@@ -38,3 +38,17 @@
 .profile-dialog{padding:21px}
 }
 @media(max-width:370px){.profile-switch{max-width:108px;gap:4px;padding-right:7px}.profile-title{max-width:43px}.profile-bubble{width:31px;height:31px}}
+
+
+/* Graduated visual memory support */
+.clue-card,.starter-card{margin-top:12px;text-align:left;padding:16px 18px;border-radius:16px;line-height:1.55}
+.clue-card{background:#faf9ff;border:1px solid #dcd9f1}
+.starter-card{background:#eff6ff;border:1px solid #cbdff2;color:#334f73}
+.clue-card b,.starter-card b{font-size:12px;letter-spacing:.03em;display:block;margin-bottom:7px}
+.clue-card p,.starter-card p{font-size:15px;margin:0;line-height:1.6;font-weight:500}
+.hint-controls{margin-top:14px!important}
+.hint-controls .btn{min-height:42px}
+.answer-memory{margin-top:17px;padding:15px 17px;border-radius:14px;border:1px solid #e3e0f2;background:#f5f3fc;color:#4c4d70}
+.answer-memory b{font-size:12px}
+.answer-memory p{font-size:14px;margin:8px 0 0;line-height:1.65}
+@media(max-width:570px){.hint-controls{display:grid;grid-template-columns:1fr 1fr}.hint-controls .btn{font-size:12px;padding:10px 7px;min-width:0;white-space:normal}}
