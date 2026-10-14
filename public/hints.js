@@ -269,7 +269,7 @@
     const scene=clean(card.sceneHint) || built?.[0] || (clean(card.englishPrompt)?'Focus on the picture. What does this scene communicate? '+clean(card.englishPrompt):'Focus on the main action or object, and say one specific French phrase.');
     const starter=clean(card.startHint) || built?.[1] || smallStart(card.frenchAnswer);
     const customMemory=clean(card.mnemonic) && (!seed || card.mnemonic!==seed.mnemonic)?clean(card.mnemonic):'';
-    const memory=customMemory || built?.[2] || clean(card.mnemonic) || clean(card.grammarNote) || 'Say the French answer while picturing the action once more.';
+    const memory=customMemory || built?.[2] || (!seed?clean(card.mnemonic):'') || (unedited?clean(card.grammarNote):'') || ('Picture the action as you say '+clean(card.frenchAnswer)+' aloud. If the scene no longer matches, update its image and clues in Library.');
     return {scene,starter,memory};
   }
   window.ParlezHints={forCard,count:Object.keys(BUILTIN_HINTS).length,ids:Object.keys(BUILTIN_HINTS)};
