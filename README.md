@@ -18,9 +18,17 @@ Connect this GitHub repo in Cloudflare > Workers & Pages > Create > Pages > Conn
 
 The deployed URL will be `https://<project>.pages.dev`. Deployments will update after new commits to `main`.
 
+## Household profiles
+
+Use the profile switcher at the top right to add, rename, switch or delete a learner profile. Each profile has **its own** review schedule, review history, streak, grammar history, speaking history and front-card preference. The **flashcard library itself is shared**, including edits and images.
+
+An existing single-learner installation automatically migrates its original reviews into the initial profile without resetting progress. Export/import JSON backs up or restores **all profiles** together; older v2 backups can also be imported.
+
+**These are device-local profiles, not accounts.** Profile data does not automatically sync from one person's phone to the other's. Each device has independent local data until a cloud synchronization backend is explicitly added.
+
 ## Important privacy/data note
 
-Card edits and study progress are stored locally in the browser on that device, **not** in GitHub and **not** synced to Cloudflare. Use the built-in JSON export regularly to back up progress, and import to move data to another device. The repository is PUBLIC, but there are no user accounts, secret tokens, or private data committed.
+Card edits and each profile's study progress are stored locally in the browser on that device, **not** in GitHub and **not** synced to Cloudflare. Use the built-in JSON export regularly to back up progress, and import to move data to another device. The repository is PUBLIC, but there are no user accounts, secret tokens, or private data committed.
 
 ## Features
 
