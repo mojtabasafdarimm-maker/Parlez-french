@@ -1,4 +1,4 @@
-const CACHE = 'parlez-v4-hints';
+const CACHE = 'parlez-v5-visual-mnemonics';
 const ASSETS = ['./', './index.html', './styles.css', './app.js', './hints.js', './manifest.webmanifest', './assets/icon.svg', './assets/icon-192.png', './assets/icon-512.png', './assets/icon-apple.png'];
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(ASSETS)).then(() => self.skipWaiting()));
