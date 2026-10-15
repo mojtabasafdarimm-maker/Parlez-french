@@ -59,3 +59,9 @@
 .mnemonic-card p[dir="auto"]{text-align:start;line-height:1.95;font-weight:550;unicode-bidi:plaintext;white-space:normal;overflow-wrap:break-word}
 .mnemonic-card p[dir="rtl"]{direction:rtl}
 .hint-controls{flex-wrap:wrap}
+
+/* A Persian-first memory cue, with optional visual explanation. */
+.answer-memory [dir="auto"]{font-size:15px;line-height:1.8;unicode-bidi:plaintext}
+.extra-scene-memory{margin-top:13px;border-top:1px solid #e3deef;padding-top:10px}
+.extra-scene-memory summary{font-size:12px;color:#666091;font-weight:700;cursor:pointer}
+.extra-scene-memory p{font-size:13px!important;line-height:1.65;color:#77738c}
