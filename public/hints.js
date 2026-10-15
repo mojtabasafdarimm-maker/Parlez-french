@@ -255,6 +255,59 @@
     "Visualize entering the cinema later tonight: Je vais aller au cinéma ce soir."
   ]
 };
+  // Optional Persian sound/word-family links, never printed automatically on the picture.
+  const PERSIAN_CUES={
+  "a1": "«réveil» یعنی زنگِ بیدارباش؛ صدای ساعت را با باز شدن چشم‌ها پیوند بده.",
+  "a2": "«lever» یعنی بالا بردن؛ تصور کن بدنت مثل یک اهرم از روی تخت بالا می‌آید.",
+  "a3": "«برس» فارسی شبیه «brosse» فرانسوی است؛ برس را روی دندان‌ها تصور کن! «dents» هم یعنی دندان‌ها.",
+  "a4": "«دوش» فارسی و «douche» فرانسوی تقریباً همان صدا را دارند؛ آب دوش را تصور کن.",
+  "a5": "«habit» در فرانسوی یعنی لباس؛ «habiller» را به پوشیدن لباس روی بدن ربط بده.",
+  "a6": "«کوافور» (coiffeur) یعنی آرایشگر؛ «coiffe» را با شانه کشیدن به موها حفظ کن.",
+  "a7": "«پرومناد» (promenade) یعنی قدم‌زدن تفریحی؛ یک پیاده‌روی آرام در پارک را تصور کن.",
+  "a8": "«couch» انگلیسی (کاناپه) را به «coucher» ربط بده؛ وقت دراز کشیدن و رفتن به تخت است.",
+  "a9": "«dorm» انگلیسی یعنی خوابگاه؛ «dormir» خوابیدن است و «s’endormir» لحظهٔ خواب رفتن.",
+  "a10": "«petit» یعنی کوچک؛ «petit-déjeuner» را با اولین وعدهٔ صبح و فنجان قهوه به یاد بیاور.",
+  "a11": "«lit» (لی) یعنی تخت؛ صبح روتختی و بالش را مرتب می‌کنی.",
+  "a12": "«vaisselle» (وِسِل) را با «وسایلِ ظرفشویی» به یاد بیاور؛ بشقاب‌ها بعد غذا شسته می‌شوند.",
+  "a13": "«occuper» شبیه «occupied» انگلیسی است؛ مشغول مراقبت از گیاه‌ها هستی.",
+  "a14": "«commencer» یعنی شروع کردن؛ تصور کن همین الآن لپ‌تاپ را روشن می‌کنی و کار آغاز می‌شود.",
+  "a15": "«pause» در انگلیسی و فرانسوی یعنی مکث؛ وسط کار برای قهوه توقف می‌کنی.",
+  "a16": "«vélo» یعنی دوچرخه؛ «faire du» را مثل یک تکهٔ ثابت قبل از فعالیت‌ها حفظ کن.",
+  "b1": "«bonnet» (بُنه) را به کلاه گرم زمستانی روی سر پیوند بده؛ با شال اشتباه نگیر.",
+  "b2": "«écharpe» (اِشارپ) را همراه تصویر شالی که دور گردن می‌پیچی حفظ کن.",
+  "b3": "«robe» انگلیسی (ردا) به «robe» فرانسوی نزدیک است؛ یک لباس یک‌تکه را ببین.",
+  "b4": "«basket» یادآور بسکتبال است؛ «baskets» یعنی کفش‌های ورزشی، نه خود توپ.",
+  "b5": "«شومیز» فارسی از «chemise» فرانسوی آمده؛ یک پیراهن دکمه‌دار را تصور کن.",
+  "b6": "«پانتالون» صدایی نزدیک به «pantalon» دارد؛ در فرانسوی نام این لباس مفرد است.",
+  "b7": "«ژوپون» (jupon) را به «jupe» فرانسوی ربط بده؛ هر دو تصویر دامن را یادآوری می‌کنند.",
+  "b8": "«chaussettes» با «chaussures» (کفش) هم‌خانواده است؛ جوراب داخل کفش می‌رود.",
+  "b9": "«moufles» (موفل) را با «مشتِ گرم» به یاد بیاور؛ انگشت‌ها به‌جز شست در یک قسمت هستند.",
+  "b10": "«رژ» لب از «rouge» فرانسوی آمده؛ رنگ قرمز لباس همان «rouge» است.",
+  "b11": "«bon» یعنی خوب (مثل bon appétit)؛ پرچم سبز-سفید-قرمز یادآور مکزیک است.",
+  "w1": "«pleut» (پْلو) را با صدای «پِلَپ‌پِلَپ» باران روی پنجره به یاد بیاور.",
+  "w2": "«neige» (نِژ) را با برف‌هایی که آرام جلوی پنجره می‌بارند پیوند بده.",
+  "w3": "«froid» (فْروا) را کنار «فریزر» به خاطر بسپار؛ هوا خیلی سرد است.",
+  "w4": "«chaud» (شو) را به «شعله» و گرمای شدید خورشید ربط بده.",
+  "w5": "«soleil» شبیه «solar» انگلیسی است؛ هر دو یادآور خورشید هستند.",
+  "w6": "«vent» را با «ventilation» (تهویه و جریان هوا) به یاد بیاور.",
+  "w7": "«nuages» (نوآژ) را به «نُه ابر» خیالی در آسمان ربط بده؛ این اسم جمع است.",
+  "o1": "«écrire» با «script» (نوشتن) هم‌ریشه است؛ نوک قلم روی کاغذ حرکت می‌کند.",
+  "o2": "«métal» همان «متال/metal» است؛ بدنهٔ قلم از جنس فلز ساخته شده.",
+  "o3": "«notes» همان «نوت‌ها» است؛ برای یادداشت‌برداری از قلم استفاده می‌کنی.",
+  "g1": "غذا هنوز شروع نشده؛ «vais + infinitif» را مثل یک حرکت رو به آینده تصور کن.",
+  "g2": "«en train de» را با «قطارِ در حرکت» به یاد بیاور؛ کار همین الآن در جریان است.",
+  "g3": "«venir» یعنی آمدن؛ انگار تازه از انجام آن کار برگشته‌ای: «viens de + فعل».",
+  "g4": "«vais» از فعل «aller» می‌آید؛ تصور کن هنوز سر کار نرفته‌ای و برنامه‌اش را داری.",
+  "g5": "«ne ... pas» دو طرف جمله را می‌گیرند؛ مثل دو علامت «نه!» دورِ فعل.",
+  "g6": "«coucher» را با couch (کاناپه) ربط بده؛ برای آینده اول «vais» و بعد «me coucher».",
+  "g7": "«participer» شبیه «participate» انگلیسی است؛ «à + le» در این عبارت می‌شود «au».",
+  "t1": "«quart» شبیه «quarter» انگلیسی، یعنی یک‌چهارم ساعت؛ دقیقه‌شمار روی ۳ است.",
+  "t2": "«demi» یعنی نصف؛ دقیقه‌شمار روی ۶ است و نیم ساعت گذشته.",
+  "t3": "«moins» یعنی منهای؛ از ساعت سه، یک ربع کم کن تا ۲:۴۵.",
+  "s1": "«puis» (پویی) یعنی بعدش؛ دو تصویر پشت‌سرهم بساز: بیدار شدن، بعد صبحانه.",
+  "s2": "«baskets» یادآور بسکتبال است؛ برای ورزش شورت و کفش ورزشی پوشیده‌ای.",
+  "s3": "«cinéma» همان سینماست؛ «vais aller» یعنی برنامه داری امشب بروی، هنوز نرفته‌ای."
+};
   const clean = value => String(value||'').trim();
   const smallStart = french => {
     const words=clean(french).replace(/[.!?]+$/,'').split(/\s+/).filter(Boolean);
@@ -270,7 +323,8 @@
     const starter=clean(card.startHint) || built?.[1] || smallStart(card.frenchAnswer);
     const customMemory=clean(card.mnemonic) && (!seed || card.mnemonic!==seed.mnemonic)?clean(card.mnemonic):'';
     const memory=customMemory || built?.[2] || (!seed?clean(card.mnemonic):'') || (unedited?clean(card.grammarNote):'') || ('Picture the action as you say '+clean(card.frenchAnswer)+' aloud. If the scene no longer matches, update its image and clues in Library.');
-    return {scene,starter,memory};
+    const mnemonic=clean(card.memoryHint) || customMemory || (unedited?PERSIAN_CUES[card.id]:null) || clean(card.mnemonic) || (clean(card.englishPrompt)?'Focus on this concept: '+clean(card.englishPrompt):'Try the visual scene clue to recall the phrase.');
+    return {scene,starter,memory,mnemonic};
   }
-  window.ParlezHints={forCard,count:Object.keys(BUILTIN_HINTS).length,ids:Object.keys(BUILTIN_HINTS)};
+  window.ParlezHints={forCard,count:Object.keys(BUILTIN_HINTS).length,ids:Object.keys(BUILTIN_HINTS),persianCount:Object.keys(PERSIAN_CUES).length};
 })();
