@@ -323,7 +323,7 @@
     const starter=clean(card.startHint) || built?.[1] || smallStart(card.frenchAnswer);
     const customMemory=clean(card.mnemonic) && (!seed || card.mnemonic!==seed.mnemonic)?clean(card.mnemonic):'';
     const memory=customMemory || built?.[2] || (!seed?clean(card.mnemonic):'') || (unedited?clean(card.grammarNote):'') || ('Picture the action as you say '+clean(card.frenchAnswer)+' aloud. If the scene no longer matches, update its image and clues in Library.');
-    const mnemonic=clean(card.memoryHint) || customMemory || (unedited?PERSIAN_CUES[card.id]:null) || clean(card.mnemonic) || (clean(card.englishPrompt)?'Focus on this concept: '+clean(card.englishPrompt):'Try the visual scene clue to recall the phrase.');
+    const mnemonic=clean(card.memoryHint) || customMemory || (unedited?PERSIAN_CUES[card.id]:null) || (!seed?clean(card.mnemonic):'') || (clean(card.englishPrompt)?'Picture the idea: '+clean(card.englishPrompt)+'. Add a personal Persian or English association in Library if that helps you remember.':'Use the scene clue, then add your own Persian or English association in Library.');
     return {scene,starter,memory,mnemonic};
   }
   window.ParlezHints={forCard,count:Object.keys(BUILTIN_HINTS).length,ids:Object.keys(BUILTIN_HINTS),persianCount:Object.keys(PERSIAN_CUES).length};
