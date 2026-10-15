@@ -1,5 +1,5 @@
-const CACHE = 'parlez-v10-simple-review';
-const ASSETS = ['./', './index.html', './styles.css', './app.js', './hints.js', './illustrations.js', './manifest.webmanifest', './assets/icon.svg', './assets/icon-192.png', './assets/icon-512.png', './assets/icon-apple.png'];
+const CACHE = 'parlez-v11-vocabulary';
+const ASSETS = ['./', './index.html', './styles.css', './app.js', './illustrations.js', './manifest.webmanifest', './assets/icon.svg', './assets/icon-192.png', './assets/icon-512.png', './assets/icon-apple.png'];
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(ASSETS)).then(() => self.skipWaiting()));
 });

@@ -40,42 +40,14 @@
 @media(max-width:370px){.profile-switch{max-width:108px;gap:4px;padding-right:7px}.profile-title{max-width:43px}.profile-bubble{width:31px;height:31px}}
 
 
-/* Graduated visual memory support */
-.clue-card,.starter-card{margin-top:12px;text-align:left;padding:16px 18px;border-radius:16px;line-height:1.55}
-.clue-card{background:#faf9ff;border:1px solid #dcd9f1}
-.starter-card{background:#eff6ff;border:1px solid #cbdff2;color:#334f73}
-.clue-card b,.starter-card b{font-size:12px;letter-spacing:.03em;display:block;margin-bottom:7px}
-.clue-card p,.starter-card p{font-size:15px;margin:0;line-height:1.6;font-weight:500}
-.hint-controls{margin-top:14px!important}
-.hint-controls .btn{min-height:42px}
-.answer-memory{margin-top:17px;padding:15px 17px;border-radius:14px;border:1px solid #e3e0f2;background:#f5f3fc;color:#4c4d70}
-.answer-memory b{font-size:12px}
-.answer-memory p{font-size:14px;margin:8px 0 0;line-height:1.65}
-@media(max-width:570px){.hint-controls{display:grid;grid-template-columns:1fr 1fr}.hint-controls .btn{font-size:12px;padding:10px 7px;min-width:0;white-space:normal}}
-
-/* Optional bilingual mnemonic; the picture stays word-free until explicitly requested */
-.mnemonic-card{background:#fff8ec;border:1px solid #f0d8af;color:#675036;text-align:start}
-.mnemonic-card b{color:#825d2e}
-.mnemonic-card p[dir="auto"]{text-align:start;line-height:1.95;font-weight:550;unicode-bidi:plaintext;white-space:normal;overflow-wrap:break-word}
-.mnemonic-card p[dir="rtl"]{direction:rtl}
-.hint-controls{flex-wrap:wrap}
-
-/* Language-neutral memory hooks, with optional visual explanation. */
-.answer-memory [dir="auto"]{font-size:15px;line-height:1.8;unicode-bidi:plaintext}
-.extra-scene-memory{margin-top:13px;border-top:1px solid #e3deef;padding-top:10px}
-.extra-scene-memory summary{font-size:12px;color:#666091;font-weight:700;cursor:pointer}
-.extra-scene-memory p{font-size:13px!important;line-height:1.65;color:#77738c}
-.mnemonic-card p,.answer-memory p{overflow-wrap:anywhere}
-.mnemonic-card bdi,.answer-memory bdi{unicode-bidi:isolate}
-.hint-controls .btn{min-height:44px}
-
-/* Simple review: one optional picture clue, then reveal. */
-.simple-hint{text-align:left;border-style:solid;padding:16px 18px}
-.simple-hint b{display:block;font-size:12px;letter-spacing:.03em;margin-bottom:7px;color:var(--purple-dark)}
-.simple-hint p{margin:0;font-size:15px;line-height:1.55;color:#51546b}
-.simple-review-actions{display:grid;grid-template-columns:minmax(92px,.38fr) 1fr;gap:8px;margin-top:17px}
-.simple-review-actions .btn{min-height:48px}
+/* Vocabulary review: picture, French, meaning, and a short example. */
+.simple-review-actions{display:flex;justify-content:center;margin-top:17px}
+.simple-review-actions .btn{min-height:48px;width:100%}
 .rating-title{text-align:center;margin:19px 0 10px}
 .review-footnote{text-align:center;margin-top:17px}
 .english-front{font-size:29px;font-weight:700;text-align:center;padding:30px}
-@media(max-width:380px){.review-card{padding:13px}.review-scene{min-height:255px}.review-scene svg{max-height:270px}.simple-review-actions .btn{padding-left:10px;padding-right:10px;font-size:13px}.rating-row{grid-template-columns:repeat(2,1fr)}}
+.answer .english{display:block;margin:10px 0 16px;font-size:18px;color:#57546b}
+.example p,.vocab-example p{margin:8px 0;line-height:1.55}
+.example-meaning{color:#747184;font-size:14px}
+.vocab-example{border-top:1px solid #ebe8f0;margin-top:14px;padding-top:8px}
+@media(max-width:380px){.review-card{padding:13px}.review-scene{min-height:255px}.review-scene svg{max-height:270px}.rating-row{grid-template-columns:repeat(2,1fr)}}

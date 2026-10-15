@@ -62,6 +62,261 @@ const starter=[
  C('s2','speaking','Speaking','sport','Explain what you wear for sport','Je porte un short et des baskets.','zhuh port uhn short ay day bas-KET','Je porte un short pour faire du sport.','','porter + clothing.'),
  C('s3','speaking','Speaking','cinema','Tell a friend your evening plan','Je vais aller au cinéma ce soir.','zhuh veh ah-LAY oh see-nay-MAH suh swahr','Ce soir, je vais regarder un film.','','Futur proche + infinitive.'),
 ];
+const vocabularyContent={
+  "a1": {
+    "englishPrompt": "I wake up.",
+    "frenchExample": "Je me réveille à sept heures.",
+    "exampleEnglish": "I wake up at seven."
+  },
+  "a2": {
+    "englishPrompt": "I get out of bed.",
+    "frenchExample": "Je me lève le matin.",
+    "exampleEnglish": "I get up in the morning."
+  },
+  "a3": {
+    "englishPrompt": "I brush my teeth.",
+    "frenchExample": "Je me brosse les dents le matin.",
+    "exampleEnglish": "I brush my teeth in the morning."
+  },
+  "a4": {
+    "englishPrompt": "I take a shower.",
+    "frenchExample": "Je me douche le matin.",
+    "exampleEnglish": "I take a shower in the morning."
+  },
+  "a5": {
+    "englishPrompt": "I get dressed.",
+    "frenchExample": "Je m’habille le matin.",
+    "exampleEnglish": "I get dressed in the morning."
+  },
+  "a6": {
+    "englishPrompt": "I do my hair.",
+    "frenchExample": "Je me coiffe le matin.",
+    "exampleEnglish": "I do my hair in the morning."
+  },
+  "a7": {
+    "englishPrompt": "I go for a walk.",
+    "frenchExample": "Je me promène dans le parc.",
+    "exampleEnglish": "I go for a walk in the park."
+  },
+  "a8": {
+    "englishPrompt": "I go to bed.",
+    "frenchExample": "Je me couche à dix heures.",
+    "exampleEnglish": "I go to bed at ten."
+  },
+  "a9": {
+    "englishPrompt": "I fall asleep.",
+    "frenchExample": "Je m’endors à dix heures.",
+    "exampleEnglish": "I fall asleep at ten."
+  },
+  "a10": {
+    "englishPrompt": "I have breakfast.",
+    "frenchExample": "Je prends mon petit-déjeuner à huit heures.",
+    "exampleEnglish": "I have breakfast at eight."
+  },
+  "a11": {
+    "englishPrompt": "I make my bed.",
+    "frenchExample": "Je fais mon lit le matin.",
+    "exampleEnglish": "I make my bed in the morning."
+  },
+  "a12": {
+    "englishPrompt": "I wash the dishes.",
+    "frenchExample": "Je fais la vaisselle le soir.",
+    "exampleEnglish": "I wash the dishes in the evening."
+  },
+  "a13": {
+    "englishPrompt": "I take care of my plants.",
+    "frenchExample": "Je m’occupe de mes plantes.",
+    "exampleEnglish": "I take care of my plants."
+  },
+  "a14": {
+    "englishPrompt": "I start working.",
+    "frenchExample": "Je commence à travailler à neuf heures.",
+    "exampleEnglish": "I start working at nine."
+  },
+  "a15": {
+    "englishPrompt": "I take a coffee break.",
+    "frenchExample": "Je fais une pause café à dix heures.",
+    "exampleEnglish": "I take a coffee break at ten."
+  },
+  "a16": {
+    "englishPrompt": "I ride a bike.",
+    "frenchExample": "Je fais du vélo le matin.",
+    "exampleEnglish": "I ride a bike in the morning."
+  },
+  "b1": {
+    "englishPrompt": "a winter hat / beanie",
+    "frenchExample": "Je porte un bonnet.",
+    "exampleEnglish": "I wear a winter hat."
+  },
+  "b2": {
+    "englishPrompt": "a scarf",
+    "frenchExample": "Je porte une écharpe.",
+    "exampleEnglish": "I wear a scarf."
+  },
+  "b3": {
+    "englishPrompt": "a dress",
+    "frenchExample": "Elle porte une robe rouge.",
+    "exampleEnglish": "She wears a red dress."
+  },
+  "b4": {
+    "englishPrompt": "sneakers / trainers",
+    "frenchExample": "Je porte des baskets.",
+    "exampleEnglish": "I wear sneakers."
+  },
+  "b5": {
+    "englishPrompt": "a shirt",
+    "frenchExample": "Il porte une chemise.",
+    "exampleEnglish": "He wears a shirt."
+  },
+  "b6": {
+    "englishPrompt": "trousers / pants",
+    "frenchExample": "Je porte un pantalon noir.",
+    "exampleEnglish": "I wear black trousers."
+  },
+  "b7": {
+    "englishPrompt": "a skirt",
+    "frenchExample": "Elle porte une jupe.",
+    "exampleEnglish": "She wears a skirt."
+  },
+  "b8": {
+    "englishPrompt": "socks",
+    "frenchExample": "Je porte des chaussettes.",
+    "exampleEnglish": "I wear socks."
+  },
+  "b9": {
+    "englishPrompt": "mittens",
+    "frenchExample": "Je porte des moufles.",
+    "exampleEnglish": "I wear mittens."
+  },
+  "b10": {
+    "englishPrompt": "She wears a red dress.",
+    "frenchExample": "Elle porte une robe rouge.",
+    "exampleEnglish": "She wears a red dress."
+  },
+  "b11": {
+    "englishPrompt": "It is a good Mexican film.",
+    "frenchExample": "Je regarde un bon film mexicain.",
+    "exampleEnglish": "I watch a good Mexican film."
+  },
+  "w1": {
+    "englishPrompt": "It is raining.",
+    "frenchExample": "Aujourd’hui, il pleut.",
+    "exampleEnglish": "Today, it is raining."
+  },
+  "w2": {
+    "englishPrompt": "It is snowing.",
+    "frenchExample": "Aujourd’hui, il neige.",
+    "exampleEnglish": "Today, it is snowing."
+  },
+  "w3": {
+    "englishPrompt": "It is cold.",
+    "frenchExample": "Il fait froid en hiver.",
+    "exampleEnglish": "It is cold in winter."
+  },
+  "w4": {
+    "englishPrompt": "It is hot.",
+    "frenchExample": "Il fait chaud en été.",
+    "exampleEnglish": "It is hot in summer."
+  },
+  "w5": {
+    "englishPrompt": "It is sunny.",
+    "frenchExample": "Aujourd’hui, il y a du soleil.",
+    "exampleEnglish": "Today, it is sunny."
+  },
+  "w6": {
+    "englishPrompt": "It is windy.",
+    "frenchExample": "Il y a du vent ce soir.",
+    "exampleEnglish": "It is windy this evening."
+  },
+  "w7": {
+    "englishPrompt": "There are clouds.",
+    "frenchExample": "Il y a des nuages aujourd’hui.",
+    "exampleEnglish": "There are clouds today."
+  },
+  "o1": {
+    "englishPrompt": "It is used for writing.",
+    "frenchExample": "Un stylo, ça sert à écrire.",
+    "exampleEnglish": "A pen is used for writing."
+  },
+  "o2": {
+    "englishPrompt": "It is made of metal.",
+    "frenchExample": "Mon stylo est en métal.",
+    "exampleEnglish": "My pen is made of metal."
+  },
+  "o3": {
+    "englishPrompt": "We use it to take notes.",
+    "frenchExample": "On utilise un stylo pour prendre des notes.",
+    "exampleEnglish": "We use a pen to take notes."
+  },
+  "g1": {
+    "englishPrompt": "I am going to eat.",
+    "frenchExample": "Je vais manger à midi.",
+    "exampleEnglish": "I am going to eat at noon."
+  },
+  "g2": {
+    "englishPrompt": "I am eating right now.",
+    "frenchExample": "Je suis en train de manger.",
+    "exampleEnglish": "I am eating right now."
+  },
+  "g3": {
+    "englishPrompt": "I have just eaten.",
+    "frenchExample": "Je viens de manger un sandwich.",
+    "exampleEnglish": "I have just eaten a sandwich."
+  },
+  "g4": {
+    "englishPrompt": "I am going to work.",
+    "frenchExample": "Demain, je vais travailler.",
+    "exampleEnglish": "Tomorrow, I am going to work."
+  },
+  "g5": {
+    "englishPrompt": "I do not go for a walk.",
+    "frenchExample": "Aujourd’hui, je ne me promène pas.",
+    "exampleEnglish": "Today, I am not going for a walk."
+  },
+  "g6": {
+    "englishPrompt": "I am going to go to bed.",
+    "frenchExample": "Je vais me coucher à dix heures.",
+    "exampleEnglish": "I am going to go to bed at ten."
+  },
+  "g7": {
+    "englishPrompt": "He wants to participate in the project.",
+    "frenchExample": "Il veut participer au projet.",
+    "exampleEnglish": "He wants to participate in the project."
+  },
+  "t1": {
+    "englishPrompt": "It is quarter past two.",
+    "frenchExample": "Il est deux heures et quart.",
+    "exampleEnglish": "It is quarter past two."
+  },
+  "t2": {
+    "englishPrompt": "It is half past two.",
+    "frenchExample": "Il est deux heures et demie.",
+    "exampleEnglish": "It is half past two."
+  },
+  "t3": {
+    "englishPrompt": "It is quarter to three.",
+    "frenchExample": "Il est trois heures moins le quart.",
+    "exampleEnglish": "It is quarter to three."
+  },
+  "s1": {
+    "englishPrompt": "In the morning, I wake up, then I have breakfast.",
+    "frenchExample": "Je me réveille à sept heures.",
+    "exampleEnglish": "I wake up at seven."
+  },
+  "s2": {
+    "englishPrompt": "I wear shorts and sneakers.",
+    "frenchExample": "Je porte un short et des baskets.",
+    "exampleEnglish": "I wear shorts and sneakers."
+  },
+  "s3": {
+    "englishPrompt": "I am going to go to the cinema this evening.",
+    "frenchExample": "Ce soir, je vais aller au cinéma.",
+    "exampleEnglish": "This evening, I am going to go to the cinema."
+  }
+};
+const originalStarterContent=Object.fromEntries(starter.map(c=>[c.id,{...c}]));
+for(const c of starter)Object.assign(c,vocabularyContent[c.id]);
+
 // SVG scenes are authored as individual physical situations, NOT language-based hints.
 const person=(x=226,y=127,opts={})=>{let {shirt='#817cc7',pants='#586a97',arm='down',pose='stand',hair='#3d3556',skin='#ebbca3'}=opts;let head=`<ellipse cx="${x}" cy="${y}" rx="22" ry="25" fill="${skin}"/><path d="M${x-22} ${y-4}q-2-35 22-32 23-1 22 32-10-17-23-18-12 4-21 18" fill="${hair}"/><circle cx="${x-8}" cy="${y+2}" r="1.8" fill="#514655"/><circle cx="${x+8}" cy="${y+2}" r="1.8" fill="#514655"/>`;if(pose==='sit'){return `<g>${head}<path d="M${x-28} ${y+28}q28-13 56 0l14 65h-72z" fill="${shirt}"/><path d="M${x-3} ${y+91}h80" stroke="${pants}" stroke-width="23" stroke-linecap="round"/><path d="M${x+70} ${y+91}v45" stroke="${pants}" stroke-width="20" stroke-linecap="round"/></g>`}return `<g>${head}<path d="M${x-25} ${y+31}q25-10 50 0l12 82h-74z" fill="${shirt}"/><path d="M${x-17} ${y+111}l-9 57M${x+17} ${y+111}l12 57" stroke="${pants}" stroke-width="19" stroke-linecap="round"/><path d="M${x-28} ${y+47}l${arm==='up'?'-22 -40':'-20 64'}M${x+28} ${y+47}l${arm==='up'?'20 -34':'24 64'}" stroke="${skin}" stroke-width="14" stroke-linecap="round" fill="none"/></g>`;};
 const sky=(color='#f4efff')=>`<rect width="520" height="340" rx="25" fill="${color}"/><ellipse cx="260" cy="292" rx="206" ry="21" fill="#292744" opacity=".055"/>`;
@@ -277,6 +532,16 @@ function upgradeStarterIllustrations(){
   const movie=state.cards.find(c=>c.id==='b11');
   if(movie && movie.scene==='cinema' && !movie.customImage)movie.scene='mexican-film';
 }
+function upgradeVocabularyContent(){
+  for(const c of state.cards){
+    const old=originalStarterContent[c.id],updated=vocabularyContent[c.id];
+    if(!old||!updated||c.frenchAnswer!==old.frenchAnswer)continue;
+    const sameExample=c.frenchExample===old.frenchExample||c.frenchExample===updated.frenchExample;
+    if(c.englishPrompt===old.englishPrompt)c.englishPrompt=updated.englishPrompt;
+    if(sameExample){c.frenchExample=updated.frenchExample;if(!c.exampleEnglish)c.exampleEnglish=updated.exampleEnglish;}
+  }
+}
+upgradeVocabularyContent();
 upgradeStarterIllustrations();
 function activeProfile(){return state.profiles.find(p=>p.id===state.activeProfileId)||state.profiles[0];}
 function progressFor(c){return activeProfile().progress[c.id]||{};}
@@ -286,7 +551,7 @@ function persist(){
   catch(e){toast('Storage is full. Export a backup, then reduce image sizes.');return false;}
 }
 persist();
-let view='home',reviewSession=null,revealed=false,hint=false,hintLevel=0,englishHint=false,libSearch='',libTopic='All',libType='All',modalOpen=false,editId=null,editImage=null,editScene='wake',gramTab='All',grammarInput='',grammarFeedback='',grammarAt=0,speakAt=0,speakShown=false,speakHint=false,speakResponse='',speakResult='';
+let view='home',reviewSession=null,revealed=false,libSearch='',libTopic='All',libType='All',modalOpen=false,editId=null,editImage=null,editScene='wake',gramTab='All',grammarInput='',grammarFeedback='',grammarAt=0,speakAt=0,speakShown=false,speakHint=false,speakResponse='',speakResult='';
 function todayHistory(){return activeProfile().history.filter(e=>todayKey(e.time)===todayKey());}
 function lastStreak(){const dates=new Set(activeProfile().history.map(e=>todayKey(e.time)));let streak=0;let d=new Date();if(!dates.has(todayKey(d)))d.setDate(d.getDate()-1);while(dates.has(todayKey(d))){streak++;d.setDate(d.getDate()-1);}return streak;}
 function dueCards(){return state.cards.filter(c=>{const p=progressFor(c);return !p.dueAt||p.dueAt<=Date.now();});}
@@ -303,38 +568,20 @@ function stat(num,label,ic){return `<div class="stat"><div class="stat-icon">${i
 const topicEmoji={'Daily routine':'☀️','Clothing':'🧣','Weather':'🌦️','Objects':'✍️','Grammar':'📖','Time':'🕒','Speaking':'💬'};
 function homePage(){const due=dueCards().length,done=todayHistory().length;const byTopic=Object.entries(topicEmoji).map(([t,emoji])=>{let cs=state.cards.filter(c=>c.topic===t),remembered=cs.filter(c=>progressFor(c).interval>=7).length;return cs.length?`<div class="topic-row"><div class="topic-icon">${emoji}</div><div style="flex:1"><div style="display:flex;justify-content:space-between"><span class="topic-name">${esc(t)}</span><span class="small muted">${remembered}/${cs.length}</span></div><div class="progress-track"><div class="progress-fill" style="width:${100*remembered/cs.length}%"></div></div></div></div>`:''}).join('');return `<section class="hero"><div><div class="eyebrow">WELCOME, ${esc(activeProfile().name.toUpperCase())}</div><h1>See it. Say it.<br/>Remember it.</h1><p>Train yourself to think in French through pictures, real-life actions and tiny daily practice.</p>${btn(`Start visual review ${icon('arrow')}`,'btn-primary btn-lg','data-action="start-review"')}</div><div class="hero-illustration">${heroArt()}</div></section><div class="stats">${stat(due,'Cards ready','clock')}${stat(done,'Reviewed today','check')}${stat(lastStreak()+' days','Study streak','fire')}</div><div class="section-head"><h2>Your learning space</h2><button class="link" data-view="library">See all cards →</button></div><div class="panels"><div class="panel"><div style="display:flex;align-items:center;justify-content:space-between"><h3>Today's focus</h3><span class="mini-step">VISUAL FIRST</span></div><p class="subline">Start with the picture, speak out loud, then reveal French. Ratings schedule your next review.</p><div style="display:flex;gap:12px;align-items:center;background:#f7f5fd;padding:17px;border-radius:16px"><span style="font-size:33px">🧠</span><div style="flex:1"><b>${due} cards waiting</b><div class="small muted">${Math.min(due,10)}-card focused session</div></div><button class="btn btn-secondary" data-action="start-review">Review ${icon('arrow')}</button></div></div><div class="panel"><h3>Progress by topic</h3>${byTopic}</div></div><div class="notice">${icon('info')} Review progress belongs to ${esc(activeProfile().name)} on this device. The card library is shared between profiles, but nothing syncs between phones yet.</div>`;}
 function getReviewPool(filter){let due=dueCards();if(filter==='All cards')due=[...state.cards];if(filter!=='Due now'&&filter!=='All cards'&&filter!=='')due=due.filter(c=>c.topic===filter);return due.sort((a,b)=>(progressFor(a).dueAt||0)-(progressFor(b).dueAt||0));}
-let reviewFilter='Due now';function initReview(){const pool=getReviewPool(reviewFilter);reviewSession={ids:(reviewFilter==='Due now'?pool.slice(0,10):pool).map(c=>c.id),index:0,done:0,again:0,good:0};revealed=false;hint=false;hintLevel=0;englishHint=false;}
+let reviewFilter='Due now';function initReview(){const pool=getReviewPool(reviewFilter);reviewSession={ids:(reviewFilter==='Due now'?pool.slice(0,10):pool).map(c=>c.id),index:0,done:0,again:0,good:0};revealed=false;}
 function currentReviewCard(){if(!reviewSession)return null;const id=reviewSession.ids[reviewSession.index];return state.cards.find(c=>c.id===id)||null;}
-function cardHints(c){
-  const seed=starter.find(item=>item.id===c.id);
-  if(window.ParlezHints && typeof window.ParlezHints.forCard==='function'){
-    return window.ParlezHints.forCard(c,seed);
-  }
-  return {
-    scene:c.sceneHint||c.englishPrompt||'Focus on the action shown.',
-    starter:c.startHint||'Begin with the main subject and verb.',
-    memory:c.mnemonic||c.grammarNote||'Connect the phrase to the image.'
-  };
-}
-function mnemonicText(value=''){
-  const persian=/^[^A-Za-z\u0600-\u06ff]*[\u0600-\u06ff]/.test(value);
-  const text=esc(value).replace(/«([^»]+)»/g,(_,word)=>'«<bdi'+(/[\u0600-\u06ff]/.test(word)?' lang="fa" dir="rtl"':'')+'>'+word+'</bdi>»');
-  return `<p dir="${persian?'rtl':'auto'}"${persian?' lang="fa"':''}>${text}</p>`;
-}
-function reviewPage(){if(!reviewSession)initReview();const c=currentReviewCard(),all=reviewSession.ids.length,hasMemory=Boolean(c&&cardHints(c).mnemonic);return `<div class="review-layout"><div class="review-top"><div><div class="eyebrow">PICTURE → FRENCH</div><h2>Visual flashcards</h2></div><select class="select select-sm" id="review-filter" aria-label="Choose review topic">${['Due now','All cards',...Object.keys(topicEmoji)].map(t=>`<option ${t===reviewFilter?'selected':''}>${esc(t)}</option>`).join('')}</select></div>${c?`<div class="small muted mb">Card ${reviewSession.index+1} of ${all} · Say the French aloud before revealing</div><div class="review-progress"><div style="width:${100*reviewSession.index/Math.max(all,1)}%"></div></div><div class="review-card"><div class="review-scene">${activeProfile().prefs.frontMode==='english'?`<div style="font-size:29px;font-weight:700;text-align:center;padding:30px">${esc(c.englishPrompt)}</div>`:visual(c)}<span class="corner">${esc(c.topic)}</span></div><div class="review-eyebrow eyebrow">What would you say in French?</div>${activeProfile().prefs.frontMode==='mixed'?`<p style="text-align:center;font-size:15px">${esc(c.englishPrompt)}</p>`:''}${!revealed?`${englishHint?`<div class="hint-card"><b>English hint:</b> ${esc(c.englishPrompt)}</div>`:''}${hintLevel>=1&&hasMemory?`<div class="hint-card mnemonic-card"><b>1 · Memory hook</b>${mnemonicText(cardHints(c).mnemonic)}</div>`:''}${hintLevel>=2?`<div class="hint-card clue-card"><b>${hasMemory?2:1} · Scene clue</b><p>${esc(cardHints(c).scene)}</p></div>`:''}${hintLevel>=3?`<div class="hint-card starter-card"><b>${hasMemory?3:2} · French starter</b><p>${esc(cardHints(c).starter)}</p></div>`:''}<div class="tabline hint-controls" style="justify-content:center;margin-bottom:0"><button class="btn btn-secondary" data-action="next-hint">${hintLevel===0?(hasMemory?'Memory hook':'Scene clue'):hintLevel===1?'Scene clue':hintLevel===2?'French starter':'Hide hints'}</button><button class="btn btn-white" data-action="toggle-english">${englishHint?'Hide English':'English meaning'}</button></div><button class="btn btn-primary btn-lg reveal-button" data-action="reveal">Reveal French ${icon('eye')}</button>`:`<div class="answer"><div class="eyebrow">FRENCH ANSWER</div><h2>${esc(c.frenchAnswer)}</h2><div class="muted">${esc(c.pronunciation)}</div><div class="answer-actions"><button class="btn btn-secondary" data-action="speak-french">${icon('sound')} Listen</button><button class="btn btn-white" data-action="toggle-english">${englishHint?'Hide meaning':'Show meaning'}</button></div>${englishHint?`<div class="english">${esc(c.englishPrompt)}</div>`:''}<div class="answer-memory">${hasMemory?`<b>Memory hook</b>${mnemonicText(cardHints(c).mnemonic)}`:''}<details class="extra-scene-memory"><summary>How the picture connects</summary><p>${esc(cardHints(c).memory)}</p></details></div>${c.frenchExample?`<div class="example"><b>In a sentence</b><br/>${esc(c.frenchExample)}</div>`:''}${c.grammarNote?`<div class="mini" style="margin-top:12px">${esc(c.grammarNote)}</div>`:''}</div><div class="eyebrow" style="text-align:center;margin:19px 0 10px">HOW WELL DID YOU REMEMBER?</div><div class="rating-row">${[['Again','0 min','again'],['Hard','1 day','hard'],['Good','3+ days','good'],['Easy','5+ days','easy']].map(([l,sub,r])=>`<button data-rate="${r}" class="btn ${r==='good'?'btn-primary':'btn-white'}">${l}<span>${sub}</span></button>`).join('')}</div>`}</div><p class="small muted" style="text-align:center;margin-top:17px">Picture on front · French on back · Spaced repetition adjusts automatically</p>`:`<div class="empty"><div class="empty-emoji">✨</div><h2>${all?'Session complete!':'No cards due right now'}</h2><p class="subline">${all?`You reviewed ${reviewSession.done} cards. ${reviewSession.again} were marked Again.`:'Nice work. You can review all cards or choose a topic to practice more.'}</p><button class="btn btn-primary" data-action="practice-all">Practice all cards ${icon('arrow')}</button> <button class="btn btn-white" data-view="home">Back home</button></div>`}</div>`;}
 function simpleReviewPage(){
   if(!reviewSession)initReview();
   const c=currentReviewCard(),all=reviewSession.ids.length;
   const header=`<div class="review-top"><div><div class="eyebrow">PICTURE → FRENCH</div><h2>Visual flashcards</h2></div><select class="select select-sm" id="review-filter" aria-label="Choose review topic">${['Due now','All cards',...Object.keys(topicEmoji)].map(t=>`<option ${t===reviewFilter?'selected':''}>${esc(t)}</option>`).join('')}</select></div>`;
   if(!c)return `<div class="review-layout">${header}<div class="empty"><div class="empty-emoji">✨</div><h2>${all?'Session complete!':'No cards due right now'}</h2><p class="subline">${all?`You reviewed ${reviewSession.done} cards. ${reviewSession.again} were marked Again.`:'Nice work. You can review all cards or choose a topic to practice more.'}</p><button class="btn btn-primary" data-action="practice-all">Practice all cards ${icon('arrow')}</button> <button class="btn btn-white" data-view="home">Back home</button></div></div>`;
-  const h=cardHints(c);
   const picture=activeProfile().prefs.frontMode==='english'?`<div class="english-front">${esc(c.englishPrompt)}</div>`:visual(c);
-  const answer=`<div class="answer"><div class="eyebrow">FRENCH ANSWER</div><h2>${esc(c.frenchAnswer)}</h2><div class="muted">${esc(c.pronunciation)}</div><div class="answer-actions"><button class="btn btn-secondary" data-action="speak-french">${icon('sound')} Listen</button><button class="btn btn-white" data-action="toggle-english">${englishHint?'Hide meaning':'Show meaning'}</button></div>${englishHint?`<div class="english">${esc(c.englishPrompt)}</div>`:''}${h.mnemonic?`<div class="answer-memory"><b>Memory link</b>${mnemonicText(h.mnemonic)}</div>`:''}${c.frenchExample?`<div class="example"><b>In a sentence</b><br/>${esc(c.frenchExample)}</div>`:''}${c.grammarNote?`<div class="mini" style="margin-top:12px">${esc(c.grammarNote)}</div>`:''}</div><div class="eyebrow rating-title">HOW WELL DID YOU REMEMBER?</div><div class="rating-row">${[['Again','0 min','again'],['Hard','1 day','hard'],['Good','3+ days','good'],['Easy','5+ days','easy']].map(([label,sub,rate])=>`<button data-rate="${rate}" class="btn ${rate==='good'?'btn-primary':'btn-white'}">${label}<span>${sub}</span></button>`).join('')}</div>`;
-  const prompt=`${hint?`<div class="hint-card simple-hint"><b>Picture clue</b><p>${esc(h.scene)}</p></div>`:''}<div class="simple-review-actions"><button class="btn btn-secondary" data-action="toggle-hint">${hint?'Hide hint':'Hint'}</button><button class="btn btn-primary btn-lg" data-action="reveal">Reveal French ${icon('eye')}</button></div>`;
+  const answer=`<div class="answer"><div class="eyebrow">FRENCH</div><h2>${esc(c.frenchAnswer)}</h2><div class="english">${esc(c.englishPrompt)}</div><div class="answer-actions"><button class="btn btn-secondary" data-action="speak-french">${icon('sound')} Listen</button></div>${c.frenchExample?`<div class="example"><b>Example</b><p lang="fr">${esc(c.frenchExample)}</p>${c.exampleEnglish?`<p class="example-meaning">${esc(c.exampleEnglish)}</p>`:''}</div>`:''}</div><div class="eyebrow rating-title">HOW WELL DID YOU REMEMBER?</div><div class="rating-row">${[['Again','10 min','again'],['Hard','1 day','hard'],['Good','3+ days','good'],['Easy','5+ days','easy']].map(([label,sub,rate])=>`<button data-rate="${rate}" class="btn ${rate==='good'?'btn-primary':'btn-white'}">${label}<span>${sub}</span></button>`).join('')}</div>`;
+  const prompt=`<div class="simple-review-actions"><button class="btn btn-primary btn-lg" data-action="reveal">Reveal French ${icon('eye')}</button></div>`;
   return `<div class="review-layout">${header}<div class="small muted mb">Card ${reviewSession.index+1} of ${all} · Say the French aloud before revealing</div><div class="review-progress"><div style="width:${100*reviewSession.index/Math.max(all,1)}%"></div></div><div class="review-card"><div class="review-scene">${picture}<span class="corner">${esc(c.topic)}</span></div><div class="review-eyebrow eyebrow">What would you say in French?</div>${revealed?answer:prompt}</div><p class="small muted review-footnote">Picture first · French after reveal</p></div>`;
 }
-reviewPage=simpleReviewPage;
-function rateCard(level){const c=currentReviewCard();if(!c)return;const p=ensureProgress(c),now=Date.now();p.reviews=(p.reviews||0)+1;p.lastReviewed=now;p.ease=p.ease||2.5;const prev=p.interval||0;switch(level){case 'again':p.interval=0;p.ease=Math.max(1.3,p.ease-.2);p.dueAt=now+10*60*1000;break;case 'hard':p.interval=Math.max(1,Math.round(prev?prev*1.2:1));p.ease=Math.max(1.3,p.ease-.15);p.dueAt=isoAfter(p.interval);break;case 'good':p.interval=prev?Math.max(3,Math.round(prev*p.ease)):3;p.dueAt=isoAfter(p.interval);break;case 'easy':p.interval=prev?Math.max(5,Math.round(prev*(p.ease+.35))):5;p.ease+=.12;p.dueAt=isoAfter(p.interval);break;}activeProfile().history.push({id:c.id,time:now,level});reviewSession.done++;if(level==='again')reviewSession.again++;reviewSession.index++;revealed=false;hint=false;hintLevel=0;englishHint=false;persist();render();}
+const reviewPage=simpleReviewPage;
+function rateCard(level){const c=currentReviewCard();if(!c)return;const p=ensureProgress(c),now=Date.now();p.reviews=(p.reviews||0)+1;p.lastReviewed=now;p.ease=p.ease||2.5;const prev=p.interval||0;switch(level){case 'again':p.interval=0;p.ease=Math.max(1.3,p.ease-.2);p.dueAt=now+10*60*1000;break;case 'hard':p.interval=Math.max(1,Math.round(prev?prev*1.2:1));p.ease=Math.max(1.3,p.ease-.15);p.dueAt=isoAfter(p.interval);break;case 'good':p.interval=prev?Math.max(3,Math.round(prev*p.ease)):3;p.dueAt=isoAfter(p.interval);break;case 'easy':p.interval=prev?Math.max(5,Math.round(prev*(p.ease+.35))):5;p.ease+=.12;p.dueAt=isoAfter(p.interval);break;}activeProfile().history.push({id:c.id,time:now,level});reviewSession.done++;if(level==='again')reviewSession.again++;reviewSession.index++;revealed=false;persist();render();}
 const grammarExercises=[
 {group:'Futur proche',title:'An action about to happen',scene:'eat-before',prompt:'I am going to eat.',fill:'Je ___ manger.',answer:'vais',explain:'aller (present) + infinitive → Je vais manger.'},
 {group:'Futur proche',title:'Going to work tomorrow',scene:'work-future',prompt:'Tomorrow I am going to work.',fill:'Demain, je ___ travailler.',answer:'vais',explain:'Future plan: je vais + infinitive.'},
@@ -360,11 +607,11 @@ const speakExercises=[
 {scene:'clock-230',title:'Tell the time',optional:'Say the time shown on the clock.',suggested:'Il est deux heures et demie.',tip:'et demie = half past.'},
 {scene:'eat-after',title:'Something that just happened',optional:'Say that you have just eaten.',suggested:'Je viens de manger.',tip:'Passé récent: je viens de + infinitive.'}
 ];
-function speakPage(){const g=speakExercises[speakAt % speakExercises.length];return `<div class="speaking-box"><div class="eyebrow">PRACTICE YOUR VOICE</div><h1>Real-life moments.</h1><p class="header-desc">Imagine yourself in the scene. Say a response out loud, then optionally type it. You're not being automatically graded.</p><div class="review-top"><span class="small muted">Scene ${speakAt+1} / ${speakExercises.length}</span><span class="mini-step">SPEAK FIRST</span></div><div class="review-card"><div class="review-scene prompt-scene">${sceneSVG(g.scene)}<span class="corner">${esc(g.title)}</span></div><div class="eyebrow review-eyebrow">WHAT WOULD YOU SAY IN FRENCH?</div><div class="field"><label for="speaking-answer">Draft your answer (optional)</label><textarea id="speaking-answer" class="textarea" rows="3" placeholder="Try saying it aloud first...">${esc(speakResponse)}</textarea></div><div class="tabline" style="margin-bottom:11px"><button class="btn btn-white" data-action="speak-hint">${speakHint?'Hide situation hint':'Show situation hint'}</button></div>${speakHint?`<p class="small muted" style="line-height:1.5">${esc(g.optional)}</p>`:''}${!speakShown?`<div class="tabline"><button class="btn btn-primary" data-action="speak-reveal">Show example answer ${icon('eye')}</button></div>`:`<div class="answer"><div class="eyebrow">ONE NATURAL RESPONSE</div><h2 style="font-size:22px">${esc(g.suggested)}</h2><p class="mini">${esc(g.tip)}</p><button class="btn btn-secondary" data-action="speech-example">${icon('sound')} Listen to example</button></div><div class="rating-row" style="grid-template-columns:1fr 1fr"><button class="btn btn-white" data-action="speak-retry">Practice again</button><button class="btn btn-primary" data-action="speak-done">I said it ${icon('check')}</button></div>`}</div><div class="notice">${icon('info')} This mode offers model answers for self-practice. It does not pretend to recognize or assess your pronunciation. You can request more complex speaking feedback later.</div></div>`;}
+function speakPage(){const g=speakExercises[speakAt % speakExercises.length];return `<div class="speaking-box"><div class="eyebrow">PRACTICE YOUR VOICE</div><h1>Real-life moments.</h1><p class="header-desc">Imagine yourself in the scene. Say a response out loud, then optionally type it. You're not being automatically graded.</p><div class="review-top"><span class="small muted">Scene ${speakAt+1} / ${speakExercises.length}</span><span class="mini-step">SPEAK FIRST</span></div><div class="review-card"><div class="review-scene prompt-scene">${sceneSVG(g.scene)}<span class="corner">${esc(g.title)}</span></div><div class="eyebrow review-eyebrow">WHAT WOULD YOU SAY IN FRENCH?</div><div class="field"><label for="speaking-answer">Draft your answer (optional)</label><textarea id="speaking-answer" class="textarea" rows="3" placeholder="Try saying it aloud first...">${esc(speakResponse)}</textarea></div><p class="small muted">${esc(g.optional)}</p>${!speakShown?`<div class="tabline"><button class="btn btn-primary" data-action="speak-reveal">Show example answer ${icon('eye')}</button></div>`:`<div class="answer"><div class="eyebrow">ONE NATURAL RESPONSE</div><h2 style="font-size:22px">${esc(g.suggested)}</h2><p class="mini">${esc(g.tip)}</p><button class="btn btn-secondary" data-action="speech-example">${icon('sound')} Listen to example</button></div><div class="rating-row" style="grid-template-columns:1fr 1fr"><button class="btn btn-white" data-action="speak-retry">Practice again</button><button class="btn btn-primary" data-action="speak-done">I said it ${icon('check')}</button></div>`}</div><div class="notice">${icon('info')} This mode offers model answers for self-practice. It does not pretend to recognize or assess your pronunciation. You can request more complex speaking feedback later.</div></div>`;}
 function libCards(){return state.cards.filter(c=>(libTopic==='All'||c.topic===libTopic)&&(libType==='All'||c.kind===libType)&&[c.frenchAnswer,c.englishPrompt,c.topic,c.frenchExample].some(v=>textNormalized(v).includes(textNormalized(libSearch))));}
-function libraryPage(){const cs=libCards();return `<div><div class="eyebrow">YOUR LEARNING LIBRARY</div><h1>Every idea has a picture.</h1><p class="header-desc">Browse your visual cards, change the illustrations, and add your own daily-life scenes. All edits are saved locally.</p><div class="library-toolbar"><div class="search-box">${icon('search')}<input class="input" placeholder="Find a concept or French expression..." id="lib-search" value="${esc(libSearch)}"/></div><select id="lib-topic" class="select" aria-label="Filter by topic"><option>All</option>${[...new Set(state.cards.map(c=>c.topic))].map(t=>`<option ${libTopic===t?'selected':''}>${esc(t)}</option>`).join('')}</select><select id="lib-type" class="select" aria-label="Filter by card type">${['All','vocab','action','sentence','grammar','speaking'].map(t=>`<option ${libType===t?'selected':''}>${esc(t)}</option>`).join('')}</select><button class="btn btn-primary" data-action="add-card">${icon('plus')} Add card</button></div><p class="small muted">${cs.length} cards · Pictures are the default prompt</p><div class="library-grid">${cs.map(c=>`<div class="lib-card hover-card"><div class="lib-scene">${visual(c)}</div><div class="lib-content"><span class="meta">${esc(c.topic)}</span><h3>${esc(c.frenchAnswer)}</h3><p>${esc(c.englishPrompt)}</p><div class="lib-footer"><button class="btn btn-secondary" data-edit="${esc(c.id)}">${icon('edit')} Edit</button><button class="btn btn-white" data-practice="${esc(c.id)}">Practice ${icon('arrow')}</button></div></div></div>`).join('')}</div>${cs.length?'':`<div class="empty"><h3>No matching cards</h3><p>Adjust filters or add a new card.</p></div>`}</div>`;}
+function libraryPage(){const cs=libCards();return `<div><div class="eyebrow">YOUR LEARNING LIBRARY</div><h1>Every idea has a picture.</h1><p class="header-desc">Browse your visual cards, change the illustrations, and add your own daily-life scenes. All edits are saved locally.</p><div class="library-toolbar"><div class="search-box">${icon('search')}<input class="input" placeholder="Find a concept or French expression..." id="lib-search" value="${esc(libSearch)}"/></div><select id="lib-topic" class="select" aria-label="Filter by topic"><option>All</option>${[...new Set(state.cards.map(c=>c.topic))].map(t=>`<option ${libTopic===t?'selected':''}>${esc(t)}</option>`).join('')}</select><select id="lib-type" class="select" aria-label="Filter by card type">${['All','vocab','action','sentence','grammar','speaking'].map(t=>`<option ${libType===t?'selected':''}>${esc(t)}</option>`).join('')}</select><button class="btn btn-primary" data-action="add-card">${icon('plus')} Add card</button></div><p class="small muted">${cs.length} cards · Pictures are the default prompt</p><div class="library-grid">${cs.map(c=>`<div class="lib-card hover-card"><div class="lib-scene">${visual(c)}</div><div class="lib-content"><span class="meta">${esc(c.topic)}</span><h3>${esc(c.frenchAnswer)}</h3><p>${esc(c.englishPrompt)}</p>${c.frenchExample?`<div class="vocab-example"><p lang="fr">${esc(c.frenchExample)}</p>${c.exampleEnglish?`<p class="example-meaning">${esc(c.exampleEnglish)}</p>`:''}</div>`:''}<div class="lib-footer"><button class="btn btn-secondary" data-edit="${esc(c.id)}">${icon('edit')} Edit</button><button class="btn btn-white" data-practice="${esc(c.id)}">Practice ${icon('arrow')}</button></div></div></div>`).join('')}</div>${cs.length?'':`<div class="empty"><h3>No matching cards</h3><p>Adjust filters or add a new card.</p></div>`}</div>`;}
 function settingsPage(){return `<div><div class="eyebrow">YOUR APP, YOUR RULES</div><h1>Settings & backups.</h1><p class="header-desc">Visual French practice works offline after installation. Each learner has independent progress saved on this device only; there is no cross-device synchronization.</p><div class="settings-grid"><div class="panel"><h3>Study profiles</h3><p>Each learner has separate reviews, streaks, grammar and speaking history. Everyone shares one vocabulary library.</p><p class="mini-step">Studying as: ${esc(activeProfile().name)}</p><div style="margin-top:17px"><button class="btn btn-primary" data-action="open-profiles">${icon("plus")} Manage profiles</button></div></div><div class="panel"><h3>Flashcard front</h3><p>Choose what appears before you reveal French. Visual is the recommended speaking-focused mode.</p><div class="field"><label for="front-mode">Card prompt mode</label><select id="front-mode" class="select"><option value="visual" ${activeProfile().prefs.frontMode==='visual'?'selected':''}>Picture only (recommended)</option><option value="english" ${activeProfile().prefs.frontMode==='english'?'selected':''}>English prompt</option><option value="mixed" ${activeProfile().prefs.frontMode==='mixed'?'selected':''}>Picture + English</option></select></div></div><div class="panel"><h3>Backup your progress</h3><p>Download a complete backup of your shared cards, uploaded pictures and every learner profile with its own study history. Importing a backup replaces all existing local profiles on that device.</p><button class="btn btn-primary" data-action="export-json">${icon('download')} Export backup</button> <button class="btn btn-white" data-action="import-json">${icon('upload')} Import backup</button><input id="import-input" type="file" accept="application/json,.json" hidden/></div><div class="panel"><h3>Add to your iPhone</h3><p>After deploying to a secure HTTPS address, open it in Safari → Share → Add to Home Screen. Then Parlez appears as an app icon.</p><p class="small muted">Offline files are cached after the first successful visit. Your card data remains local.</p></div><div class="panel"><h3>Data controls</h3><p><b>${state.cards.length}</b> cards · <b>${activeProfile().history.length}</b> reviews · <b>${activeProfile().speakingHistory.length}</b> speaking attempts.</p><button class="btn btn-white" data-action="export-csv">${icon('download')} Export cards CSV</button> <button class="btn btn-danger" style="margin-top:12px" data-action="reset-data">${icon('trash')} Reset entire app</button></div></div><div class="notice">${icon('info')} Important: all profiles are stored only in this browser. Different phones do not synchronize. Clearing Safari data removes all local profiles and your edited cards. Export a full JSON backup regularly.</div></div>`;}
-function cardModal(c){modalOpen=true;editId=c?.id||null;editScene=c?.scene||'wake';editImage=c?.customImage||null;const sceneKeys=['wake','rise','brush','shower','dress','hair','walk','bedtime','sleep','breakfast','makebed','dishes','plants','work','coffee','bike','hat','scarf','dressobj','shoes','shirt','pants','skirt','socks','gloves','red-dress','rain','snow','sun','wind','clouds','cold','hot','write','eat-before','eat-now','eat-after','clock-215','clock-230','clock-245','sport','cinema','mexican-film'];const fields=[['sceneHint','Scene clue (optional)','What is happening or changing in the picture?'],['startHint','French starter (optional)','e.g. Je me ré…'],['englishPrompt','English meaning (for hints)','e.g. I wake up'],['frenchAnswer','French answer','e.g. Je me réveille.'],['pronunciation','Pronunciation','e.g. zhuh muh ray-VEHY'],['frenchExample','Example in French','e.g. Je me réveille tôt.'],['mnemonic','Your memory hook (optional)','e.g. couch → coucher; leave blank for our suggested hook'],['grammarNote','Optional grammar note','e.g. Je + me + verb']];const f=(key,title,placeholder)=>`<div class="field"><label for="ed-${key}">${title}</label><input class="input" id="ed-${key}" value="${esc(c?.[key]||'')}" placeholder="${esc(placeholder)}" ${key==='frenchAnswer'?'required':''}/></div>`;const html=`<div class="modal-backdrop" id="modal-backdrop"><div class="modal" role="dialog" aria-modal="true" aria-label="${c?'Edit':'Add'} card"><div class="modal-header"><h2>${c?'Edit your card':'Create a new card'}</h2><button class="round-btn" data-action="close-modal" aria-label="Close dialog">${icon('close')}</button></div><div class="field-row"><div class="field"><label for="ed-topic">Topic</label><input class="input" id="ed-topic" value="${esc(c?.topic||'My own cards')}"/></div><div class="field"><label for="ed-kind">Card type</label><select class="select" id="ed-kind">${['vocab','action','sentence','grammar','speaking'].map(t=>`<option ${c?.kind===t?'selected':''}>${t}</option>`).join('')}</select></div></div><div class="field"><label>Choose a picture for the FRONT</label><div class="image-chooser">${sceneKeys.map(key=>`<button class="${editScene===key?'selected':''}" data-choose-scene="${key}" title="${key}">${sceneSVG(key)}<span>${key.replace(/-/g,' ')}</span></button>`).join('')}</div><small style="margin-top:5px">Pick an illustration or upload a photo below.</small></div><div class="field"><label for="own-image">Upload your own image (optional)</label><input id="own-image" type="file" accept="image/*" class="input"/><small>Images are compressed on your device to fit local storage. A custom image replaces the illustration.</small></div><div id="uploaded-preview">${editImage?`<img alt="User image" src="${esc(editImage)}" style="max-height:110px;max-width:160px;border-radius:10px"/> <button class="btn btn-white" data-action="clear-upload">Remove image</button>`:''}</div>${fields.map(x=>f(...x)).join('')}<div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:18px">${c?`<button class="btn btn-danger" data-action="delete-card" data-card-id="${esc(c.id)}">${icon('trash')} Delete</button>`:'<span></span>'}<div style="display:flex;gap:9px"><button class="btn btn-white" data-action="close-modal">Cancel</button><button class="btn btn-primary" data-action="save-card">${icon('check')} Save card</button></div></div></div></div>`;document.body.insertAdjacentHTML('beforeend',html);}
+function cardModal(c){modalOpen=true;editId=c?.id||null;editScene=c?.scene||'wake';editImage=c?.customImage||null;const sceneKeys=['wake','rise','brush','shower','dress','hair','walk','bedtime','sleep','breakfast','makebed','dishes','plants','work','coffee','bike','hat','scarf','dressobj','shoes','shirt','pants','skirt','socks','gloves','red-dress','rain','snow','sun','wind','clouds','cold','hot','write','eat-before','eat-now','eat-after','clock-215','clock-230','clock-245','sport','cinema','mexican-film'];const fields=[['frenchAnswer','French word or expression','e.g. une écharpe'],['englishPrompt','English meaning','e.g. a scarf'],['frenchExample','Simple example in French','e.g. Je porte une écharpe.'],['exampleEnglish','Example in English','e.g. I wear a scarf.']];const f=(key,title,placeholder)=>`<div class="field"><label for="ed-${key}">${title}</label><input class="input" id="ed-${key}" value="${esc(c?.[key]||'')}" placeholder="${esc(placeholder)}" ${key==='frenchAnswer'?'required':''}/></div>`;const html=`<div class="modal-backdrop" id="modal-backdrop"><div class="modal" role="dialog" aria-modal="true" aria-label="${c?'Edit':'Add'} card"><div class="modal-header"><h2>${c?'Edit your card':'Create a new card'}</h2><button class="round-btn" data-action="close-modal" aria-label="Close dialog">${icon('close')}</button></div><div class="field-row"><div class="field"><label for="ed-topic">Topic</label><input class="input" id="ed-topic" value="${esc(c?.topic||'My own cards')}"/></div><div class="field"><label for="ed-kind">Card type</label><select class="select" id="ed-kind">${['vocab','action','sentence','grammar','speaking'].map(t=>`<option ${c?.kind===t?'selected':''}>${t}</option>`).join('')}</select></div></div><div class="field"><label>Choose a picture for the FRONT</label><div class="image-chooser">${sceneKeys.map(key=>`<button class="${editScene===key?'selected':''}" data-choose-scene="${key}" title="${key}">${sceneSVG(key)}<span>${key.replace(/-/g,' ')}</span></button>`).join('')}</div><small style="margin-top:5px">Pick an illustration or upload a photo below.</small></div><div class="field"><label for="own-image">Upload your own image (optional)</label><input id="own-image" type="file" accept="image/*" class="input"/><small>Images are compressed on your device to fit local storage. A custom image replaces the illustration.</small></div><div id="uploaded-preview">${editImage?`<img alt="User image" src="${esc(editImage)}" style="max-height:110px;max-width:160px;border-radius:10px"/> <button class="btn btn-white" data-action="clear-upload">Remove image</button>`:''}</div>${fields.map(x=>f(...x)).join('')}<div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:18px">${c?`<button class="btn btn-danger" data-action="delete-card" data-card-id="${esc(c.id)}">${icon('trash')} Delete</button>`:'<span></span>'}<div style="display:flex;gap:9px"><button class="btn btn-white" data-action="close-modal">Cancel</button><button class="btn btn-primary" data-action="save-card">${icon('check')} Save card</button></div></div></div></div>`;document.body.insertAdjacentHTML('beforeend',html);}
 function modalClose(){document.querySelector('#modal-backdrop')?.remove();modalOpen=false;}
 function profileModal(){
  modalClose();
@@ -401,13 +648,13 @@ function switchProfile(id){
  if(!state.profiles.some(p=>p.id===id))return;
  state.activeProfileId=id;
  if(!persist())return;
- reviewSession=null;revealed=false;hint=false;hintLevel=0;englishHint=false;speakShown=false;speakHint=false;speakResponse='';
+ reviewSession=null;revealed=false;speakShown=false;speakHint=false;speakResponse='';
  modalClose();navigate('home');
  toast('Switched to '+activeProfile().name+'. Review progress is separate.');
 }
-function saveCard(){const french=$('#ed-frenchAnswer')?.value?.trim();if(!french){toast('Please add a French answer.');$('#ed-frenchAnswer')?.focus();return;}let c=state.cards.find(c=>c.id===editId);if(!c){c=C('own-'+Date.now()+'-'+Math.random().toString(16).slice(2),'vocab','My own cards','wake','','','');state.cards.push(c);}['sceneHint','startHint','englishPrompt','frenchAnswer','pronunciation','frenchExample','mnemonic','grammarNote'].forEach(k=>c[k]=$('#ed-'+k).value.trim());c.kind=$('#ed-kind').value;c.topic=$('#ed-topic').value.trim()||'My own cards';c.scene=editScene;c.customImage=editImage;if(persist()){modalClose();render();toast('Card saved.');}}
+function saveCard(){const french=$('#ed-frenchAnswer')?.value?.trim();if(!french){toast('Please add a French answer.');$('#ed-frenchAnswer')?.focus();return;}let c=state.cards.find(c=>c.id===editId);if(!c){c=C('own-'+Date.now()+'-'+Math.random().toString(16).slice(2),'vocab','My own cards','wake','','','');state.cards.push(c);}['englishPrompt','frenchAnswer','frenchExample','exampleEnglish'].forEach(k=>c[k]=$('#ed-'+k).value.trim());c.kind=$('#ed-kind').value;c.topic=$('#ed-topic').value.trim()||'My own cards';c.scene=editScene;c.customImage=editImage;if(persist()){modalClose();render();toast('Card saved.');}}
 function uploadImage(file){if(!file)return;if(!file.type.startsWith('image/')){toast('Choose a picture file.');return;}if(file.size>10*1024*1024){toast('Choose an image under 10 MB.');return;}const r=new FileReader();r.onload=()=>{const image=new Image();image.onload=()=>{let max=500,scale=Math.min(1,max/Math.max(image.width,image.height)),canvas=document.createElement('canvas');canvas.width=Math.round(image.width*scale);canvas.height=Math.round(image.height*scale);canvas.getContext('2d').drawImage(image,0,0,canvas.width,canvas.height);const data=canvas.toDataURL('image/jpeg',.72);if(data.length>260000){toast('Image remains too large. Choose a smaller picture.');return;}editImage=data;$('#uploaded-preview').innerHTML=`<img alt="Uploaded card image" src="${data}" style="max-height:110px;max-width:160px;border-radius:10px"/> <button class="btn btn-white" data-action="clear-upload">Remove image</button>`;};image.onerror=()=>toast('Could not read that image.');image.src=r.result;};r.readAsDataURL(file);}
-function exportData(type){let text,filename,mime;if(type==='json'){text=JSON.stringify(state,null,2);filename='parlez-all-profiles-'+todayKey()+'.json';mime='application/json';}else{const keys=['kind','topic','sceneHint','startHint','englishPrompt','frenchAnswer','pronunciation','frenchExample','mnemonic','grammarNote'];text=[keys.join(','),...state.cards.map(c=>keys.map(k=>'"'+String(c[k]||'').replace(/"/g,'""')+'"').join(','))].join('\r\n');filename='parlez-cards-'+todayKey()+'.csv';mime='text/csv;charset=utf-8';}const blob=new Blob([text],{type:mime}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);toast('Backup downloaded.');}
+function exportData(type){let text,filename,mime;if(type==='json'){text=JSON.stringify(state,null,2);filename='parlez-all-profiles-'+todayKey()+'.json';mime='application/json';}else{const keys=['kind','topic','frenchAnswer','englishPrompt','frenchExample','exampleEnglish'];text=[keys.join(','),...state.cards.map(c=>keys.map(k=>'"'+String(c[k]||'').replace(/"/g,'""')+'"').join(','))].join('\r\n');filename='parlez-cards-'+todayKey()+'.csv';mime='text/csv;charset=utf-8';}const blob=new Blob([text],{type:mime}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);toast('Backup downloaded.');}
 function importData(file){
  if(!file)return;
  file.text().then(t=>{
@@ -427,11 +674,11 @@ function say(text){if(!('speechSynthesis' in window)){toast('Speech playback is 
 function page(){switch(view){case 'review':return reviewPage();case 'grammar':return grammarPage();case 'speak':return speakPage();case 'library':return libraryPage();case 'settings':return settingsPage();default:return homePage();}}
 function render(){document.querySelector('#modal-backdrop')?.remove();modalOpen=false;$('#app').innerHTML=shell(page());if(view==='library'&&libSearch){const i=$('#lib-search');if(i)i.setSelectionRange(i.value.length,i.value.length);}}
 function navigate(to){view=to;window.location.hash=to;reviewSession=null;speakShown=false;speakHint=false;speakResponse='';render();scrollTo({top:0,behavior:'instant'});}
-function startPracticeCard(id){view='review';reviewSession={ids:[id],index:0,done:0,again:0};reviewFilter='All cards';revealed=false;hint=false;hintLevel=0;englishHint=false;window.location.hash='review';render();scrollTo(0,0);}
+function startPracticeCard(id){view='review';reviewSession={ids:[id],index:0,done:0,again:0};reviewFilter='All cards';revealed=false;window.location.hash='review';render();scrollTo(0,0);}
 // Delegated controls: stable even when cards and views re-render.
-document.addEventListener('click',e=>{const el=e.target.closest('button');if(!el)return;if(el.dataset.view){navigate(el.dataset.view);return;}if(el.dataset.rate){rateCard(el.dataset.rate);return;}if(el.dataset.edit){cardModal(state.cards.find(c=>c.id===el.dataset.edit));return;}if(el.dataset.practice){startPracticeCard(el.dataset.practice);return;}if(el.dataset.chooseScene){editScene=el.dataset.chooseScene;editImage=null;$('#uploaded-preview').innerHTML='';document.querySelectorAll('[data-choose-scene]').forEach(b=>b.classList.toggle('selected',b.dataset.chooseScene===editScene));return;}if(el.dataset.gramtab){gramTab=el.dataset.gramtab;render();return;}if(el.dataset.checkGrammar!==undefined){let i=Number(el.dataset.checkGrammar),g=grammarExercises[i],v=$('#gr-'+i)?.value||'',correct=textNormalized(v)===textNormalized(g.answer);activeProfile().grammarHistory.push({time:Date.now(),item:i,correct});persist();$('#res-'+i).innerHTML=`<div class="result ${correct?'correct':'incorrect'}">${correct?'Correct!':'Answer: '+esc(g.answer)}<br/>${esc(g.explain)}</div>`;return;}let action=el.dataset.action;if(!action)return;switch(action){case 'open-profiles':profileModal();break;case 'create-profile':{const name=$('#new-profile-name')?.value.trim().replace(/\s+/g,' ');if(!profileNameAvailable(name)){toast('Enter a unique name, up to 30 characters.');return;}const p=makeProfile(name);p.color=PROFILE_COLORS[state.profiles.length%PROFILE_COLORS.length];state.profiles.push(p);state.activeProfileId=p.id;if(!persist())return;modalClose();reviewSession=null;navigate('home');toast('Created '+name+'. Ready to study!');break;}case 'rename-profile':{const id=el.dataset.profileId,p=state.profiles.find(x=>x.id===id);const name=document.getElementById('profile-name-'+id)?.value.trim().replace(/\s+/g,' ');if(!p)return;if(!profileNameAvailable(name,id)){toast('Enter a unique name, up to 30 characters.');return;}p.name=name;if(persist()){render();profileModal();toast('Profile name updated.');}break;}case 'switch-profile':switchProfile(el.dataset.profileId);break;case 'delete-profile':{if(state.profiles.length<2){toast('Keep at least one learner profile.');return;}const p=state.profiles.find(x=>x.id===el.dataset.profileId);if(!p)return;if(!confirm('Delete '+p.name+' and their study progress on this device? Shared cards will remain. This cannot be undone.'))return;state.profiles=state.profiles.filter(x=>x.id!==p.id);if(state.activeProfileId===p.id)state.activeProfileId=state.profiles[0].id;if(!persist())return;reviewSession=null;modalClose();navigate('home');profileModal();toast('Profile deleted.');break;}case 'start-review':reviewFilter='Due now';view='review';initReview();window.location.hash='review';render();break;case 'practice-all':reviewFilter='All cards';initReview();render();break;case 'toggle-english':englishHint=!englishHint;render();break;case 'next-hint':hintLevel=hintLevel===0&&!cardHints(currentReviewCard()).mnemonic?2:(hintLevel+1)%4;render();break;case 'toggle-hint':hint=!hint;render();break;case 'reveal':revealed=true;render();break;case 'speak-french':{let c=currentReviewCard();if(c)say(c.frenchAnswer);break;}case 'speech-example':say(speakExercises[speakAt].suggested);break;case 'speak-hint':speakResponse=$('#speaking-answer')?.value||'';speakHint=!speakHint;render();break;case 'speak-reveal':speakResponse=$('#speaking-answer')?.value||'';speakShown=true;render();break;case 'speak-retry':speakShown=false;render();break;case 'speak-done':activeProfile().speakingHistory.push({time:Date.now(),item:speakAt,spoken:true});persist();speakAt=(speakAt+1)%speakExercises.length;speakShown=false;speakHint=false;speakResponse='';render();break;case 'add-card':cardModal(null);break;case 'close-modal':modalClose();break;case 'clear-upload':editImage=null;$('#uploaded-preview').innerHTML='';break;case 'save-card':saveCard();break;case 'delete-card':if(confirm('Delete this card and its history? This cannot be undone.')){const id=el.dataset.cardId;state.cards=state.cards.filter(c=>c.id!==id);for(const p of state.profiles){p.history=p.history.filter(h=>h.id!==id);delete p.progress[id];}persist();modalClose();render();toast('Card deleted.');}break;case 'export-json':exportData('json');break;case 'export-csv':exportData('csv');break;case 'import-json':$('#import-input')?.click();break;case 'reset-data':if(confirm('Reset ALL profiles, shared cards, and review history on this device? Export a backup first.'))if(confirm('Second confirmation: erase every learner\'s local progress?')){state=initial();persist();reviewSession=null;render();toast('Data reset.');}break;}});
+document.addEventListener('click',e=>{const el=e.target.closest('button');if(!el)return;if(el.dataset.view){navigate(el.dataset.view);return;}if(el.dataset.rate){rateCard(el.dataset.rate);return;}if(el.dataset.edit){cardModal(state.cards.find(c=>c.id===el.dataset.edit));return;}if(el.dataset.practice){startPracticeCard(el.dataset.practice);return;}if(el.dataset.chooseScene){editScene=el.dataset.chooseScene;editImage=null;$('#uploaded-preview').innerHTML='';document.querySelectorAll('[data-choose-scene]').forEach(b=>b.classList.toggle('selected',b.dataset.chooseScene===editScene));return;}if(el.dataset.gramtab){gramTab=el.dataset.gramtab;render();return;}if(el.dataset.checkGrammar!==undefined){let i=Number(el.dataset.checkGrammar),g=grammarExercises[i],v=$('#gr-'+i)?.value||'',correct=textNormalized(v)===textNormalized(g.answer);activeProfile().grammarHistory.push({time:Date.now(),item:i,correct});persist();$('#res-'+i).innerHTML=`<div class="result ${correct?'correct':'incorrect'}">${correct?'Correct!':'Answer: '+esc(g.answer)}<br/>${esc(g.explain)}</div>`;return;}let action=el.dataset.action;if(!action)return;switch(action){case 'open-profiles':profileModal();break;case 'create-profile':{const name=$('#new-profile-name')?.value.trim().replace(/\s+/g,' ');if(!profileNameAvailable(name)){toast('Enter a unique name, up to 30 characters.');return;}const p=makeProfile(name);p.color=PROFILE_COLORS[state.profiles.length%PROFILE_COLORS.length];state.profiles.push(p);state.activeProfileId=p.id;if(!persist())return;modalClose();reviewSession=null;navigate('home');toast('Created '+name+'. Ready to study!');break;}case 'rename-profile':{const id=el.dataset.profileId,p=state.profiles.find(x=>x.id===id);const name=document.getElementById('profile-name-'+id)?.value.trim().replace(/\s+/g,' ');if(!p)return;if(!profileNameAvailable(name,id)){toast('Enter a unique name, up to 30 characters.');return;}p.name=name;if(persist()){render();profileModal();toast('Profile name updated.');}break;}case 'switch-profile':switchProfile(el.dataset.profileId);break;case 'delete-profile':{if(state.profiles.length<2){toast('Keep at least one learner profile.');return;}const p=state.profiles.find(x=>x.id===el.dataset.profileId);if(!p)return;if(!confirm('Delete '+p.name+' and their study progress on this device? Shared cards will remain. This cannot be undone.'))return;state.profiles=state.profiles.filter(x=>x.id!==p.id);if(state.activeProfileId===p.id)state.activeProfileId=state.profiles[0].id;if(!persist())return;reviewSession=null;modalClose();navigate('home');profileModal();toast('Profile deleted.');break;}case 'start-review':reviewFilter='Due now';view='review';initReview();window.location.hash='review';render();break;case 'practice-all':reviewFilter='All cards';initReview();render();break;case 'reveal':revealed=true;render();break;case 'speak-french':{let c=currentReviewCard();if(c)say(c.frenchAnswer);break;}case 'speech-example':say(speakExercises[speakAt].suggested);break;case 'speak-reveal':speakResponse=$('#speaking-answer')?.value||'';speakShown=true;render();break;case 'speak-retry':speakShown=false;render();break;case 'speak-done':activeProfile().speakingHistory.push({time:Date.now(),item:speakAt,spoken:true});persist();speakAt=(speakAt+1)%speakExercises.length;speakShown=false;speakHint=false;speakResponse='';render();break;case 'add-card':cardModal(null);break;case 'close-modal':modalClose();break;case 'clear-upload':editImage=null;$('#uploaded-preview').innerHTML='';break;case 'save-card':saveCard();break;case 'delete-card':if(confirm('Delete this card and its history? This cannot be undone.')){const id=el.dataset.cardId;state.cards=state.cards.filter(c=>c.id!==id);for(const p of state.profiles){p.history=p.history.filter(h=>h.id!==id);delete p.progress[id];}persist();modalClose();render();toast('Card deleted.');}break;case 'export-json':exportData('json');break;case 'export-csv':exportData('csv');break;case 'import-json':$('#import-input')?.click();break;case 'reset-data':if(confirm('Reset ALL profiles, shared cards, and review history on this device? Export a backup first.'))if(confirm('Second confirmation: erase every learner\'s local progress?')){state=initial();persist();reviewSession=null;render();toast('Data reset.');}break;}});
 document.addEventListener('change',e=>{const el=e.target;if(el.id==='review-filter'){reviewFilter=el.value;initReview();render();}if(el.id==='lib-topic'){libTopic=el.value;render();}if(el.id==='lib-type'){libType=el.value;render();}if(el.id==='front-mode'){activeProfile().prefs.frontMode=el.value;persist();toast('Flashcard prompt mode updated.');}if(el.id==='own-image')uploadImage(el.files[0]);if(el.id==='import-input')importData(el.files[0]);});
-document.addEventListener('input',e=>{if(e.target.id==='lib-search'){const el=e.target;let pos=el.selectionStart;libSearch=el.value;const grid=$('.library-grid'),cards=libCards();if(grid){grid.outerHTML=`<div class="library-grid">${cards.map(c=>`<div class="lib-card hover-card"><div class="lib-scene">${visual(c)}</div><div class="lib-content"><span class="meta">${esc(c.topic)}</span><h3>${esc(c.frenchAnswer)}</h3><p>${esc(c.englishPrompt)}</p><div class="lib-footer"><button class="btn btn-secondary" data-edit="${esc(c.id)}">${icon('edit')} Edit</button><button class="btn btn-white" data-practice="${esc(c.id)}">Practice ${icon('arrow')}</button></div></div></div>`).join('')}</div>`;}}});
+document.addEventListener('input',e=>{if(e.target.id==='lib-search'){const el=e.target;let pos=el.selectionStart;libSearch=el.value;const grid=$('.library-grid'),cards=libCards();if(grid){grid.outerHTML=`<div class="library-grid">${cards.map(c=>`<div class="lib-card hover-card"><div class="lib-scene">${visual(c)}</div><div class="lib-content"><span class="meta">${esc(c.topic)}</span><h3>${esc(c.frenchAnswer)}</h3><p>${esc(c.englishPrompt)}</p>${c.frenchExample?`<div class="vocab-example"><p lang="fr">${esc(c.frenchExample)}</p>${c.exampleEnglish?`<p class="example-meaning">${esc(c.exampleEnglish)}</p>`:''}</div>`:''}<div class="lib-footer"><button class="btn btn-secondary" data-edit="${esc(c.id)}">${icon('edit')} Edit</button><button class="btn btn-white" data-practice="${esc(c.id)}">Practice ${icon('arrow')}</button></div></div></div>`).join('')}</div>`;}}});
 window.addEventListener('hashchange',()=>{const hash=location.hash.slice(1);if(['home','review','grammar','speak','library','settings'].includes(hash)&&view!==hash){view=hash;reviewSession=null;render();}});
 const initialHash=location.hash.slice(1);if(['home','review','grammar','speak','library','settings'].includes(initialHash))view=initialHash;render();
 if('serviceWorker' in navigator && location.protocol.startsWith('http'))navigator.serviceWorker.register('./sw.js').catch(()=>{});

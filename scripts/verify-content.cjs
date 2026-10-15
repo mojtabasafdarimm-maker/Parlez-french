@@ -1,107 +1,83 @@
-// Run with NODE_PATH pointing to a Playwright install and a server on localhost:8000.
-const {chromium} = require('playwright');
-const assert = require('node:assert/strict');
-const fs = require('node:fs');
-const path = require('node:path');
-const out = path.resolve(__dirname, '../artifacts');
-fs.mkdirSync(out, {recursive:true});
-(async () => {
-  const browser = await chromium.launch({headless:true, ...(process.env.PARLEZ_BROWSER_CHANNEL ? {channel:process.env.PARLEZ_BROWSER_CHANNEL} : {})});
-  try {
-    const context = await browser.newContext({viewport:{width:390,height:844}});
-    const page = await context.newPage();
-    const errors=[];
-    page.on('pageerror',error=>errors.push(error.message));
-    await page.goto('http://localhost:8000');
-    await page.evaluate(()=>startPracticeCard('a6'));
-    await page.screenshot({path:path.join(out,'hair-phone.png'),fullPage:true});
-    await page.evaluate(()=>{
-      document.body.innerHTML='<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:20px">'+['wake','rise','bedtime','sleep','brush','hair','eat-before','eat-now','eat-after','shirt','red-dress','gloves','morning','sport','snow'].map(s=>'<div>'+sceneSVG(s)+'<p>'+s+'</p></div>').join('')+'</div>';
-    });
-    await page.setViewportSize({width:1400,height:1050});
-    await page.screenshot({path:path.join(out,'scene-contact-sheet.png'),fullPage:true});
-    await page.reload();
-    const coverage=await page.evaluate(()=>starter.map(c=>({id:c.id,hints:cardHints(c),french:c.frenchAnswer,svg:sceneSVG(c.scene)})));
-    assert.equal(coverage.length,50);
-    for(const c of coverage){
-      for(const field of ['scene','starter','memory'])assert.ok(c.hints[field],`${c.id}: missing ${field}`);
-      assert.equal(typeof c.hints.mnemonic,'string');
-      assert.ok(!c.hints.starter.includes(c.french.replace(/[.!?]+$/,'')),`${c.id}: full answer in starter`);
-      assert.ok(!/<text\b/.test(c.svg),`${c.id}: language on artwork`);
-    }
-    assert.match(coverage.find(c=>c.id==='a3').hints.mnemonic,/برس/);
-    assert.match(coverage.find(c=>c.id==='a6').hints.mnemonic,/کوافور/);
-    assert.equal(coverage.filter(c=>c.hints.mnemonic).length,19);
-    assert.equal(coverage.find(c=>c.id==='a8').hints.mnemonic,'');
-    assert.equal(coverage.find(c=>c.id==='a11').hints.mnemonic,'');
-    assert.match(coverage.find(c=>c.id==='a14').hints.mnemonic,/commence/);
-    const custom=await page.evaluate(()=>{
-      const seed=starter.find(c=>c.id==='a6');
-      return {personal:cardHints({...seed,mnemonic:'My personal cue'}), changed:cardHints({...seed,scene:'sun'}), answer:cardHints({...seed,frenchAnswer:'Le soleil.'})};
-    });
-    assert.equal(custom.personal.mnemonic,'My personal cue');
-    assert.ok(!custom.changed.mnemonic.includes('کوافور'));
-    assert.ok(!custom.answer.starter.includes('coi'));
-    const widths=[320,375,390,430,768,1280];
-    for(const width of widths){
-      await page.setViewportSize({width,height:844});
-      for(const id of ['a1','a2','a3','a6','b5','b9','g1','g2','g3','w2','t3','s1','s2']){
-        await page.evaluate(id=>startPracticeCard(id),id);
-        assert.equal(await page.locator('.hint-card').count(),0);
-        assert.equal(await page.locator('.answer').count(),0);
-        assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false,`${width}/${id} front overflow`);
-        if(width===390)await page.screenshot({path:path.join(out,`${id}-390.png`),fullPage:true});
-        assert.equal(await page.locator('[data-action="toggle-hint"]').textContent(),'Hint');
-        await page.locator('[data-action="toggle-hint"]').click();
-        assert.equal(await page.locator('.hint-card').count(),1);
-        assert.equal(await page.locator('.hint-card').textContent(),`Picture clue${coverage.find(c=>c.id===id).hints.scene}`);
-        assert.ok(!(await page.locator('.hint-card').textContent()).includes(coverage.find(c=>c.id===id).french));
-        assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false,`${width}/${id} hint overflow`);
-        if(width<=430)assert.equal(await page.evaluate(()=>{const button=document.querySelector('[data-action="reveal"]')?.getBoundingClientRect(),nav=document.querySelector('.bottom-nav')?.getBoundingClientRect();return Boolean(button&&nav&&button.top<nav.top);}),true,`${width}/${id} reveal button obscured`);
-        if(width===320 && id==='a3')await page.screenshot({path:path.join(out,'hints-320.png'),fullPage:true});
-        await page.locator('[data-action="toggle-hint"]').click();
-        assert.equal(await page.locator('.hint-card').count(),0);
-        await page.locator('[data-action="reveal"]').click();
-        assert.ok(await page.locator('.answer h2').textContent());
-        assert.equal(await page.locator('.answer-memory').count(),coverage.find(x=>x.id===id).hints.mnemonic?1:0);
-      }
-    }
-    // Synthetic v3 state: preserve two learners, a custom image and personal hints on reload.
-    await page.evaluate(()=>{
-      const other=makeProfile('Second learner');
-      other.progress.a6={interval:21,reviews:8,dueAt:9999999999999};
-      state.profiles.push(other);
-      const c=state.cards.find(c=>c.id==='a6');
-      c.mnemonic='Personal hair cue';
-      c.customImage='data:image/svg+xml,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"><circle cx="10" cy="10" r="8"/></svg>');
-      persist();
-    });
-    assert.equal(await page.evaluate(()=>cardHints(state.cards.find(c=>c.id==='a6')).mnemonic),'Personal hair cue');
-    const snapshot=await page.evaluate(()=>localStorage.getItem(STORE));
-    await page.reload();
-    assert.equal(await page.evaluate(()=>localStorage.getItem(STORE)),snapshot);
-    await page.evaluate(()=>startPracticeCard('a6'));
-    assert.equal(await page.locator('.review-scene img').count(),1);
+// Serve public/ on localhost:8000. NODE_PATH must include Playwright.
+const {chromium}=require('playwright');
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const path=require('node:path');
+const out=path.resolve(__dirname,'../artifacts');
+fs.mkdirSync(out,{recursive:true});
+(async()=>{
+ const browser=await chromium.launch({headless:true,channel:process.env.PARLEZ_BROWSER_CHANNEL||'msedge'});
+ try{
+  const context=await browser.newContext({viewport:{width:390,height:844}});
+  const page=await context.newPage(),errors=[];
+  page.on('pageerror',e=>errors.push(e.message));
+  await page.goto(process.env.PARLEZ_URL||'http://127.0.0.1:8000');
+  const cards=await page.evaluate(()=>starter.map(c=>({id:c.id,example:c.frenchExample,translation:c.exampleEnglish,meaning:c.englishPrompt,svg:sceneSVG(c.scene)})));
+  assert.equal(cards.length,50);
+  for(const c of cards){
+   assert.ok(c.example&&c.translation&&c.meaning,c.id+' incomplete vocabulary');
+   assert.ok(!/<text\b/.test(c.svg),c.id+' image contains text');
+   await page.evaluate(id=>startPracticeCard(id),c.id);
+   assert.equal(await page.locator('.answer').count(),0);
+   assert.equal(await page.locator('[data-action*="hint"],.hint-card,.answer-memory').count(),0);
+   await page.locator('[data-action="reveal"]').click();
+   assert.equal(await page.locator('.answer .english').textContent(),c.meaning);
+   assert.equal(await page.locator('.example [lang="fr"]').textContent(),c.example);
+   assert.equal(await page.locator('.example-meaning').textContent(),c.translation);
+  }
+  for(const width of [320,375,390,430,768,1280]){
+   await page.setViewportSize({width,height:844});
+   for(const id of ['a3','a6','a11','b5','b9','w2','t3','g2']){
+    await page.evaluate(id=>startPracticeCard(id),id);
+    assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false,width+'/'+id+' front overflow');
     await page.locator('[data-action="reveal"]').click();
-    await page.locator('[data-rate="good"]').click();
-    assert.equal(await page.evaluate(()=>state.profiles[1].progress.a6.reviews),8);
-    assert.equal(await page.evaluate(()=>state.profiles[0].progress.a6.reviews),1);
-    assert.equal(await page.evaluate(()=>cardHints(state.cards.find(c=>c.id==='a6')).mnemonic),'Personal hair cue');
-    const migration=await page.evaluate(()=>{
-      const migrated=migrate({version:2,cards:[{...starter[0],interval:7,reviews:4}],history:[{id:'a1',time:123}]});
-      return {interval:migrated.profiles[0].progress.a1.interval,history:migrated.profiles[0].history.length};
-    });
-    assert.deepEqual(migration,{interval:7,history:1});
-    // Real cache: all revised assets must load without network.
-    await page.evaluate(()=>navigator.serviceWorker.ready);
-    await page.reload();
-    await page.waitForFunction(()=>!!navigator.serviceWorker.controller);
-    await context.setOffline(true);
-    await page.reload();
-    await page.evaluate(()=>startPracticeCard('g2'));
-    assert.equal(await page.locator('.review-scene svg').count(),1);
-    assert.equal(await page.evaluate(()=>typeof window.ParlezIllustrations.scene),'function');
-    assert.deepEqual(errors,[]);
-    console.log('PASS: 50-card hints and word-free SVG audit; 6 widths × 13 cards; hint/reveal flow; custom content; profile isolation; v2 migration; offline reload.');
-  } finally { await browser.close(); }
-})().catch(error=>{console.error(error);process.exitCode=1;});
+    assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false,width+'/'+id+' back overflow');
+    if(width===390)await page.screenshot({path:path.join(out,'vocab-'+id+'-390.png'),fullPage:true});
+   }
+  }
+  await page.evaluate(()=>{
+   document.body.innerHTML='<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;padding:12px">'+starter.map(c=>'<div>'+sceneSVG(c.scene)+'<p>'+c.id+' '+c.englishPrompt+'</p></div>').join('')+'</div>';
+  });
+  await page.setViewportSize({width:1600,height:1000});
+  await page.screenshot({path:path.join(out,'vocabulary-images.png'),fullPage:true});
+  await page.reload();
+  // Old saved cards receive revised built-in examples, without losing personal edits or profiles.
+  await page.evaluate(()=>{
+   const other=makeProfile('Second learner');other.progress.a6={interval:21,reviews:8,dueAt:9999999999999};state.profiles.push(other);
+   Object.assign(state.cards.find(c=>c.id==='a1'),originalStarterContent.a1);
+   const edited=state.cards.find(c=>c.id==='a6');edited.frenchExample='Je me coiffe à midi.';edited.exampleEnglish='I do my hair at noon.';
+   edited.customImage='data:image/svg+xml,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"><circle cx="10" cy="10" r="8"/></svg>');
+   persist();
+  });
+  await page.reload();
+  assert.equal(await page.evaluate(()=>state.cards.find(c=>c.id==='a1').exampleEnglish),'I wake up at seven.');
+  assert.equal(await page.evaluate(()=>state.cards.find(c=>c.id==='a6').frenchExample),'Je me coiffe à midi.');
+  await page.evaluate(()=>startPracticeCard('a6'));
+  assert.equal(await page.locator('.review-scene img').count(),1);
+  await page.locator('[data-action="reveal"]').click();
+  await page.locator('[data-rate="good"]').click();
+  assert.equal(await page.evaluate(()=>state.profiles[1].progress.a6.reviews),8);
+  assert.equal(await page.evaluate(()=>state.profiles[0].progress.a6.reviews),1);
+  await page.evaluate(()=>cardModal(state.cards.find(c=>c.id==='a6')));
+  assert.equal(await page.locator('#ed-mnemonic,#ed-sceneHint,#ed-startHint').count(),0);
+  await page.locator('#ed-frenchExample').fill('Je me coiffe le soir.');
+  await page.locator('#ed-exampleEnglish').fill('I do my hair in the evening.');
+  await page.locator('[data-action="save-card"]').click();
+  await page.reload();
+  assert.equal(await page.evaluate(()=>state.cards.find(c=>c.id==='a6').exampleEnglish),'I do my hair in the evening.');
+  const migrated=await page.evaluate(()=>migrate({version:2,cards:[{...starter[0],interval:7,reviews:4}],history:[{id:'a1',time:123}]}));
+  assert.equal(migrated.profiles[0].progress.a1.interval,7);
+  assert.equal(migrated.profiles[0].history.length,1);
+  await page.evaluate(()=>navigator.serviceWorker.ready);
+  await page.reload();
+  await page.waitForFunction(()=>!!navigator.serviceWorker.controller);
+  await context.setOffline(true);
+  await page.reload();
+  await page.evaluate(()=>startPracticeCard('g2'));
+  await page.locator('[data-action="reveal"]').click();
+  assert.equal(await page.locator('.example-meaning').textContent(),'I am eating right now.');
+  assert.ok((await page.evaluate(()=>caches.keys())).includes('parlez-v11-vocabulary'));
+  assert.deepEqual(errors,[]);
+  console.log('PASS: 50 cards with meanings/examples/translations; no hints; 6 widths; editor save; content upgrade; custom edits/images; separate profiles; v2 migration; offline reload.');
+ }finally{await browser.close();}
+})().catch(e=>{console.error(e);process.exitCode=1;});

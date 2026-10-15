@@ -40,6 +40,30 @@
       `<g transform="translate(384 40)"><circle cx="0" cy="0" r="24" fill="#fffdf8" stroke="#d2c7df" stroke-width="3"/>${before ? path('M-9 0h18m-7-7 7 7-7 7',purple,4) : now ? `<circle r="8" fill="#7caa94"/>` : path('M-10 0l7 7 14-15','#7caa94',4)}</g>`;
   }
   function scene(name) {
+    if (name==='walk' || name==='no-walk') return `<path d="M40 294q190-90 440 0" fill="none" stroke="#cbd9b5" stroke-width="24"/><path d="M85 142v115m350-115v115" stroke="#a1ac82" stroke-width="13"/><circle cx="85" cy="111" r="48" fill="#a9c9a1"/><circle cx="435" cy="111" r="48" fill="#bfd5aa"/>` +
+      torso(260,97,'#b09acb') + face(260,82) + path('M239 232l-25 36-28 29m94-65 22 32 33 19','#626587',17) + path('M187 300l-20 5m170-20 20 5',ink,10) + path('M212 158l-28 31-26-12m150-19 20 24 30-17',skin,14) +
+      (name==='no-walk'?`<circle cx="375" cy="72" r="34" fill="#fffdf8" stroke="#d28293" stroke-width="7"/>`+path('M352 49l46 46','#d28293',7):'');
+    if (name==='dress') return `<rect x="59" y="40" width="132" height="252" rx="14" fill="#e8dfd0"/><path d="M125 50v230" stroke="#c9bba6" stroke-width="3"/><circle cx="115" cy="171" r="4" fill="#a99b87"/>` +
+      path('M270 238v61m38-61 9 61','#626587',20) + face(290,92) +
+      `<path d="M251 164l-24-49-31 18 38 90 22-14-8 40h86l-7-40 22 14 38-90-31-18-24 49-16-20h-31Z" fill="#9bbdad" stroke="#7a9f90" stroke-width="3"/>` +
+      path('M210 126l-10-25m170 25 10-25',skin,13) + path('M278 149q12 20 24 0','#d8ebe1',6) + path('M271 186v35m18-38v36m18-36v36','#bcd7ca',3);
+    if (name==='dishes') return `<rect x="69" y="237" width="380" height="61" rx="12" fill="#c7c2da"/><ellipse cx="203" cy="239" rx="105" ry="28" fill="#dfeaf0"/><ellipse cx="203" cy="242" rx="80" ry="18" fill="#b6d1dd"/>` +
+      path('M101 218v-43q0-26 27-26h22v21','#8e9aa5',9) + path('M149 182v34','#8fc9dc',6) +
+      torso(347,105,'#aa9ac9') + face(347,91) + `<ellipse cx="224" cy="211" rx="41" ry="45" fill="#fffdf8" stroke="#9ea9c6" stroke-width="5"/><ellipse cx="224" cy="211" rx="28" ry="32" fill="none" stroke="#d2d8e7" stroke-width="3"/>` +
+      path('M299 172l-39 43-9 9m142-51-46 54-100-32',skin,14) + `<rect x="229" y="183" width="32" height="18" rx="5" fill="#e9c96a" transform="rotate(15 245 192)"/>` +
+      [176,192,210].map((x,i)=>`<circle cx="${x}" cy="${225-i*16}" r="${7+i}" fill="#f8ffff" stroke="#c0dfeb" stroke-width="2"/>`).join('');
+    if (name==='plants') return `<path d="M102 244h83l-13 61h-57Z" fill="#cd947b"/><path d="M144 249v-97" stroke="#679f82" stroke-width="7"/><ellipse cx="124" cy="177" rx="13" ry="32" transform="rotate(-43 124 177)" fill="#86b499"/><ellipse cx="165" cy="158" rx="13" ry="32" transform="rotate(43 165 158)" fill="#6da78e"/><ellipse cx="124" cy="218" rx="12" ry="26" transform="rotate(-55 124 218)" fill="#8abb9e"/>` +
+      torso(350,109,'#b294b0') + face(350,93) + path('M330 244l-9 58m47-58 9 58','#626587',17) +
+      `<g transform="rotate(-20 239 200)"><path d="M213 176h62v52h-62Z" fill="#88b7ce"/><path d="M214 192l-46-22-8 14 54 35Z" fill="#88b7ce"/><path d="M268 182q39-19 33 13-4 15-27 13" fill="none" stroke="#6f9caf" stroke-width="8"/></g>` +
+      path('M303 173l-23 17m118-13-48 43-74-6',skin,14) + path('M169 184l-15 34m4-39-14 29m3-24-11 21','#87bbd1',3);
+    if (name==='coffee') return `<rect x="64" y="89" width="144" height="101" rx="8" fill="#817fa7"/><rect x="74" y="100" width="124" height="79" rx="3" fill="#dddbee"/><path d="M54 196h164" stroke="#b8b1cb" stroke-width="11"/><rect x="50" y="210" width="182" height="15" rx="7" fill="#d0b49c"/><path d="M69 224v77m141-77v77" stroke="#b2957f" stroke-width="9"/>` +
+      torso(353,110,'#8caeb5') + face(353,93) + path('M331 247l-8 53m48-53 11 53','#626587',17) +
+      `<rect x="292" y="174" width="46" height="43" rx="7" fill="#fffdf8" stroke="#b8a9cd" stroke-width="3"/><ellipse cx="315" cy="176" rx="21" ry="5" fill="#a47959"/>` + path('M337 183q26-2 19 17-4 7-18 6','#b8a9cd',5) +
+      path('M306 160q-7-12 0-23m14 23q-7-12 0-23','#b9a9bc',3) + path('M307 172l-9 50 20 4m81-53-23 45-38-19',skin,14);
+    if (name==='work') return torso(297,106,'#8cafb5') + face(297,91) +
+      path('M277 242l-40 32 2 29m79-61 28 35 4 25','#626587',17) +
+      `<rect x="99" y="229" width="327" height="20" rx="8" fill="#d6b79e"/><path d="M120 249v57m284-57v57" stroke="#b99a80" stroke-width="10"/><path d="M143 153h108l12 71H155Z" fill="#8585ad" stroke="#676b91" stroke-width="4"/><path d="M155 224h157" stroke="#8e93b5" stroke-width="9" stroke-linecap="round"/><circle cx="203" cy="188" r="9" fill="#dddcee"/>` +
+      path('M346 172l21 39-66 11m-50-52 6 32 22 17',skin,14) + path('M289 217l-11 6m21-4-9 6',skin,8);
     if (name==='makebed') return morningSun +
       `<rect x="56" y="209" width="313" height="74" rx="13" fill="#c9bce4"/><path d="M62 279v27m300-27v27" stroke="#8f7fa9" stroke-width="12"/><rect x="66" y="197" width="103" height="35" rx="13" fill="#fffdf8"/>` +
       path('M394 218l-10 76m42-76 12 76','#626587',17) + path('M383 298h-20m76 0h19',ink,10) +
