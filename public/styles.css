@@ -52,3 +52,10 @@
 .answer-memory b{font-size:12px}
 .answer-memory p{font-size:14px;margin:8px 0 0;line-height:1.65}
 @media(max-width:570px){.hint-controls{display:grid;grid-template-columns:1fr 1fr}.hint-controls .btn{font-size:12px;padding:10px 7px;min-width:0;white-space:normal}}
+
+/* Optional bilingual mnemonic; the picture stays word-free until explicitly requested */
+.mnemonic-card{background:#fff8ec;border:1px solid #f0d8af;color:#675036;text-align:start}
+.mnemonic-card b{color:#825d2e}
+.mnemonic-card p[dir="auto"]{text-align:start;line-height:1.95;font-weight:550;unicode-bidi:plaintext;white-space:normal;overflow-wrap:break-word}
+.mnemonic-card p[dir="rtl"]{direction:rtl}
+.hint-controls{flex-wrap:wrap}
