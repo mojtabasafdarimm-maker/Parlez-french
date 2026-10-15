@@ -31,10 +31,10 @@ fs.mkdirSync(out, {recursive:true});
     }
     assert.match(coverage.find(c=>c.id==='a3').hints.mnemonic,/برس/);
     assert.match(coverage.find(c=>c.id==='a6').hints.mnemonic,/کوافور/);
+    assert.equal(coverage.filter(c=>c.hints.mnemonic).length,19);
     assert.equal(coverage.find(c=>c.id==='a8').hints.mnemonic,'');
     assert.equal(coverage.find(c=>c.id==='a11').hints.mnemonic,'');
-    assert.match(coverage.find(c=>c.id==='a14').hints.mnemonic,/COMMENCE/);
-    assert.equal(await page.locator('[data-action="next-hint"]').textContent(),'Memory hook');
+    assert.match(coverage.find(c=>c.id==='a14').hints.mnemonic,/commence/);
     const custom=await page.evaluate(()=>{
       const seed=starter.find(c=>c.id==='a6');
       return {personal:cardHints({...seed,mnemonic:'My personal cue'}), changed:cardHints({...seed,scene:'sun'}), answer:cardHints({...seed,frenchAnswer:'Le soleil.'})};
@@ -51,17 +51,19 @@ fs.mkdirSync(out, {recursive:true});
         assert.equal(await page.locator('.answer').count(),0);
         assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false,`${width}/${id} front overflow`);
         if(width===390)await page.screenshot({path:path.join(out,`${id}-390.png`),fullPage:true});
-        for(let stage=1;stage<=3;stage++){
-          await page.locator('[data-action="next-hint"]').click();
-          assert.equal(await page.locator('.hint-card').count(),stage);
-          if(stage===1 && id==='a3')assert.equal(await page.locator('.mnemonic-card p').getAttribute('dir'),'auto');
-          assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false,`${width}/${id} hint overflow`);
-        }
+        assert.equal(await page.locator('[data-action="toggle-hint"]').textContent(),'Hint');
+        await page.locator('[data-action="toggle-hint"]').click();
+        assert.equal(await page.locator('.hint-card').count(),1);
+        assert.equal(await page.locator('.hint-card').textContent(),`Picture clue${coverage.find(c=>c.id===id).hints.scene}`);
+        assert.ok(!(await page.locator('.hint-card').textContent()).includes(coverage.find(c=>c.id===id).french));
+        assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false,`${width}/${id} hint overflow`);
+        if(width<=430)assert.equal(await page.evaluate(()=>{const button=document.querySelector('[data-action="reveal"]')?.getBoundingClientRect(),nav=document.querySelector('.bottom-nav')?.getBoundingClientRect();return Boolean(button&&nav&&button.top<nav.top);}),true,`${width}/${id} reveal button obscured`);
         if(width===320 && id==='a3')await page.screenshot({path:path.join(out,'hints-320.png'),fullPage:true});
-        await page.locator('[data-action="next-hint"]').click();
+        await page.locator('[data-action="toggle-hint"]').click();
         assert.equal(await page.locator('.hint-card').count(),0);
         await page.locator('[data-action="reveal"]').click();
         assert.ok(await page.locator('.answer h2').textContent());
+        assert.equal(await page.locator('.answer-memory').count(),coverage.find(x=>x.id===id).hints.mnemonic?1:0);
       }
     }
     // Synthetic v3 state: preserve two learners, a custom image and personal hints on reload.

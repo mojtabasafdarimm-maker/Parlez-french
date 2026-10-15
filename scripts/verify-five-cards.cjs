@@ -27,15 +27,13 @@ const server=http.createServer((req,res)=>{
         await page.evaluate(id=>startPracticeCard(id),id);
         const hasMemory=!['a8','a11'].includes(id);
         assert.equal(await page.locator('.hint-card').count(),0);
-        assert.equal(await page.locator('[data-action="next-hint"]').textContent(),hasMemory?'Memory hook':'Scene clue');
-        for(let n=1;n<=(hasMemory?3:2);n++){
-          await page.locator('[data-action="next-hint"]').click();
-          assert.equal(await page.locator('.hint-card').count(),n);
-          assert.equal(await page.locator('.mnemonic-card').count(),hasMemory?1:0);
-          assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
-        }
+        assert.equal(await page.locator('[data-action="toggle-hint"]').textContent(),'Hint');
+        await page.locator('[data-action="toggle-hint"]').click();
+        assert.equal(await page.locator('.hint-card').count(),1);
+        assert.equal(await page.locator('.mnemonic-card').count(),0);
+        assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
         if(width===390)await page.screenshot({path:path.join(out,`draft-${id}-390.png`),fullPage:true});
-        await page.locator('[data-action="next-hint"]').click();
+        await page.locator('[data-action="toggle-hint"]').click();
         assert.equal(await page.locator('.hint-card').count(),0);
         await page.locator('[data-action="reveal"]').click();
         assert.equal(await page.locator('.answer-memory>b').count(),hasMemory?1:0);
@@ -55,6 +53,6 @@ const server=http.createServer((req,res)=>{
     });
     await page.screenshot({path:path.join(out,'five-card-review.png'),fullPage:true});
     assert.deepEqual(errors,[]);
-    console.log('PASS: five cards at five widths; three supported hooks; two omitted hooks; progression, hiding, reveal and personal override. Review image saved.');
+    console.log('PASS: five cards at five widths; one picture clue before reveal; memory links only after reveal; personal override. Review image saved.');
   }finally{if(browser)await browser.close();await new Promise(resolve=>server.close(resolve));}
 })().catch(e=>{console.error(e);process.exitCode=1;});

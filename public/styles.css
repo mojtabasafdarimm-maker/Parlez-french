@@ -68,3 +68,14 @@
 .mnemonic-card p,.answer-memory p{overflow-wrap:anywhere}
 .mnemonic-card bdi,.answer-memory bdi{unicode-bidi:isolate}
 .hint-controls .btn{min-height:44px}
+
+/* Simple review: one optional picture clue, then reveal. */
+.simple-hint{text-align:left;border-style:solid;padding:16px 18px}
+.simple-hint b{display:block;font-size:12px;letter-spacing:.03em;margin-bottom:7px;color:var(--purple-dark)}
+.simple-hint p{margin:0;font-size:15px;line-height:1.55;color:#51546b}
+.simple-review-actions{display:grid;grid-template-columns:minmax(92px,.38fr) 1fr;gap:8px;margin-top:17px}
+.simple-review-actions .btn{min-height:48px}
+.rating-title{text-align:center;margin:19px 0 10px}
+.review-footnote{text-align:center;margin-top:17px}
+.english-front{font-size:29px;font-weight:700;text-align:center;padding:30px}
+@media(max-width:380px){.review-card{padding:13px}.review-scene{min-height:255px}.review-scene svg{max-height:270px}.simple-review-actions .btn{padding-left:10px;padding-right:10px;font-size:13px}.rating-row{grid-template-columns:repeat(2,1fr)}}

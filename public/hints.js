@@ -255,60 +255,28 @@
     "Visualize entering the cinema later tonight: Je vais aller au cinéma ce soir."
   ]
 };
-  // Choose the strongest familiar hook per word; language is not a ranking criterion.
-  // Invented scenes and loose sound hooks are memory aids, not etymology or pronunciation.
+  // Curated links appear only after reveal. Weak or forced links are deliberately omitted.
   const MEMORY_CUES={
-  "a1": "réveille → REVEILLE, the wake-up bugle call. Imagine a tiny trumpeter standing on your alarm clock, blasting your eyes open.",
-  "a2": "lève → a LEVER. Imagine a giant lever under your mattress lifting you onto your feet.",
-  "a3": "brosse ↔ «برس» (brush). DENTist → dents (teeth).",
-  "a4": "douche ↔ «دوش» (shower).",
-  "a5": "habille → HABIT, as in a monk’s clothing. Imagine pulling a huge monk’s habit over your ordinary clothes.",
-  "a6": "coiffe ↔ «کوافور» / coiffeur (hairdresser) → doing your hair.",
-  "a7": "promène → PROMENADE. Imagine a red carpet unrolling through the park just for your leisurely walk.",
-  "a8": "",
-  "a9": "endors → DORM room. Imagine stepping into a dorm and instantly nodding off before you can put your bag down.",
-  "a10": "petit means small. Imagine your entire breakfast shrunk onto a dollhouse plate: petit-déjeuner.",
-  "a11": "",
-  "a12": "vaisselle → a VESSEL overflowing with dirty dishes. Imagine sailing that dish-filled boat into your sink. A loose sound hook.",
-  "a13": "occupe → OCCUPIED. Imagine your plants putting an OCCUPIED sign on you because you are busy caring for them.",
-  "a14": "commence → COMMENCE. Imagine a starting pistol on your laptop firing the instant work begins.",
-  "a15": "pause café → PAUSE + CAFÉ. Imagine pressing a giant pause button on your laptop and a coffee cup popping out.",
-  "a16": "vélo → VELOdrome. Imagine cycling around a miniature racing track on your kitchen table.",
-  "b1": "bonnet → BONNET. Imagine a car wearing a huge knitted winter bonnet, pom-pom and all.",
-  "b2": "écharpe → SHARP. Imagine a scarf folded into an impossibly sharp zigzag around your neck. Use the sound as a hook.",
-  "b3": "robe → ROBE. Imagine your bathrobe turning into a party dress as you step out of the bathroom.",
-  "b4": "baskets → BASKETball. Imagine basketballs bouncing out of your trainers with every step.",
-  "b5": "chemise ↔ «شومیز». Imagine each button on your familiar shirt ringing like a tiny bell as you fasten it.",
-  "b6": "pantalon → PANTaloons. Imagine absurdly long pantaloons stretching down the entire staircase. One garment: un pantalon.",
-  "b7": "jupe → “ZHOOP!” Imagine a skirt making that cartoon sound as it spins. An invented sound effect to attach to the word.",
-  "b8": "chaussettes → a SHOE SET. Imagine a matching pair of shoes with giant socks springing out. A loose sound hook.",
-  "b9": "moufles → fluffy MUFFS for your hands. Imagine four fingers sharing one warm room while the thumb gets its own tiny room.",
-  "b10": "rouge ↔ «رژ». Imagine a red lipstick drawing the entire red dress onto her.",
-  "b11": "bon → bon appétit: something good. Imagine giving a film a giant thumbs-up while its screen waves a Mexican flag.",
-  "w1": "pleut ↔ «پلو» (rice), as a loose sound hook. Imagine clouds raining cooked rice into your bowl. Use Listen for the French vowel.",
-  "w2": "neige → BEIGE. Imagine beige snowflakes covering the whole street. The end of beige can help cue the sound of neige.",
-  "w3": "froid → FROzen. Imagine the letters FRO trapped inside a huge ice cube. This is a spelling hook for cold.",
-  "w4": "chaud → SHOW. Imagine a show so hot that the stage melts and the audience fans itself.",
-  "w5": "soleil → SOLAR. Imagine the sun wearing enormous solar panels as sunglasses.",
-  "w6": "vent → a VENT. Imagine an air vent blasting so hard that it bends every tree outside.",
-  "w7": "nuages → NEW AGE, as a loose sound hook. Imagine a meditation class sitting on clouds instead of yoga mats.",
-  "o1": "écrire → ÉCRITURE, handwriting. Imagine a pen skating across paper and leaving enormous handwritten loops behind it.",
-  "o2": "métal → METAL. Imagine tapping the pen and hearing it ring like a steel bell.",
-  "o3": "notes → NOTES. Imagine your pen turning into a tiny hand that grabs notes from the air and drops them into your notebook.",
-  "g1": "vais → GOING to. Imagine a GO arrow pointing toward your untouched meal: the first bite is still ahead.",
-  "g2": "en train de → action IN PROGRESS. Imagine a video frozen halfway through a bite, with a bright recording light still on.",
-  "g3": "viens de → “just come from doing it.” Imagine returning from the dinner table with the taste of the last bite still in your mouth.",
-  "g4": "vais → GOING to. Imagine tomorrow’s work waiting inside a box you have not opened yet.",
-  "g5": "ne … pas → two NO guards. Imagine one guard before me and the other after the verb, blocking the walk.",
-  "g6": "vais + me coucher → a GO arrow pointing to your COUCH-bed. Imagine the couch booking your bedtime for later.",
-  "g7": "participer → PARTICIPATE. Imagine a spare puzzle piece jumping into the group’s project to take part.",
-  "t1": "quart → QUARTER. Imagine the clock cut like a pizza: one quarter is 15 minutes. Add it to two.",
-  "t2": "demie → DEMI, half. Imagine a clock dipped halfway into chocolate: 30 minutes past the hour.",
-  "t3": "moins → MINUS; quart → QUARTER. Imagine an eraser rubbing 15 minutes off three o’clock.",
-  "s1": "puis → “then.” Imagine two giant comic panels joined by an arrow: alarm first, breakfast next. Put puis on the arrow.",
-  "s2": "short → SHORTS; baskets → BASKETball shoes. Imagine your shorts dribbling a basketball into your trainers.",
-  "s3": "cinéma ↔ CINEMA / «سینما». Imagine tonight’s cinema ticket tucked inside an arrow pointing forward: your trip is still a plan."
-};
+    "a3": "«برس» ↔ brosse; dentist ↔ dents.",
+    "a4": "«دوش» ↔ douche.",
+    "a6": "«کوافور» / coiffeur ↔ coiffe.",
+    "a7": "promenade ↔ promène.",
+    "a13": "occupied ↔ m’occupe.",
+    "a14": "commence means “begin” in English too.",
+    "b3": "robe is also an English word for a garment.",
+    "b4": "basketball ↔ baskets (sports shoes).",
+    "b5": "«شومیز» ↔ chemise.",
+    "b6": "pantaloons ↔ pantalon.",
+    "b10": "«رژ» ↔ rouge.",
+    "b11": "bon appétit ↔ bon (good).",
+    "w6": "Air flows through a vent; vent means wind.",
+    "o2": "metal ↔ métal.",
+    "o3": "notes ↔ notes.",
+    "g7": "participate ↔ participer.",
+    "t1": "quarter ↔ quart.",
+    "t3": "minus ↔ moins; quarter ↔ quart.",
+    "s3": "cinema / «سینما» ↔ cinéma."
+  };
   const clean = value => String(value||'').trim();
   const smallStart = french => {
     const words=clean(french).replace(/[.!?]+$/,'').split(/\s+/).filter(Boolean);
@@ -324,9 +292,7 @@
     const starter=clean(card.startHint) || built?.[1] || smallStart(card.frenchAnswer);
     const customMemory=clean(card.mnemonic) && (!seed || card.mnemonic!==seed.mnemonic)?clean(card.mnemonic):'';
     const memory=customMemory || built?.[2] || (!seed?clean(card.mnemonic):'') || (unedited?clean(card.grammarNote):'') || ('Picture the action as you say '+clean(card.frenchAnswer)+' aloud. If the scene no longer matches, update its image and clues in Library.');
-    // An empty curated cue deliberately means no mnemonic; do not fill it with generic advice.
-    const suggestedMemory=unedited && Object.prototype.hasOwnProperty.call(MEMORY_CUES,card.id)?MEMORY_CUES[card.id]:null;
-    const mnemonic=clean(card.memoryHint) || customMemory || (!seed?clean(card.mnemonic):'') || (suggestedMemory===null?'Choose one detail in the picture and link it to the sound you are trying to recall. You can save a personal association in Library.':suggestedMemory);
+    const mnemonic=clean(card.memoryHint) || customMemory || (unedited?clean(MEMORY_CUES[card.id]):'') || (!seed?clean(card.mnemonic):'');
     return {scene,starter,memory,mnemonic};
   }
   window.ParlezHints={forCard,count:Object.keys(BUILTIN_HINTS).length,ids:Object.keys(BUILTIN_HINTS),memoryCount:Object.keys(MEMORY_CUES).length};

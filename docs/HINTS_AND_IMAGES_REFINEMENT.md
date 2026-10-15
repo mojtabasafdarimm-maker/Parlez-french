@@ -1,5 +1,9 @@
 # Hints and images refinement
 
+## Simplified review flow
+
+The review card now offers one optional **Hint**, containing only a plain picture clue. It no longer steps through a memory hook, scene clue, French starter, and English meaning before reveal. The complete French answer remains hidden until **Reveal French**. After reveal, one of 19 curated memory links appears when there is a strong, familiar connection; 31 forced associations were removed. The English meaning remains optional on the answer side.
+
 Based on `main` at `5ff5c9b`. Changes are local; no push, PR, merge or Cloudflare deployment was performed.
 
 ## User clarification: memorable connections, without language preference
