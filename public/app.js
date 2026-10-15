@@ -37,7 +37,7 @@ const starter=[
  C('b8','vocab','Clothing','socks','Socks','des chaussettes','day shoh-SET','Je mets des chaussettes.','','des = plural article.'),
  C('b9','vocab','Clothing','gloves','Mittens','des moufles','day MOOFL','Je mets des moufles pour le ski.','','des moufles = mittens; des gants = gloves.'),
  C('b10','sentence','Clothing','red-dress','Wearing a red dress','Elle porte une robe rouge.','el port ewn rob roozh','Elle porte une belle robe rouge.','','Colour adjectives normally go after the noun.'),
- C('b11','grammar','Clothing','cinema','Describe a good Mexican film','C’est un bon film mexicain.','seh uhn bohn feelm mek-see-KAHN','Nous regardons un bon film mexicain.','','Bon before noun; mexicain after noun.'),
+ C('b11','grammar','Clothing','mexican-film','Describe a good Mexican film','C’est un bon film mexicain.','seh uhn bohn feelm mek-see-KAHN','Nous regardons un bon film mexicain.','','Bon before noun; mexicain after noun.'),
  C('w1','sentence','Weather','rain','Rainy weather','Il pleut.','eel PLUH','Aujourd’hui, il pleut.','Picture loud plop-plop raindrops.','Il + weather verb.'),
  C('w2','sentence','Weather','snow','Snowing','Il neige.','eel NEZH','En hiver, il neige.','','Il + weather verb.'),
  C('w3','sentence','Weather','cold','Cold weather','Il fait froid.','eel feh FRWAH','Il fait froid au Canada en hiver.','Imagine a FRIDGE full of snow.','Il fait + adjective.'),
@@ -77,10 +77,56 @@ function sceneSVG(scene){let s=sky(),m='',palette={floor:'#e1dced'};const floor=
  switch(scene){
  case 'wake':s=sky('#f5f1ff');m=bed()+`<ellipse cx="230" cy="192" rx="27" ry="29" fill="#e5b597"/><path d="M203 190q0-27 28-27 20 0 24 20" fill="#41364e"/><path d="m218 191 6 2m14-2 7 2" stroke="#68515b" stroke-width="3"/>`+alarm()+`<path d="m306 99 12-23m17 21 18-8" stroke="#e8a874" stroke-width="5"/>`;break;
  case 'rise':m=bed()+person(285,113,{pose:'sit'})+`<path d="m350 111 13-24" stroke="#e8ad83" stroke-width="6"/>`;break;
- case 'brush':m=`<rect x="300" y="206" width="115" height="72" rx="11" fill="#d4dde7"/><rect x="321" y="196" width="74" height="9" rx="4" fill="#a7b6cd"/>`+person(224,86,{shirt:'#92b9ad'})+`<path d="M246 170l39-34" stroke="#edc3aa" stroke-width="13" stroke-linecap="round"/><rect x="275" y="121" width="59" height="10" rx="5" transform="rotate(-43 275 121)" fill="#81b7ca"/><circle cx="285" cy="117" r="9" fill="#fff"/>`;break;
+ case 'brush':
+    s=sky('#f2f9fb');
+    m=`
+      <rect x="59" y="43" width="401" height="259" rx="35" fill="#e8f3f7"/>
+      <path d="M166 297q12-74 79-86 80-8 109 86Z" fill="#a0c5b6"/>
+      <path d="M185 143q-9-80 76-87 79-4 77 90v19h-151z" fill="#453a5e"/>
+      <ellipse cx="263" cy="150" rx="66" ry="80" fill="#eebfa7"/>
+      <path d="M193 126Q197 47 274 65q54 7 57 64-27-12-46-32-30 29-92 29Z" fill="#453a5e"/>
+      <circle cx="240" cy="155" r="4" fill="#544353"/><circle cx="285" cy="155" r="4" fill="#544353"/>
+      <path d="M244 189q19 13 39 0" stroke="#b27378" stroke-width="6" fill="none" stroke-linecap="round"/>
+      <rect x="234" y="183" width="56" height="16" rx="6" fill="#fff"/>
+      ${Array.from({length:4},(_,i)=>`<path d="M${247+i*10} 185v12" stroke="#ead9d8" stroke-width="2"/>`).join('')}
+      <!-- A toothbrush brushing the visible teeth -->
+      <path d="M344 252q-36-18-55-42l-23-20" stroke="#edb99e" stroke-width="19" fill="none" stroke-linecap="round"/>
+      <g transform="rotate(-18 262 190)">
+        <rect x="251" y="184" width="113" height="11" rx="5" fill="#69aac2"/>
+        <rect x="244" y="177" width="30" height="19" rx="4" fill="#d7eaf7" stroke="#69aac2" stroke-width="2"/>
+        ${Array.from({length:7},(_,i)=>`<path d="M${247+i*3.4} 177v-10" stroke="#fff" stroke-width="3" stroke-linecap="round"/>`).join('')}
+      </g>
+      <circle cx="288" cy="185" r="7" fill="#fff" opacity=".9"/><circle cx="297" cy="174" r="5" fill="#fff" opacity=".82"/>
+    `;
+    break;
  case 'shower':m=`<path d="M135 301V90q0-32 34-32h158" stroke="#a4a7b8" stroke-width="13" fill="none"/><path d="M327 58v22" stroke="#a4a7b8" stroke-width="9"/><rect x="280" y="80" width="95" height="12" rx="6" fill="#a4a7b8"/>`+person(253,140,{shirt:'#c2d6e3',pants:'#8ac6ca'})+Array.from({length:16},(_,i)=>`<path d="M${291+(i%8)*10} ${96+Math.floor(i/8)*40}l-5 18" stroke="#83b6d7" stroke-width="3"/>`).join('');break;
  case 'dress':m=`<rect x="75" y="80" width="120" height="195" rx="11" fill="#efe4d5"/><path d="M115 107h46m-23 0v27" stroke="#a68e89" stroke-width="6"/>`+person(306,96,{shirt:'#dea6a9'})+`<path d="M260 189q46-34 92 2l22 90h-135z" fill="#d7abca" opacity=".85"/>`;break;
- case 'hair':m=`<rect x="70" y="77" width="165" height="176" rx="75" fill="#f3d2bf" stroke="#deb5b0" stroke-width="10"/>`+person(303,87,{shirt:'#ccb0d7'})+`<path d="M350 143l-17 45m-16-43 35 4" stroke="#edc3aa" stroke-width="12" stroke-linecap="round"/><rect x="335" y="136" width="48" height="13" rx="6" fill="#8569a9"/>`;break;
+ case 'hair':
+    s=sky('#f8f3fc');
+    m=`
+      <!-- Clear close-up: person brushing their own hair; no empty mirror -->
+      <rect x="62" y="36" width="400" height="264" rx="38" fill="#eee8fa"/>
+      <ellipse cx="260" cy="313" rx="172" ry="17" fill="#dcd4ec"/>
+      <path d="M178 294 Q177 228 223 204 Q260 190 312 209 Q349 233 352 294Z" fill="#bba6d9"/>
+      <path d="M190 223 Q165 173 183 99 Q194 53 250 49 Q326 46 345 109 Q353 163 351 234 Q328 241 312 225 L310 180 L209 180 L212 226Z" fill="#453a5e"/>
+      <ellipse cx="264" cy="143" rx="65" ry="78" fill="#edb99e"/>
+      <path d="M198 137 Q182 60 260 58 Q329 56 332 135 Q309 126 294 96 Q261 130 201 119Z" fill="#453a5e"/>
+      <path d="M207 125 Q190 179 204 231" fill="none" stroke="#453a5e" stroke-width="30" stroke-linecap="round"/>
+      <path d="M327 124 Q343 172 333 239" fill="none" stroke="#453a5e" stroke-width="29" stroke-linecap="round"/>
+      <path d="M224 155 Q236 147 247 155M280 155 Q291 147 302 155" stroke="#5d4351" stroke-width="4" stroke-linecap="round" fill="none"/>
+      <path d="M263 164l-4 20 9 1" stroke="#d49a86" stroke-width="3" stroke-linejoin="round" fill="none"/>
+      <path d="M244 200q20 13 39 0" stroke="#ad6e79" stroke-width="4" fill="none" stroke-linecap="round"/>
+      <!-- Right arm visibly holding a hair comb against the side of the head -->
+      <path d="M343 234 Q373 208 390 170 Q397 147 387 122" fill="none" stroke="#edb99e" stroke-width="21" stroke-linecap="round"/>
+      <path d="M383 138l-15-26" stroke="#edb99e" stroke-width="17" stroke-linecap="round"/>
+      <g transform="rotate(-26 355 113)">
+        <rect x="308" y="94" width="104" height="17" rx="7" fill="#8570b7" stroke="#63519d" stroke-width="2"/>
+        ${Array.from({length:13},(_,i)=>`<path d="M${315+i*6.5} 111v23" stroke="#7462a9" stroke-width="4" stroke-linecap="round"/>`).join('')}
+      </g>
+      <path d="M314 144q18 18 22 43M318 152q19 19 16 48" stroke="#77678e" stroke-width="3" fill="none" opacity=".75"/>
+      <path d="M377 68l11-19M405 82l19-8" stroke="#b8a3db" stroke-width="5" stroke-linecap="round"/>
+    `;
+    break;
  case 'walk':m=`<path d="M40 300q110-60 225-11 120-49 215 11" stroke="#cdd9b9" stroke-width="22" fill="none"/>`+`<path d="M105 241V103" stroke="#a9aa89" stroke-width="15"/><circle cx="107" cy="103" r="55" fill="#a5c8a3"/><path d="M419 241V124" stroke="#a9aa89" stroke-width="15"/><circle cx="418" cy="114" r="46" fill="#c3d6b5"/>`+person(269,82,{shirt:'#e0a4aa',arm:'up'});break;
  case 'bedtime':m=`<rect x="95" y="86" width="87" height="114" rx="10" fill="#ddd9ee"/>`+bed()+`<path d="M179 176h179q24 0 24 20v47H172z" fill="#aa9bd4"/><ellipse cx="159" cy="191" rx="23" ry="23" fill="#f2c5a5"/><path d="M137 187q8-32 40-9" stroke="#46374c" stroke-width="14" fill="none"/>`+`<path d="M404 74q-36 12-27 55 27 14 48-9-21 1-21-46" fill="#f6db9c"/>`;break;
  case 'sleep':m=bed()+`<ellipse cx="175" cy="195" rx="27" ry="23" fill="#f0bea2"/><path d="M149 185q26-36 54 1" fill="#45384d"/><path d="m162 196 8 2m10-2 7 2" stroke="#665465" stroke-width="3"/>`+`<path d="M237 181q90-55 136 34l4 27H205z" fill="#958ccc"/>`+`<path d="m363 91 27-25m-15 42 25-13" stroke="#edb57b" stroke-width="6"/>`;break;
@@ -91,7 +137,25 @@ function sceneSVG(scene){let s=sky(),m='',palette={floor:'#e1dced'};const floor=
  case 'work':m=`<rect x="132" y="186" width="270" height="107" rx="10" fill="#e5d6ca"/><rect x="215" y="105" width="142" height="108" rx="9" fill="#8991c3"/><rect x="229" y="119" width="114" height="77" rx="4" fill="#f9faff"/><path d="M238 142h96m-96 18h68" stroke="#c0bfdf" stroke-width="8"/>`+`<circle cx="134" cy="127" r="27" fill="#ecc1a8"/><path d="M111 119q-3-31 27-27 18 0 20 23" fill="#493d55"/><path d="M134 154v32" stroke="#9db5bd" stroke-width="32"/>`;break;
  case 'coffee':m=`<rect x="139" y="143" width="184" height="127" rx="21" fill="#fff" stroke="#b7b6ca" stroke-width="8"/><path d="M322 175q72-12 72 32-4 50-72 30" fill="none" stroke="#b7b6ca" stroke-width="14"/><ellipse cx="230" cy="152" rx="85" ry="19" fill="#9d735b"/><path d="M187 128q-15-24 1-52m41 52q-15-24 1-52m41 52q-15-24 1-52" stroke="#b5a6a3" stroke-width="6" fill="none" stroke-linecap="round"/>`;break;
  case 'bike':m=`<circle cx="150" cy="249" r="58" fill="none" stroke="#718ab7" stroke-width="10"/><circle cx="376" cy="249" r="58" fill="none" stroke="#718ab7" stroke-width="10"/><path d="m150 249 71-85 70 85h-141l70-85h102l54 85" fill="none" stroke="#b383bc" stroke-width="9" stroke-linejoin="round"/><path d="M218 166l-6-23h-27" stroke="#6b769c" stroke-width="9"/>`+`<circle cx="244" cy="83" r="23" fill="#ebb9a3"/><path d="M241 108l28 55 50 16" stroke="#e3a9a8" stroke-width="20" fill="none"/><path d="M265 165l-24 49-56 10" stroke="#6b76aa" stroke-width="18" fill="none"/>`;break;
- case 'hat':case 'scarf':case 'dressobj':case 'shoes':case 'shirt':case 'pants':case 'skirt':case 'socks':case 'gloves':m=clothes(scene);break;
+ case 'hat':case 'scarf':case 'dressobj':case 'shoes':case 'shirt':case 'pants':case 'skirt':case 'socks':m=clothes(scene);break;
+ case 'gloves':
+    s=sky('#f6f2fb');
+    m=`
+      <!-- Pair of mittens with rounded, joined-finger tips, not gloves -->
+      <g transform="translate(45 6) rotate(-13 167 176)">
+        <path d="M131 275L105 206Q82 170 98 125Q113 86 148 91Q185 89 198 126Q212 166 187 217L173 278Z" fill="#9b83cb" stroke="#7c66ae" stroke-width="6"/>
+        <path d="M116 184Q89 155 73 164Q57 177 81 211L116 229" fill="#9b83cb" stroke="#7c66ae" stroke-width="6"/>
+        <rect x="126" y="264" width="56" height="31" rx="7" fill="#6f61af"/>
+        <path d="M140 265v26M153 267v26" stroke="#b5a6df" stroke-width="5"/>
+      </g>
+      <g transform="translate(45 3) rotate(15 331 174)">
+        <path d="M306 276L280 205Q257 169 273 124Q287 88 324 91Q361 91 376 128Q389 169 365 218L349 277Z" fill="#83bdb3" stroke="#639d94" stroke-width="6"/>
+        <path d="M362 183Q394 151 407 171Q417 191 387 218L362 225" fill="#83bdb3" stroke="#639d94" stroke-width="6"/>
+        <rect x="301" y="263" width="56" height="31" rx="7" fill="#55998f"/>
+        <path d="M314 265v26M327 267v26" stroke="#b6ded4" stroke-width="5"/>
+      </g>
+    `;
+    break;
  case 'red-dress':m=person(260,93,{shirt:'#df8095',pants:'#d6809f'})+`<path d="M230 214h60l63 73H171z" fill="#d76e87"/>`;break;
  case 'rain':m=cloud(250,94,1.2)+Array.from({length:21},(_,i)=>`<path d="M${100+(i%7)*53+((Math.floor(i/7)%2)*13)} ${167+Math.floor(i/7)*45}l-11 24" stroke="#81aed8" stroke-width="7" stroke-linecap="round"/>`).join('');break;
  case 'snow':m=cloud(244,90,1.25)+Array.from({length:20},(_,i)=>{let x=96+(i%7)*54,y=163+Math.floor(i/7)*43;return `<g stroke="#98badd" stroke-width="4"><path d="M${x-9} ${y}h18m-9-9v18m-7-7 14 14m-14 0 14-14"/></g>`}).join('');break;
@@ -100,7 +164,38 @@ function sceneSVG(scene){let s=sky(),m='',palette={floor:'#e1dced'};const floor=
  case 'clouds':m=cloud(178,141,1)+cloud(339,110,.73)+cloud(364,216,.76);break;
  case 'cold':m=`${cloud(392,60,.62)}${person(247,80,{shirt:'#8db0ce'})}<path d="M217 152q28 33 58 0" stroke="#f2e8ee" stroke-width="15" fill="none"/><path d="m177 133-12 19m1-32-13 18m222 3-12 19" stroke="#8ab7da" stroke-width="7" stroke-linecap="round"/><path d="M225 112q21 17 41 0" stroke="#f5f5fb" stroke-width="11" fill="none"/>`;break;
  case 'hot':m=sun(411,86,36)+person(225,92,{shirt:'#efa38c'})+`<path d="M277 119q57-17 53 31-17 33-45 19" stroke="#e7bd9d" stroke-width="14" fill="none"/><path d="M330 149l29-35" stroke="#b59fc6" stroke-width="7"/><path d="m196 126 8 22" stroke="#80b7ca" stroke-width="7" stroke-linecap="round"/>`;break;
- case 'write':case 'pen':case 'notes':m=`<rect x="84" y="89" width="355" height="213" rx="11" fill="#fff" stroke="#dbd7de" stroke-width="6" transform="rotate(-4 260 195)"/><path d="M130 135h177M130 164h194M130 193h139M130 220h163" stroke="#ccd1e5" stroke-width="6" stroke-linecap="round"/><path d="M331 101 217 239" stroke="#6b7fb1" stroke-width="17" stroke-linecap="round"/><path d="M217 239l-13 16 5-28" fill="#47476c"/><path d="M327 106l13-15" stroke="#ced5e4" stroke-width="20" stroke-linecap="round"/>`;break;
+ case 'write':m=`<rect x="84" y="89" width="355" height="213" rx="11" fill="#fff" stroke="#dbd7de" stroke-width="6" transform="rotate(-4 260 195)"/><path d="M130 135h177M130 164h194M130 193h139M130 220h163" stroke="#ccd1e5" stroke-width="6" stroke-linecap="round"/><path d="M331 101 217 239" stroke="#6b7fb1" stroke-width="17" stroke-linecap="round"/><path d="M217 239l-13 16 5-28" fill="#47476c"/><path d="M327 106l13-15" stroke="#ced5e4" stroke-width="20" stroke-linecap="round"/>`;break;
+ case 'pen':
+    s=sky('#f8f8fb');
+    m=`
+      <!-- Shiny metallic pen, prominent reflective steel material -->
+      <g transform="rotate(-31 270 169)">
+        <rect x="102" y="145" width="297" height="53" rx="17" fill="#93a6b9" stroke="#667f9a" stroke-width="7"/>
+        <path d="M110 157h277" stroke="#f5faff" stroke-width="10" stroke-linecap="round" opacity=".93"/>
+        <path d="M110 185h276" stroke="#516985" stroke-width="7" opacity=".55"/>
+        <rect x="316" y="147" width="19" height="50" fill="#d9e3e9" stroke="#849aa8" stroke-width="3"/>
+        <path d="M399 152l52 19-52 21Z" fill="#d1dce6" stroke="#72889e" stroke-width="5"/>
+        <path d="M451 166l13 5-13 5Z" fill="#51546b"/>
+        <path d="M175 143v-20q0-13 17-13h126" stroke="#f4f4f8" stroke-width="8" fill="none" stroke-linecap="round"/>
+      </g>
+      <path d="M391 52l8-20m13 31 20-13" stroke="#b9b4dc" stroke-width="5" stroke-linecap="round"/>
+    `;
+    break;
+ case 'notes':
+    s=sky('#faf7f2');
+    m=`
+      <!-- Clearly a notes list rather than a lone pen -->
+      <g transform="rotate(-5 260 167)">
+        <rect x="114" y="46" width="303" height="255" rx="19" fill="#fffefc" stroke="#d3ccde" stroke-width="7"/>
+        <rect x="114" y="47" width="36" height="253" rx="9" fill="#e8e3f4"/>
+        ${[98,145,192,239].map((y,i)=>`<g><circle cx="179" cy="${y}" r="7" fill="#8b83b9"/><path d="M204 ${y}h${i===2?99:145}" stroke="#c8c4d7" stroke-width="9" stroke-linecap="round"/></g>`).join('')}
+        <path d="M204 114h95m-95 47h109m-109 47h128m-128 46h104" stroke="#e5e1eb" stroke-width="6" stroke-linecap="round"/>
+      </g>
+      <path d="M394 92l-92 143" stroke="#5e83ad" stroke-width="19" stroke-linecap="round"/>
+      <path d="M297 238l-8 25 23-17" fill="#3c4457"/>
+      <path d="M393 86l9-14" stroke="#dae3ed" stroke-width="20" stroke-linecap="round"/>
+    `;
+    break;
  case 'eat-before':case 'eat-now':case 'eat-after':m=`<rect x="93" y="220" width="342" height="59" rx="12" fill="#dcc2b8"/>`+person(250,82,{shirt:'#8daaba'})+`<ellipse cx="270" cy="217" rx="80" ry="22" fill="#fff" stroke="#d0bdc0" stroke-width="5"/>`+((scene==='eat-before')?`<path d="M240 207h60" stroke="#d2a86b" stroke-width="13"/>`:scene==='eat-now'?`<path d="M246 205h32" stroke="#d2a86b" stroke-width="9"/><path d="M276 171l-23 19" stroke="#e9bea9" stroke-width="12"/>`:`<circle cx="260" cy="216" r="8" fill="#d3b3a2"/><path d="M234 212h54" stroke="#d9d0c9" stroke-width="3"/>`)+timeline(scene==='eat-before'?'future':scene==='eat-now'?'now':'past');break;
  case 'work-future':m=`<rect x="70" y="109" width="126" height="152" rx="10" fill="#e2e2f1"/><rect x="90" y="132" width="88" height="46" rx="4" fill="#b9cddd"/><path d="M110 199h46" stroke="#a3a0c2" stroke-width="8"/>`+person(324,84,{shirt:'#9eb7c0'})+timeline('future');break;
  case 'no-walk':m=`<path d="M70 285q150-49 370 0" stroke="#d4dcbf" stroke-width="28" fill="none"/>`+person(244,81,{shirt:'#b0a9d0'})+`<circle cx="376" cy="119" r="44" fill="#fff" stroke="#db829a" stroke-width="9"/><path d="m347 89 59 59" stroke="#db829a" stroke-width="10"/>`;break;
@@ -111,6 +206,22 @@ function sceneSVG(scene){let s=sky(),m='',palette={floor:'#e1dced'};const floor=
  case 'clock-245':m=clock(2,45);break;
  case 'morning':m=bed()+alarm()+sun(107,87,27)+`<ellipse cx="239" cy="188" rx="23" ry="24" fill="#e5b597"/><path d="M215 188q0-25 23-25 20 0 25 21" fill="#45374d"/>`;break;
  case 'sport':m=person(249,77,{shirt:'#b3a0d6',pants:'#7f88b7',arm:'up'})+`<path d="M230 194l-20 33M269 194l29 31" stroke="#59699d" stroke-width="18" stroke-linecap="round"/><path d="M90 269h50M386 269h47" stroke="#a9bdb7" stroke-width="9"/>`;break;
+ case 'mexican-film':
+    s=sky('#f8f5ff');
+    m=`
+      <rect x="121" y="48" width="289" height="213" rx="18" fill="#57577c"/>
+      <rect x="134" y="61" width="263" height="186" rx="9" fill="#e9e7f4"/>
+      <path d="M184 115v80h40v-80Z" fill="#27916a"/>
+      <path d="M224 115v80h40v-80Z" fill="#fff"/>
+      <path d="M264 115v80h40v-80Z" fill="#d45e61"/>
+      <circle cx="243" cy="155" r="9" fill="#8d8b7d"/>
+      <g transform="translate(320 165)">
+        <circle cx="0" cy="0" r="49" fill="#fff1ce"/>
+        <path d="M-20 18v-29h13l12-23q7-13 15-5 3 4-3 23h17q19 0 12 19l-7 26q-3 10-14 10H-7v-11Z" fill="#8fbb9f" stroke="#588d76" stroke-width="5" stroke-linejoin="round"/>
+      </g>
+      <path d="M145 279h241" stroke="#c4b8d6" stroke-width="14" stroke-linecap="round"/>
+    `;
+    break;
  case 'cinema':m=`<rect x="94" y="82" width="326" height="165" rx="13" fill="#626492"/><rect x="110" y="99" width="294" height="133" rx="7" fill="#d9d6ef"/><circle cx="256" cy="166" r="44" fill="#9290c7"/><path d="M246 145v42l37-21z" fill="#fff"/>`+`<path d="M128 289h258" stroke="#c0a8b3" stroke-width="27" stroke-linecap="round"/>`;break;
  default:m=sun(240,152,50);break;
  }
@@ -161,6 +272,11 @@ try{
   const raw=localStorage.getItem(STORE)||localStorage.getItem(LEGACY_STORE);
   state=migrate(raw?JSON.parse(raw):null);
 }catch(e){state=initial();}
+function upgradeStarterIllustrations(){
+  const movie=state.cards.find(c=>c.id==='b11');
+  if(movie && movie.scene==='cinema' && !movie.customImage)movie.scene='mexican-film';
+}
+upgradeStarterIllustrations();
 function activeProfile(){return state.profiles.find(p=>p.id===state.activeProfileId)||state.profiles[0];}
 function progressFor(c){return activeProfile().progress[c.id]||{};}
 function ensureProgress(c){const p=activeProfile();return p.progress[c.id]||(p.progress[c.id]={});}
@@ -230,7 +346,7 @@ function speakPage(){const g=speakExercises[speakAt % speakExercises.length];ret
 function libCards(){return state.cards.filter(c=>(libTopic==='All'||c.topic===libTopic)&&(libType==='All'||c.kind===libType)&&[c.frenchAnswer,c.englishPrompt,c.topic,c.frenchExample].some(v=>textNormalized(v).includes(textNormalized(libSearch))));}
 function libraryPage(){const cs=libCards();return `<div><div class="eyebrow">YOUR LEARNING LIBRARY</div><h1>Every idea has a picture.</h1><p class="header-desc">Browse your visual cards, change the illustrations, and add your own daily-life scenes. All edits are saved locally.</p><div class="library-toolbar"><div class="search-box">${icon('search')}<input class="input" placeholder="Find a concept or French expression..." id="lib-search" value="${esc(libSearch)}"/></div><select id="lib-topic" class="select" aria-label="Filter by topic"><option>All</option>${[...new Set(state.cards.map(c=>c.topic))].map(t=>`<option ${libTopic===t?'selected':''}>${esc(t)}</option>`).join('')}</select><select id="lib-type" class="select" aria-label="Filter by card type">${['All','vocab','action','sentence','grammar','speaking'].map(t=>`<option ${libType===t?'selected':''}>${esc(t)}</option>`).join('')}</select><button class="btn btn-primary" data-action="add-card">${icon('plus')} Add card</button></div><p class="small muted">${cs.length} cards · Pictures are the default prompt</p><div class="library-grid">${cs.map(c=>`<div class="lib-card hover-card"><div class="lib-scene">${visual(c)}</div><div class="lib-content"><span class="meta">${esc(c.topic)}</span><h3>${esc(c.frenchAnswer)}</h3><p>${esc(c.englishPrompt)}</p><div class="lib-footer"><button class="btn btn-secondary" data-edit="${esc(c.id)}">${icon('edit')} Edit</button><button class="btn btn-white" data-practice="${esc(c.id)}">Practice ${icon('arrow')}</button></div></div></div>`).join('')}</div>${cs.length?'':`<div class="empty"><h3>No matching cards</h3><p>Adjust filters or add a new card.</p></div>`}</div>`;}
 function settingsPage(){return `<div><div class="eyebrow">YOUR APP, YOUR RULES</div><h1>Settings & backups.</h1><p class="header-desc">Visual French practice works offline after installation. Each learner has independent progress saved on this device only; there is no cross-device synchronization.</p><div class="settings-grid"><div class="panel"><h3>Study profiles</h3><p>Each learner has separate reviews, streaks, grammar and speaking history. Everyone shares one vocabulary library.</p><p class="mini-step">Studying as: ${esc(activeProfile().name)}</p><div style="margin-top:17px"><button class="btn btn-primary" data-action="open-profiles">${icon("plus")} Manage profiles</button></div></div><div class="panel"><h3>Flashcard front</h3><p>Choose what appears before you reveal French. Visual is the recommended speaking-focused mode.</p><div class="field"><label for="front-mode">Card prompt mode</label><select id="front-mode" class="select"><option value="visual" ${activeProfile().prefs.frontMode==='visual'?'selected':''}>Picture only (recommended)</option><option value="english" ${activeProfile().prefs.frontMode==='english'?'selected':''}>English prompt</option><option value="mixed" ${activeProfile().prefs.frontMode==='mixed'?'selected':''}>Picture + English</option></select></div></div><div class="panel"><h3>Backup your progress</h3><p>Download a complete backup of your shared cards, uploaded pictures and every learner profile with its own study history. Importing a backup replaces all existing local profiles on that device.</p><button class="btn btn-primary" data-action="export-json">${icon('download')} Export backup</button> <button class="btn btn-white" data-action="import-json">${icon('upload')} Import backup</button><input id="import-input" type="file" accept="application/json,.json" hidden/></div><div class="panel"><h3>Add to your iPhone</h3><p>After deploying to a secure HTTPS address, open it in Safari → Share → Add to Home Screen. Then Parlez appears as an app icon.</p><p class="small muted">Offline files are cached after the first successful visit. Your card data remains local.</p></div><div class="panel"><h3>Data controls</h3><p><b>${state.cards.length}</b> cards · <b>${activeProfile().history.length}</b> reviews · <b>${activeProfile().speakingHistory.length}</b> speaking attempts.</p><button class="btn btn-white" data-action="export-csv">${icon('download')} Export cards CSV</button> <button class="btn btn-danger" style="margin-top:12px" data-action="reset-data">${icon('trash')} Reset entire app</button></div></div><div class="notice">${icon('info')} Important: all profiles are stored only in this browser. Different phones do not synchronize. Clearing Safari data removes all local profiles and your edited cards. Export a full JSON backup regularly.</div></div>`;}
-function cardModal(c){modalOpen=true;editId=c?.id||null;editScene=c?.scene||'wake';editImage=c?.customImage||null;const sceneKeys=['wake','rise','brush','shower','dress','hair','walk','bedtime','sleep','breakfast','makebed','dishes','plants','work','coffee','bike','hat','scarf','dressobj','shoes','shirt','pants','skirt','socks','gloves','red-dress','rain','snow','sun','wind','clouds','cold','hot','write','eat-before','eat-now','eat-after','clock-215','clock-230','clock-245','sport','cinema'];const fields=[['sceneHint','Scene clue (optional)','What is happening or changing in the picture?'],['startHint','French starter (optional)','e.g. Je me ré…'],['englishPrompt','English meaning (for hints)','e.g. I wake up'],['frenchAnswer','French answer','e.g. Je me réveille.'],['pronunciation','Pronunciation','e.g. zhuh muh ray-VEHY'],['frenchExample','Example in French','e.g. Je me réveille tôt.'],['mnemonic','Optional memory cue','e.g. An alarm ringing — leave blank if unnecessary'],['grammarNote','Optional grammar note','e.g. Je + me + verb']];const f=(key,title,placeholder)=>`<div class="field"><label for="ed-${key}">${title}</label><input class="input" id="ed-${key}" value="${esc(c?.[key]||'')}" placeholder="${esc(placeholder)}" ${key==='frenchAnswer'?'required':''}/></div>`;const html=`<div class="modal-backdrop" id="modal-backdrop"><div class="modal" role="dialog" aria-modal="true" aria-label="${c?'Edit':'Add'} card"><div class="modal-header"><h2>${c?'Edit your card':'Create a new card'}</h2><button class="round-btn" data-action="close-modal" aria-label="Close dialog">${icon('close')}</button></div><div class="field-row"><div class="field"><label for="ed-topic">Topic</label><input class="input" id="ed-topic" value="${esc(c?.topic||'My own cards')}"/></div><div class="field"><label for="ed-kind">Card type</label><select class="select" id="ed-kind">${['vocab','action','sentence','grammar','speaking'].map(t=>`<option ${c?.kind===t?'selected':''}>${t}</option>`).join('')}</select></div></div><div class="field"><label>Choose a picture for the FRONT</label><div class="image-chooser">${sceneKeys.map(key=>`<button class="${editScene===key?'selected':''}" data-choose-scene="${key}" title="${key}">${sceneSVG(key)}<span>${key.replace(/-/g,' ')}</span></button>`).join('')}</div><small style="margin-top:5px">Pick an illustration or upload a photo below.</small></div><div class="field"><label for="own-image">Upload your own image (optional)</label><input id="own-image" type="file" accept="image/*" class="input"/><small>Images are compressed on your device to fit local storage. A custom image replaces the illustration.</small></div><div id="uploaded-preview">${editImage?`<img alt="User image" src="${esc(editImage)}" style="max-height:110px;max-width:160px;border-radius:10px"/> <button class="btn btn-white" data-action="clear-upload">Remove image</button>`:''}</div>${fields.map(x=>f(...x)).join('')}<div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:18px">${c?`<button class="btn btn-danger" data-action="delete-card" data-card-id="${esc(c.id)}">${icon('trash')} Delete</button>`:'<span></span>'}<div style="display:flex;gap:9px"><button class="btn btn-white" data-action="close-modal">Cancel</button><button class="btn btn-primary" data-action="save-card">${icon('check')} Save card</button></div></div></div></div>`;document.body.insertAdjacentHTML('beforeend',html);}
+function cardModal(c){modalOpen=true;editId=c?.id||null;editScene=c?.scene||'wake';editImage=c?.customImage||null;const sceneKeys=['wake','rise','brush','shower','dress','hair','walk','bedtime','sleep','breakfast','makebed','dishes','plants','work','coffee','bike','hat','scarf','dressobj','shoes','shirt','pants','skirt','socks','gloves','red-dress','rain','snow','sun','wind','clouds','cold','hot','write','eat-before','eat-now','eat-after','clock-215','clock-230','clock-245','sport','cinema','mexican-film'];const fields=[['sceneHint','Scene clue (optional)','What is happening or changing in the picture?'],['startHint','French starter (optional)','e.g. Je me ré…'],['englishPrompt','English meaning (for hints)','e.g. I wake up'],['frenchAnswer','French answer','e.g. Je me réveille.'],['pronunciation','Pronunciation','e.g. zhuh muh ray-VEHY'],['frenchExample','Example in French','e.g. Je me réveille tôt.'],['mnemonic','Optional memory cue','e.g. An alarm ringing — leave blank if unnecessary'],['grammarNote','Optional grammar note','e.g. Je + me + verb']];const f=(key,title,placeholder)=>`<div class="field"><label for="ed-${key}">${title}</label><input class="input" id="ed-${key}" value="${esc(c?.[key]||'')}" placeholder="${esc(placeholder)}" ${key==='frenchAnswer'?'required':''}/></div>`;const html=`<div class="modal-backdrop" id="modal-backdrop"><div class="modal" role="dialog" aria-modal="true" aria-label="${c?'Edit':'Add'} card"><div class="modal-header"><h2>${c?'Edit your card':'Create a new card'}</h2><button class="round-btn" data-action="close-modal" aria-label="Close dialog">${icon('close')}</button></div><div class="field-row"><div class="field"><label for="ed-topic">Topic</label><input class="input" id="ed-topic" value="${esc(c?.topic||'My own cards')}"/></div><div class="field"><label for="ed-kind">Card type</label><select class="select" id="ed-kind">${['vocab','action','sentence','grammar','speaking'].map(t=>`<option ${c?.kind===t?'selected':''}>${t}</option>`).join('')}</select></div></div><div class="field"><label>Choose a picture for the FRONT</label><div class="image-chooser">${sceneKeys.map(key=>`<button class="${editScene===key?'selected':''}" data-choose-scene="${key}" title="${key}">${sceneSVG(key)}<span>${key.replace(/-/g,' ')}</span></button>`).join('')}</div><small style="margin-top:5px">Pick an illustration or upload a photo below.</small></div><div class="field"><label for="own-image">Upload your own image (optional)</label><input id="own-image" type="file" accept="image/*" class="input"/><small>Images are compressed on your device to fit local storage. A custom image replaces the illustration.</small></div><div id="uploaded-preview">${editImage?`<img alt="User image" src="${esc(editImage)}" style="max-height:110px;max-width:160px;border-radius:10px"/> <button class="btn btn-white" data-action="clear-upload">Remove image</button>`:''}</div>${fields.map(x=>f(...x)).join('')}<div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:18px">${c?`<button class="btn btn-danger" data-action="delete-card" data-card-id="${esc(c.id)}">${icon('trash')} Delete</button>`:'<span></span>'}<div style="display:flex;gap:9px"><button class="btn btn-white" data-action="close-modal">Cancel</button><button class="btn btn-primary" data-action="save-card">${icon('check')} Save card</button></div></div></div></div>`;document.body.insertAdjacentHTML('beforeend',html);}
 function modalClose(){document.querySelector('#modal-backdrop')?.remove();modalOpen=false;}
 function profileModal(){
  modalClose();
