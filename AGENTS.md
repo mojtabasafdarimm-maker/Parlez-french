@@ -7,6 +7,9 @@ You are working on **Parlez**, a visual-first French learning Progressive Web Ap
 - Front of a flashcard = a CLEAR picture/action/scenario, **no French, English or Persian answer text by default**. Learner recalls and says French aloud before reveal. Optional hints are user-invoked.
 - Back = correct French answer, pronunciation/audio, relevant example, helpful explanations. Keep accents, articles, gender, conjugations, and semantics accurate.
 - Memory trick hint: optional useful Persian / English sound or word association; then scene clue; then partial French starter. A hint must not replace an ambiguous image. Review existing cues for false etymology/forced associations.
+- Choose each memory hook for memorability, without a Persian-first preference. Explain it in English; use a familiar Persian or English anchor when it makes the stronger connection. Prefer one vivid, concrete association over translation or generic scene description. UI labels are language-neutral.
+- Latest user review: reject forced or absurd invented stories. Use a short familiar connection only when strong; omit the mnemonic otherwise. Pronunciation respellings are not mnemonic connections. Review five cards together before publishing the revised batch.
+- The user subsequently authorized pushing all changes so far; this supersedes that five-card publication hold for the current release. Continue to use the stronger mnemonic standard for future changes.
 - Preserve learner profiles: independent schedules/streaks/history/preferences and shared library on the **same device**. This is **not** cross-device sync. Never silently reset local data or change storage keys without tested migration.
 - Maintain offline functionality, JSON export/import, and no in-app AI API by default.
 
