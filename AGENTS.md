@@ -10,6 +10,7 @@ You are working on **Parlez**, a visual-first French learning Progressive Web Ap
 - Hint/mnemonic fields from old backups may remain stored for compatibility but must not appear in review or card editing.
 - Preserve learner profiles: independent schedules/streaks/history/preferences and shared library on the **same device**. This is **not** cross-device sync. Never silently reset local data or change storage keys without tested migration.
 - Maintain offline functionality, JSON export/import, and no in-app AI API by default.
+- Grammar now opens the Verb game: 10 rounds choosing and building sentences in présent, présent continu, passé récent, passé composé and futur proche. Keep explanations short and game sessions/results per profile. Do not equate passé récent with passé composé or reject the ordinary present as an invalid continuous translation.
 
 ## Engineering boundaries
 
