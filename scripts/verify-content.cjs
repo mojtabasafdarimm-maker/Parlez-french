@@ -76,7 +76,7 @@ fs.mkdirSync(out,{recursive:true});
   await page.evaluate(()=>startPracticeCard('g2'));
   await page.locator('[data-action="reveal"]').click();
   assert.equal(await page.locator('.example-meaning').textContent(),'I am eating right now.');
-  assert.ok((await page.evaluate(()=>caches.keys())).includes('parlez-v11-vocabulary'));
+  assert.ok((await page.evaluate(()=>caches.keys())).includes('parlez-v12-clean-cards'));
   assert.deepEqual(errors,[]);
   console.log('PASS: 50 cards with meanings/examples/translations; no hints; 6 widths; editor save; content upgrade; custom edits/images; separate profiles; v2 migration; offline reload.');
  }finally{await browser.close();}
