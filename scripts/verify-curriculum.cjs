@@ -92,11 +92,25 @@ function startServer() {
     await page.locator('[data-action="vocab-reveal"]').click();
     await page.waitForTimeout(200);
 
-    // Verify card back shows answer, example, and rating buttons
+    // Verify card back shows answer, example, phonetic, and rating buttons
     assert.equal(await page.locator('.answer').count(), 1);
     const frenchAnswer = await page.locator('.answer h2').textContent();
     console.log('A1.2 revealed French answer:', frenchAnswer);
     assert.ok(frenchAnswer.length > 0);
+
+    // Verify absence of "HOW WELL DID YOU REMEMBER?"
+    const pageText = await page.evaluate(() => document.body.innerText);
+    assert.ok(!pageText.includes('HOW WELL DID YOU REMEMBER'), 'Must NOT contain "HOW WELL DID YOU REMEMBER"');
+    console.log('Verified: "HOW WELL DID YOU REMEMBER?" is completely removed from card back!');
+
+    // Verify presence of example-phonetic
+    const phonCount = await page.locator('.example-phonetic').count();
+    console.log('Example phonetic count on vocab card back:', phonCount);
+    assert.ok(phonCount >= 1, 'Revealed card must display .example-phonetic');
+    const phonText = await page.locator('.example-phonetic').first().textContent();
+    console.log('Vocab example phonetic reading guide:', phonText);
+    assert.ok(phonText.startsWith('[') && phonText.endsWith(']'), 'Phonetic guide must be formatted in brackets');
+
     await page.screenshot({ path: path.join(out, 'vocab-card-back-390.png') });
 
     // Rate "good"
@@ -184,6 +198,11 @@ function startServer() {
     console.log('Revealed sentence:', revealedText.trim());
     assert.ok(revealedText.includes('parle'), 'Revealed sentence should contain conjugated form "parle"');
     assert.equal(await page.locator('.drill-highlight').count(), 1, 'Target verb should be highlighted');
+
+    // Verify drill sentence phonetic
+    const drillPhon = await page.locator('.drill-sentence-phonetic').textContent();
+    console.log('Drill revealed phonetic pronunciation guide:', drillPhon.trim());
+    assert.ok(drillPhon.includes('[zhuh parl'), 'Drill revealed phonetic should contain [zhuh parl...');
 
     // Verify full 6-pronoun structural guide table
     const paradigmRowsCount = await page.locator('.drill-paradigm-row').count();

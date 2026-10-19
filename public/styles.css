@@ -49,6 +49,8 @@
 .answer .english{display:block;margin:10px 0 16px;font-size:18px;color:#57546b}
 .example p,.vocab-example p{margin:8px 0;line-height:1.55}
 .example-meaning{color:#747184;font-size:14px}
+.example-phonetic{color:#706bbc;font-size:13.5px;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;letter-spacing:.2px;margin:3px 0 5px!important;font-weight:600;background:#f4f1fc;display:inline-block;padding:3px 8px;border-radius:6px;line-height:1.4}
+.drill-sentence-phonetic{color:#706bbc;font-size:13.5px;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;letter-spacing:.2px;margin:4px 0 4px!important;font-weight:600;background:#f4f1fc;display:inline-block;padding:3px 8px;border-radius:6px;line-height:1.4}
 .vocab-example{border-top:1px solid #ebe8f0;margin-top:14px;padding-top:8px}
 .vocab-deck-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin-top:16px}
 .vocab-deck-card{display:flex;flex-direction:column;justify-content:space-between;transition:transform .15s ease,border-color .15s ease}
