@@ -2,7 +2,7 @@
 'use strict';
 const STORE='parlez-v3-state', LEGACY_STORE='parlez-v2-state';
 const $=s=>document.querySelector(s);
-const icons={home:'<path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/>',review:'<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 7h8M8 11h8M8 15h4"/>',grammar:'<path d="M3 5h7a4 4 0 0 1 4 4v12a4 4 0 0 0-4-4H3zM21 5h-3a4 4 0 0 0-4 4v12a4 4 0 0 1 4-4h3z"/>',speak:'<rect x="9" y="2" width="6" height="13" rx="3"/><path d="M5 10a7 7 0 0 0 14 0M12 17v5M8 22h8"/>',library:'<path d="M4 4h16v16H4zM9 4v16M13 9h4M13 13h4"/>',settings:'<circle cx="12" cy="12" r="3"/><path d="m19.4 15 1 1.7-2 2-1.7-1a8 8 0 0 1-2 .8l-.5 2.2H9.8l-.5-2.2a8 8 0 0 1-2-.8l-1.7 1-2-2 1-1.7a8 8 0 0 1-.8-2L1.5 12l2.3-.5a8 8 0 0 1 .8-2L3.6 7.8l2-2 1.7 1a8 8 0 0 1 2-.8l.5-2.2h4.4l.5 2.2a8 8 0 0 1 2 .8l1.7-1 2 2-1 1.7a8 8 0 0 1 .8 2l2.3.5-2.3.5a8 8 0 0 1-.8 2z"/>',arrow:'<path d="M5 12h14m-6-6 6 6-6 6"/>',sound:'<path d="M11 5 6 9H3v6h3l5 4zM15 9a5 5 0 0 1 0 6M18 6a9 9 0 0 1 0 12"/>',edit:'<path d="M12 20h9M16 4l4 4L9 19l-5 1 1-5z"/>',plus:'<path d="M12 5v14M5 12h14"/>',search:'<circle cx="11" cy="11" r="7"/><path d="m16 16 5 5"/>',check:'<path d="m5 12 4 4L19 6"/>',close:'<path d="M5 5 19 19M19 5 5 19"/>',clock:'<circle cx="12" cy="12" r="9"/><path d="M12 6v6l4 2"/>',fire:'<path d="M12 22c5 0 8-4 8-8 0-4-3-7-5-9 0 4-2 5-3 6 0-4-2-6-4-8-1 4-4 7-4 11 0 4 3 8 8 8z"/>',brain:'<path d="M12 5a4 4 0 0 0-7 2 4 4 0 0 0-1 7 5 5 0 0 0 8 5M12 5a4 4 0 0 1 7 2 4 4 0 0 1 1 7 5 5 0 0 1-8 5zM12 5v14"/>',download:'<path d="M12 3v13m-5-5 5 5 5-5M4 18v3h16v-3"/>',upload:'<path d="M12 17V4m-5 5 5-5 5 5M4 18v3h16v-3"/>',trash:'<path d="M4 7h16M10 11v7m4-7v7M6 7l1 14h10l1-14M9 7V4h6v3"/>',eye:'<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',spark:'<path d="M12 2l2.5 7.5L22 12l-7.5 2.5L12 22l-2.5-7.5L2 12l7.5-2.5z"/>',left:'<path d="m14 5-7 7 7 7"/>',book:'<path d="M4 3h13a3 3 0 0 1 3 3v15H7a3 3 0 0 1-3-3zM4 18a3 3 0 0 1 3-3h13"/>',info:'<circle cx="12" cy="12" r="10"/><path d="M12 11v6M12 7h.01"/>'};
+const icons={home:'<path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/>',vocab:'<rect x="3" y="4" width="18" height="16" rx="3"/><path d="M7 8h10M7 12h7"/>',review:'<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 7h8M8 11h8M8 15h4"/>',grammar:'<path d="M3 5h7a4 4 0 0 1 4 4v12a4 4 0 0 0-4-4H3zM21 5h-3a4 4 0 0 0-4 4v12a4 4 0 0 1 4-4h3z"/>',speak:'<rect x="9" y="2" width="6" height="13" rx="3"/><path d="M5 10a7 7 0 0 0 14 0M12 17v5M8 22h8"/>',library:'<path d="M4 4h16v16H4zM9 4v16M13 9h4M13 13h4"/>',settings:'<circle cx="12" cy="12" r="3"/><path d="m19.4 15 1 1.7-2 2-1.7-1a8 8 0 0 1-2 .8l-.5 2.2H9.8l-.5-2.2a8 8 0 0 1-2-.8l-1.7 1-2-2 1-1.7a8 8 0 0 1-.8-2L1.5 12l2.3-.5a8 8 0 0 1 .8-2L3.6 7.8l2-2 1.7 1a8 8 0 0 1 2-.8l.5-2.2h4.4l.5 2.2a8 8 0 0 1 2 .8l1.7-1 2 2-1 1.7a8 8 0 0 1 .8 2l2.3.5-2.3.5a8 8 0 0 1-.8 2z"/>',arrow:'<path d="M5 12h14m-6-6 6 6-6 6"/>',sound:'<path d="M11 5 6 9H3v6h3l5 4zM15 9a5 5 0 0 1 0 6M18 6a9 9 0 0 1 0 12"/>',edit:'<path d="M12 20h9M16 4l4 4L9 19l-5 1 1-5z"/>',plus:'<path d="M12 5v14M5 12h14"/>',search:'<circle cx="11" cy="11" r="7"/><path d="m16 16 5 5"/>',check:'<path d="m5 12 4 4L19 6"/>',close:'<path d="M5 5 19 19M19 5 5 19"/>',clock:'<circle cx="12" cy="12" r="9"/><path d="M12 6v6l4 2"/>',fire:'<path d="M12 22c5 0 8-4 8-8 0-4-3-7-5-9 0 4-2 5-3 6 0-4-2-6-4-8-1 4-4 7-4 11 0 4 3 8 8 8z"/>',brain:'<path d="M12 5a4 4 0 0 0-7 2 4 4 0 0 0-1 7 5 5 0 0 0 8 5M12 5a4 4 0 0 1 7 2 4 4 0 0 1 1 7 5 5 0 0 1-8 5zM12 5v14"/>',download:'<path d="M12 3v13m-5-5 5 5 5-5M4 18v3h16v-3"/>',upload:'<path d="M12 17V4m-5 5 5-5 5 5M4 18v3h16v-3"/>',trash:'<path d="M4 7h16M10 11v7m4-7v7M6 7l1 14h10l1-14M9 7V4h6v3"/>',eye:'<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',spark:'<path d="M12 2l2.5 7.5L22 12l-7.5 2.5L12 22l-2.5-7.5L2 12l7.5-2.5z"/>',left:'<path d="m14 5-7 7 7 7"/>',book:'<path d="M4 3h13a3 3 0 0 1 3 3v15H7a3 3 0 0 1-3-3zM4 18a3 3 0 0 1 3-3h13"/>',info:'<circle cx="12" cy="12" r="10"/><path d="M12 11v6M12 7h.01"/>'};
 function icon(name,cl='icon'){return `<svg class="${cl}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${icons[name]||icons.spark}</svg>`;}
 function esc(s=''){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function textNormalized(s){return String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[’']/g,'').replace(/[^a-z0-9 ]/g,' ').replace(/\s+/g,' ').trim();}
@@ -541,8 +541,19 @@ function upgradeVocabularyContent(){
     if(sameExample){c.frenchExample=updated.frenchExample;if(!c.exampleEnglish)c.exampleEnglish=updated.exampleEnglish;}
   }
 }
+function mergeCurriculumCards(){
+  if(typeof window.ParlezCurriculumCards==='object'&&window.ParlezCurriculumCards){
+    const list=window.ParlezCurriculumCards.all||Object.values(window.ParlezCurriculumCards).flat();
+    for(const c of list){
+      if(!state.cards.some(existing=>existing.id===c.id)){
+        state.cards.push({...c,tags:[...(c.tags||[])]});
+      }
+    }
+  }
+}
 upgradeVocabularyContent();
 upgradeStarterIllustrations();
+mergeCurriculumCards();
 function activeProfile(){return state.profiles.find(p=>p.id===state.activeProfileId)||state.profiles[0];}
 function progressFor(c){return activeProfile().progress[c.id]||{};}
 function ensureProgress(c){const p=activeProfile();return p.progress[c.id]||(p.progress[c.id]={});}
@@ -552,6 +563,8 @@ function persist(){
 }
 persist();
 let view='home',reviewSession=null,revealed=false,libSearch='',libTopic='All',libType='All',modalOpen=false,editId=null,editImage=null,editScene='wake',gramTab='All',grammarInput='',grammarFeedback='',grammarAt=0,speakAt=0,speakShown=false,speakHint=false,speakResponse='',speakResult='';
+let vocabSession=null,vocabLessonFilter='All',vocabTopicFilter='All',vocabSearch='';
+let grammarSubView='game',grammarTopicFilter='All',grammarSession=null;
 function todayHistory(){return activeProfile().history.filter(e=>todayKey(e.time)===todayKey());}
 function lastStreak(){const dates=new Set(activeProfile().history.map(e=>todayKey(e.time)));let streak=0;let d=new Date();if(!dates.has(todayKey(d)))d.setDate(d.getDate()-1);while(dates.has(todayKey(d))){streak++;d.setDate(d.getDate()-1);}return streak;}
 function dueCards(){return state.cards.filter(c=>{const p=progressFor(c);return !p.dueAt||p.dueAt<=Date.now();});}
@@ -562,11 +575,11 @@ function navbar(){
  let date=new Date().toLocaleDateString('en-CA',{weekday:'long',month:'long',day:'numeric'}),p=activeProfile();
  return `<div class="topbar"><div class="mobile-logo"><span class="logo-mark">P</span> Parlez</div><div class="date">${esc(date)}</div><div class="top-actions"><button class="round-btn" data-view="settings" aria-label="Settings">${icon('settings')}</button><button class="profile-switch" type="button" data-action="open-profiles" aria-label="Switch or add a study profile" title="Switch profile"><span class="profile-bubble" style="background:${esc(p.color)}">${esc(p.name.charAt(0).toUpperCase())}</span><span class="profile-title">${esc(p.name)}</span><span class="profile-down">⌄</span></button></div></div>`;
 }
-function shell(content){const tabs=['home','review','grammar','speak','library'];let names=['Home','Review','Grammar','Speak','Library'];return `<div class="app-shell"><aside class="side"><div class="logo"><span class="logo-mark">P</span> Parlez</div><nav class="side-nav">${tabs.map((t,i)=>navItem(t,names[i])).join('')}</nav><div class="side-bottom"><span class="eyebrow">Your learning method</span><p style="font-size:15px;font-weight:700;line-height:1.5;margin:10px 0 5px">See it. Think it.<br/>Say it in French.</p><p class="small muted" style="margin:0">Direct visual recall without translation.</p></div></aside><main class="main">${navbar()}${content}</main></div><nav class="bottom-nav">${tabs.map((t,i)=>`<button data-view="${t}" class="${view===t?'active':''}" aria-label="${names[i]}">${icon(t)}${names[i]}</button>`).join('')}</nav>`;}
+function shell(content){const tabs=['home','vocab','grammar','review','library'];let names=['Home','Vocab','Grammar','Review','Library'];return `<div class="app-shell"><aside class="side"><div class="logo"><span class="logo-mark">P</span> Parlez</div><nav class="side-nav">${tabs.map((t,i)=>navItem(t,names[i])).join('')}</nav><div class="side-bottom"><span class="eyebrow">Your learning method</span><p style="font-size:15px;font-weight:700;line-height:1.5;margin:10px 0 5px">See it. Think it.<br/>Say it in French.</p><p class="small muted" style="margin:0">Direct visual recall without translation.</p></div></aside><main class="main">${navbar()}${content}</main></div><nav class="bottom-nav">${tabs.map((t,i)=>`<button data-view="${t}" class="${view===t?'active':''}" aria-label="${names[i]}">${icon(t)}${names[i]}</button>`).join('')}</nav>`;}
 function heroArt(){return `<svg viewBox="0 0 320 255" xmlns="http://www.w3.org/2000/svg"><g transform="translate(4 5) rotate(-10 120 115)"><rect x="36" y="35" width="192" height="202" rx="24" fill="#fff"/><rect x="52" y="52" width="160" height="123" rx="16" fill="#e8e5fb"/>${sun(132,107,32).replace('cx="132"','cx="132"')}<path d="M70 203h127" stroke="#e2dfec" stroke-width="11" stroke-linecap="round"/></g><g transform="translate(96 12) rotate(12 120 110)"><rect x="45" y="30" width="186" height="203" rx="24" fill="#fff" stroke="#e3dff2" stroke-width="3"/><rect x="61" y="46" width="154" height="120" rx="15" fill="#f5eff8"/><path d="M101 135q32-45 70 0" stroke="#b7a1d4" stroke-width="24" fill="none"/><circle cx="137" cy="87" r="28" fill="#f1bda8"/><path d="M110 85q-3-34 29-30 22 0 24 28" fill="#51455a"/><path d="M92 193h94" stroke="#d8d3e7" stroke-width="9" stroke-linecap="round"/><path d="M92 212h57" stroke="#e9e6f1" stroke-width="8" stroke-linecap="round"/></g><circle cx="289" cy="29" r="14" fill="#ffd78a"/><circle cx="29" cy="207" r="9" fill="#aac5bd"/></svg>`;}
 function stat(num,label,ic){return `<div class="stat"><div class="stat-icon">${icon(ic)}</div><div><div class="big-count">${num}</div><div class="stat-label">${label}</div></div></div>`;}
-const topicEmoji={'Daily routine':'☀️','Clothing':'🧣','Weather':'🌦️','Objects':'✍️','Grammar':'📖','Time':'🕒','Speaking':'💬'};
-function homePage(){const due=dueCards().length,done=todayHistory().length;const byTopic=Object.entries(topicEmoji).map(([t,emoji])=>{let cs=state.cards.filter(c=>c.topic===t),remembered=cs.filter(c=>progressFor(c).interval>=7).length;return cs.length?`<div class="topic-row"><div class="topic-icon">${emoji}</div><div style="flex:1"><div style="display:flex;justify-content:space-between"><span class="topic-name">${esc(t)}</span><span class="small muted">${remembered}/${cs.length}</span></div><div class="progress-track"><div class="progress-fill" style="width:${100*remembered/cs.length}%"></div></div></div></div>`:''}).join('');return `<section class="hero"><div><div class="eyebrow">WELCOME, ${esc(activeProfile().name.toUpperCase())}</div><h1>See it. Say it.<br/>Remember it.</h1><p>Train yourself to think in French through pictures, real-life actions and tiny daily practice.</p>${btn(`Start visual review ${icon('arrow')}`,'btn-primary btn-lg','data-action="start-review"')}</div><div class="hero-illustration">${heroArt()}</div></section><div class="stats">${stat(due,'Cards ready','clock')}${stat(done,'Reviewed today','check')}${stat(lastStreak()+' days','Study streak','fire')}</div><div class="section-head"><h2>Your learning space</h2><button class="link" data-view="library">See all cards →</button></div><div class="panels"><div class="panel"><div style="display:flex;align-items:center;justify-content:space-between"><h3>Today's focus</h3><span class="mini-step">VISUAL FIRST</span></div><p class="subline">Start with the picture, speak out loud, then reveal French. Ratings schedule your next review.</p><div style="display:flex;gap:12px;align-items:center;background:#f7f5fd;padding:17px;border-radius:16px"><span style="font-size:33px">🧠</span><div style="flex:1"><b>${due} cards waiting</b><div class="small muted">${Math.min(due,10)}-card focused session</div></div><button class="btn btn-secondary" data-action="start-review">Review ${icon('arrow')}</button></div></div><div class="panel"><h3>Progress by topic</h3>${byTopic}</div></div><div class="notice">${icon('info')} Review progress belongs to ${esc(activeProfile().name)} on this device. The card library is shared between profiles, but nothing syncs between phones yet.</div>`;}
+const topicEmoji={'Greetings':'👋','Identity':'🪪','Hobbies':'🎨','Daily life':'☕','Daily routine':'☀️','Clothing':'🧣','Weather':'🌦️','Objects':'✍️','Animals':'🐾','Family':'👨‍👩‍👧','Professions':'💼','Numbers':'🔢','Questions':'❓','City':'🏛️','Food & Dining':'🍽️','Grammar':'📖','Time':'🕒','Speaking':'💬'};
+function homePage(){const due=dueCards().length,done=todayHistory().length;const byTopic=Object.entries(topicEmoji).map(([t,emoji])=>{let cs=state.cards.filter(c=>c.topic===t),remembered=cs.filter(c=>progressFor(c).interval>=7).length;return cs.length?`<div class="topic-row"><div class="topic-icon">${emoji}</div><div style="flex:1"><div style="display:flex;justify-content:space-between"><span class="topic-name">${esc(t)}</span><span class="small muted">${remembered}/${cs.length}</span></div><div class="progress-track"><div class="progress-fill" style="width:${100*remembered/cs.length}%"></div></div></div></div>`:''}).join('');return `<section class="hero"><div><div class="eyebrow">WELCOME, ${esc(activeProfile().name.toUpperCase())}</div><h1>See it. Say it.<br/>Remember it.</h1><p>Train yourself to think in French through pictures, real-life actions and tiny daily practice.</p><div style="display:flex;gap:10px;flex-wrap:wrap">${btn(`Start visual review ${icon('arrow')}`,'btn-primary btn-lg','data-action="start-review"')}${btn(`Vocab flashcards ${icon('vocab')}`,'btn-secondary btn-lg','data-view="vocab"')}</div></div><div class="hero-illustration">${heroArt()}</div></section><div class="stats">${stat(due,'Cards ready','clock')}${stat(done,'Reviewed today','check')}${stat(lastStreak()+' days','Study streak','fire')}</div><div class="section-head"><h2>Your learning space</h2><button class="link" data-view="library">See all cards →</button></div><div class="panels"><div class="panel"><div style="display:flex;align-items:center;justify-content:space-between"><h3>Today's focus</h3><span class="mini-step">VISUAL FIRST</span></div><p class="subline">Start with the picture, speak out loud, then reveal French. Ratings schedule your next review.</p><div style="display:flex;gap:12px;align-items:center;background:#f7f5fd;padding:17px;border-radius:16px"><span style="font-size:33px">🧠</span><div style="flex:1"><b>${due} cards waiting</b><div class="small muted">${Math.min(due,10)}-card focused session</div></div><button class="btn btn-secondary" data-action="start-review">Review ${icon('arrow')}</button></div></div><div class="panel"><h3>Progress by topic</h3>${byTopic}</div></div><div class="notice">${icon('info')} Review progress belongs to ${esc(activeProfile().name)} on this device. The card library is shared between profiles, but nothing syncs between phones yet.</div>`;}
 function getReviewPool(filter){let due=dueCards();if(filter==='All cards')due=[...state.cards];if(filter!=='Due now'&&filter!=='All cards'&&filter!=='')due=due.filter(c=>c.topic===filter);return due.sort((a,b)=>(progressFor(a).dueAt||0)-(progressFor(b).dueAt||0));}
 let reviewFilter='Due now';function initReview(){const pool=getReviewPool(reviewFilter);reviewSession={ids:(reviewFilter==='Due now'?pool.slice(0,10):pool).map(c=>c.id),index:0,done:0,again:0,good:0};revealed=false;}
 function currentReviewCard(){if(!reviewSession)return null;const id=reviewSession.ids[reviewSession.index];return state.cards.find(c=>c.id===id)||null;}
@@ -578,10 +591,178 @@ function simpleReviewPage(){
   const picture=activeProfile().prefs.frontMode==='english'?`<div class="english-front">${esc(c.englishPrompt)}</div>`:visual(c);
   const answer=`<div class="answer"><div class="eyebrow">FRENCH</div><h2>${esc(c.frenchAnswer)}</h2><div class="english">${esc(c.englishPrompt)}</div><div class="answer-actions"><button class="btn btn-secondary" data-action="speak-french">${icon('sound')} Listen</button></div>${c.frenchExample?`<div class="example"><b>Example</b><p lang="fr">${esc(c.frenchExample)}</p>${c.exampleEnglish?`<p class="example-meaning">${esc(c.exampleEnglish)}</p>`:''}</div>`:''}</div><div class="eyebrow rating-title">HOW WELL DID YOU REMEMBER?</div><div class="rating-row">${[['Again','10 min','again'],['Hard','1 day','hard'],['Good','3+ days','good'],['Easy','5+ days','easy']].map(([label,sub,rate])=>`<button data-rate="${rate}" class="btn ${rate==='good'?'btn-primary':'btn-white'}">${label}<span>${sub}</span></button>`).join('')}</div>`;
   const prompt=`<div class="simple-review-actions"><button class="btn btn-primary btn-lg" data-action="reveal">Reveal French ${icon('eye')}</button></div>`;
-  return `<div class="review-layout">${header}<div class="small muted mb">Card ${reviewSession.index+1} of ${all}</div><div class="review-progress"><div style="width:${100*reviewSession.index/Math.max(all,1)}%"></div></div><div class="review-card"><div class="review-scene">${picture}<span class="corner">${esc(c.topic)}</span></div>${revealed?answer:prompt}</div></div>`;
+  return `<div class="review-layout">${header}<div class="small muted mb">Card ${reviewSession.index+1} of ${all}</div><div class="review-progress"><div style="width:${100*reviewSession.index/Math.max(all,1)}%"></div></div><div class="review-card ${revealed?'revealed':''}"><div class="review-scene">${picture}<span class="corner">${esc(c.topic)}</span></div>${revealed?answer:prompt}</div></div>`;
 }
 const reviewPage=simpleReviewPage;
 function rateCard(level){const c=currentReviewCard();if(!c)return;const p=ensureProgress(c),now=Date.now();p.reviews=(p.reviews||0)+1;p.lastReviewed=now;p.ease=p.ease||2.5;const prev=p.interval||0;switch(level){case 'again':p.interval=0;p.ease=Math.max(1.3,p.ease-.2);p.dueAt=now+10*60*1000;break;case 'hard':p.interval=Math.max(1,Math.round(prev?prev*1.2:1));p.ease=Math.max(1.3,p.ease-.15);p.dueAt=isoAfter(p.interval);break;case 'good':p.interval=prev?Math.max(3,Math.round(prev*p.ease)):3;p.dueAt=isoAfter(p.interval);break;case 'easy':p.interval=prev?Math.max(5,Math.round(prev*(p.ease+.35))):5;p.ease+=.12;p.dueAt=isoAfter(p.interval);break;}activeProfile().history.push({id:c.id,time:now,level});reviewSession.done++;if(level==='again')reviewSession.again++;reviewSession.index++;revealed=false;persist();render();}
+function getVocabPool(){
+  let pool=state.cards.filter(c=>c.kind!=='speaking');
+  if(vocabLessonFilter!=='All')pool=pool.filter(c=>c.lesson===vocabLessonFilter);
+  if(vocabTopicFilter!=='All')pool=pool.filter(c=>c.topic===vocabTopicFilter);
+  if(vocabSearch){
+    const q=textNormalized(vocabSearch);
+    pool=pool.filter(c=>textNormalized(c.frenchAnswer).includes(q)||textNormalized(c.englishPrompt).includes(q)||textNormalized(c.topic).includes(q));
+  }
+  return pool;
+}
+function initVocabSession(ids){
+  vocabSession={ids:ids&&ids.length?ids:getVocabPool().map(c=>c.id),index:0,done:0,again:0,revealed:false};
+}
+function currentVocabCard(){
+  if(!vocabSession||!vocabSession.ids.length)return null;
+  const id=vocabSession.ids[vocabSession.index];
+  return state.cards.find(c=>c.id===id)||null;
+}
+function rateVocabCard(level){
+  const c=currentVocabCard();if(!c)return;
+  const p=ensureProgress(c),now=Date.now();
+  p.reviews=(p.reviews||0)+1;p.lastReviewed=now;p.ease=p.ease||2.5;const prev=p.interval||0;
+  switch(level){
+    case 'again':p.interval=0;p.ease=Math.max(1.3,p.ease-.2);p.dueAt=now+10*60*1000;break;
+    case 'hard':p.interval=Math.max(1,Math.round(prev?prev*1.2:1));p.ease=Math.max(1.3,p.ease-.15);p.dueAt=isoAfter(p.interval);break;
+    case 'good':p.interval=prev?Math.max(3,Math.round(prev*p.ease)):3;p.dueAt=isoAfter(p.interval);break;
+    case 'easy':p.interval=prev?Math.max(5,Math.round(prev*(p.ease+.35))):5;p.ease+=.12;p.dueAt=isoAfter(p.interval);break;
+  }
+  activeProfile().history.push({id:c.id,time:now,level});
+  vocabSession.done++;
+  if(level==='again')vocabSession.again++;
+  vocabSession.index++;
+  vocabSession.revealed=false;
+  persist();
+  render();
+}
+function vocabCardSessionView(){
+  const c=currentVocabCard(),all=vocabSession.ids.length;
+  if(!c||vocabSession.index>=all){
+    return `<div class="review-layout">
+      <div class="review-top">
+        <div><div class="eyebrow">VOCABULARY PRACTICE</div><h2>Session Complete!</h2></div>
+        <button class="btn btn-secondary btn-sm" data-action="exit-vocab-session">Back to Decks</button>
+      </div>
+      <div class="empty">
+        <div class="empty-emoji">🎉</div>
+        <h2>Bravo !</h2>
+        <p class="subline">You completed ${vocabSession.done} vocabulary flashcards. ${vocabSession.again} marked for review.</p>
+        <button class="btn btn-primary" data-action="restart-vocab-session">Study Again ${icon('arrow')}</button>
+        <button class="btn btn-white" data-action="exit-vocab-session">All Decks</button>
+      </div>
+    </div>`;
+  }
+  const picture=activeProfile().prefs.frontMode==='english'?`<div class="english-front">${esc(c.englishPrompt)}</div>`:visual(c);
+  const answer=`<div class="answer"><div class="eyebrow">FRENCH</div><h2>${esc(c.frenchAnswer)}</h2><div class="english">${esc(c.englishPrompt)}</div><div class="answer-actions"><button class="btn btn-secondary" data-action="say-vocab-answer">${icon('sound')} Listen</button></div>${c.frenchExample?`<div class="example"><b>Example</b><p lang="fr">${esc(c.frenchExample)}</p>${c.exampleEnglish?`<p class="example-meaning">${esc(c.exampleEnglish)}</p>`:''}</div>`:''}${c.grammarNote?`<div class="vocab-note"><small>${esc(c.grammarNote)}</small></div>`:''}</div><div class="eyebrow rating-title">HOW WELL DID YOU REMEMBER?</div><div class="rating-row">${[['Again','10 min','again'],['Hard','1 day','hard'],['Good','3+ days','good'],['Easy','5+ days','easy']].map(([label,sub,rate])=>`<button data-vocab-rate="${rate}" class="btn ${rate==='good'?'btn-primary':'btn-white'}">${label}<span>${sub}</span></button>`).join('')}</div>`;
+  const prompt=`<div class="simple-review-actions"><button class="btn btn-primary btn-lg" data-action="vocab-reveal">Reveal French ${icon('eye')}</button></div>`;
+  return `<div class="review-layout">
+    <div class="review-top">
+      <div><div class="eyebrow">${esc(c.lesson||'A1.1 FLASHCARDS')}</div><h2>${esc(c.topic||'Vocabulary')}</h2></div>
+      <button class="btn btn-white btn-sm" data-action="exit-vocab-session">Exit Deck ✕</button>
+    </div>
+    <div class="small muted mb">Card ${vocabSession.index+1} of ${all}</div>
+    <div class="review-progress"><div style="width:${100*vocabSession.index/Math.max(all,1)}%"></div></div>
+    <div class="review-card ${vocabSession.revealed?'revealed':''}">
+      <div class="review-scene">${picture}<span class="corner">${esc(c.topic)}</span></div>
+      ${vocabSession.revealed?answer:prompt}
+    </div>
+  </div>`;
+}
+function vocabCatalogView(){
+  const allCards=state.cards.filter(c=>c.kind!=='speaking');
+  const distinctLessons=[
+    'A1.1 · Séances 1–2',
+    'A1.1 · Séances 3–4',
+    'A1.1 · Séances 5–6',
+    'A1.1 · Séances 7–8',
+    'A1.1 · Séances 9–10',
+    'A1.2 · Séances 1–2',
+    'A1.2 · Séances 3–4',
+    'A1.2 · Séances 5–6',
+    'A1.2 · Séances 7–8',
+    'A1.2 · Marché & Resto'
+  ];
+  const distinctTopics=['All',...new Set(allCards.map(c=>c.topic).filter(Boolean))];
+  const pool=getVocabPool();
+  const lessonDescriptions={
+    'A1.1 · Séances 1–2':{title:'Greetings, Politeness & Identity',desc:'Bonjour, bonsoir, enchanté, alphabet, spelling, politeness & questions.',icon:'👋'},
+    'A1.1 · Séances 3–4':{title:'Tastes, Leisure & Hobbies',desc:'Aimer, détester, adorer, musique, lecture, sport, échecs, guitare & expressions.',icon:'🎨'},
+    'A1.1 · Séances 5–6':{title:'Contact, Numbers & Living',desc:'Arobase (@), point, tiret, numéros de téléphone, soixante-dix, quatre-vingts, cent.',icon:'🔢'},
+    'A1.1 · Séances 7–8':{title:'Questions & City Places',desc:'Qui, qu’est-ce que, où, quand, comment, combien, bibliothèque, quartier, mairie.',icon:'❓'},
+    'A1.1 · Séances 9–10':{title:'Everyday Talk, Family & Professions',desc:'Quoi de neuf, train-train, parents, enfants, enseignant, médecin, avocat, architecte.',icon:'👨‍👩‍👧'},
+    'A1.2 · Séances 1–2':{title:'Verbes en -ir & Sentiments',desc:'Finir, choisir, rougir, réfléchir, sortir, dormir, partir, se sentir bien & fatigué.',icon:'✨'},
+    'A1.2 · Séances 3–4':{title:'Transports, Déplacements & Itinéraire',desc:'Bus, métro, tramway, vélo, monter, descendre, tourner à gauche/droite, tout droit.',icon:'🚇'},
+    'A1.2 · Séances 5–6':{title:'Vêtements, Style & Les Trois Temps',desc:'Chemise, pantalon, robe, manteau, moufles, en train de, venir de, aller + inf.',icon:'🧣'},
+    'A1.2 · Séances 7–8':{title:'Vie quotidienne, Corvées & Invitations',desc:'Se réveiller, se lever, faire les courses, la vaisselle, la lessive, ça te dit de... ?',icon:'☕'},
+    'A1.2 · Marché & Resto':{title:'Au Marché & Au Restaurant',desc:'Qu’est-ce qu’il vous faudra, tomates, laitue, oignons, l’addition s’il vous plaît.',icon:'🥖'}
+  };
+  const deckCardsHtml=distinctLessons.map(lessonKey=>{
+    const cardsInLesson=allCards.filter(c=>c.lesson===lessonKey);
+    const meta=lessonDescriptions[lessonKey]||{title:lessonKey,desc:'Classroom curriculum deck.',icon:'📖'};
+    const remembered=cardsInLesson.filter(c=>progressFor(c).interval>=7).length;
+    const pct=cardsInLesson.length?Math.round(100*remembered/cardsInLesson.length):0;
+    return `<div class="panel vocab-deck-card">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px">
+        <div style="font-size:32px">${meta.icon}</div>
+        <span class="meta">${cardsInLesson.length} cards</span>
+      </div>
+      <h3 style="margin:12px 0 6px">${esc(meta.title)}</h3>
+      <p class="small muted" style="margin:0 0 14px;line-height:1.5">${esc(meta.desc)}</p>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+        <span class="small muted" style="font-size:11px">Mastery: ${pct}%</span>
+        <span class="small muted" style="font-size:11px">${remembered}/${cardsInLesson.length} learned</span>
+      </div>
+      <div class="progress-track" style="margin-bottom:16px"><div class="progress-fill" style="width:${pct}%"></div></div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-primary" style="flex:1" data-start-deck="${esc(lessonKey)}">Study Deck ${icon('arrow')}</button>
+        <button class="btn btn-white btn-sm" data-filter-deck="${esc(lessonKey)}">Browse</button>
+      </div>
+    </div>`;
+  }).join('');
+  return `<div>
+    <div class="eyebrow">VOCABULARY FLASHCARDS · CLASS & ÉDITO</div>
+    <h1>See it. Say it.</h1>
+    <p class="header-desc">Direct visual recall without intermediate translation. Choose a classroom session or search for specific words.</p>
+    <div class="library-toolbar">
+      <div class="search-box">
+        ${icon('search')}
+        <input type="search" id="vocab-search-input" class="input" placeholder="Search vocabulary in French or English..." value="${esc(vocabSearch)}"/>
+      </div>
+      <select id="vocab-lesson-select" class="select" aria-label="Filter by lesson">
+        <option value="All" ${vocabLessonFilter==='All'?'selected':''}>All Sessions (${allCards.length} cards)</option>
+        ${distinctLessons.map(l=>`<option value="${esc(l)}" ${vocabLessonFilter===l?'selected':''}>${esc(l)}</option>`).join('')}
+      </select>
+      <select id="vocab-topic-select" class="select" aria-label="Filter by topic">
+        ${distinctTopics.map(t=>`<option value="${esc(t)}" ${vocabTopicFilter===t?'selected':''}>${esc(t)}</option>`).join('')}
+      </select>
+      ${(vocabLessonFilter!=='All'||vocabTopicFilter!=='All'||vocabSearch)?`<button class="btn btn-white btn-sm" data-action="reset-vocab-filter">Clear filters</button>`:''}
+    </div>
+    ${(vocabLessonFilter==='All'&&vocabTopicFilter==='All'&&!vocabSearch)?`
+      <div class="section-head" style="margin-top:10px">
+        <h2>Classroom Curriculum Decks</h2>
+        <button class="btn btn-secondary btn-sm" data-action="study-all-vocab">Study All (${allCards.length}) ${icon('arrow')}</button>
+      </div>
+      <div class="vocab-deck-grid">${deckCardsHtml}</div>
+    `:`
+      <div class="section-head" style="margin-top:10px">
+        <h2>${pool.length} Cards Found</h2>
+        <button class="btn btn-primary btn-sm" data-action="study-filtered-vocab">Study These ${pool.length} Cards ${icon('arrow')}</button>
+      </div>
+      <div class="library-grid">
+        ${pool.map(c=>`<div class="lib-card hover-card">
+          <div class="lib-scene">${visual(c)}</div>
+          <div class="lib-content">
+            <span class="meta">${esc(c.lesson||c.topic)}</span>
+            <h3>${esc(c.frenchAnswer)}</h3>
+            <p>${esc(c.englishPrompt)}</p>
+            ${c.frenchExample?`<div class="vocab-example"><p lang="fr">${esc(c.frenchExample)}</p>${c.exampleEnglish?`<p class="example-meaning">${esc(c.exampleEnglish)}</p>`:''}</div>`:''}
+            <div class="lib-footer">
+              <button class="btn btn-secondary btn-sm" data-say-card="${esc(c.frenchAnswer)}">${icon('sound')} Listen</button>
+              <button class="btn btn-white btn-sm" data-practice="${esc(c.id)}">Flashcard ${icon('arrow')}</button>
+            </div>
+          </div>
+        </div>`).join('')}
+      </div>
+    `}
+  </div>`;
+}
+function vocabPage(){return vocabSession?vocabCardSessionView():vocabCatalogView();}
 const grammarExercises=[
 {group:'Futur proche',title:'An action about to happen',scene:'eat-before',prompt:'I am going to eat.',fill:'Je ___ manger.',answer:'vais',explain:'aller (present) + infinitive → Je vais manger.'},
 {group:'Futur proche',title:'Going to work tomorrow',scene:'work-future',prompt:'Tomorrow I am going to work.',fill:'Demain, je ___ travailler.',answer:'vais',explain:'Future plan: je vais + infinitive.'},
@@ -596,7 +777,128 @@ const grammarExercises=[
 {group:'Weather',title:'Sunny weather',scene:'sun',prompt:'It is sunny.',fill:'Il y a du ___.',answer:'soleil',explain:'Il y a + du + singular noun.'},
 {group:'Functions',title:'Writing with a pen',scene:'write',prompt:'It is used for writing.',fill:'Ça sert ___ écrire.',answer:'à',explain:'Ça sert à + infinitive.'}
 ];
-function grammarPage(){return window.ParlezGrammarGame.page();}
+function getGrammarPool(){
+  let pool=state.cards.filter(c=>c.kind==='grammar');
+  if(grammarTopicFilter!=='All')pool=pool.filter(c=>c.topic===grammarTopicFilter);
+  return pool;
+}
+function initGrammarSession(ids){
+  grammarSession={
+    ids:ids&&ids.length?ids:getGrammarPool().map(c=>c.id),
+    index:0,
+    done:0,
+    again:0,
+    revealed:false
+  };
+}
+function currentGrammarCard(){
+  if(!grammarSession||!grammarSession.ids.length)return null;
+  const id=grammarSession.ids[grammarSession.index];
+  return state.cards.find(c=>c.id===id)||null;
+}
+function rateGrammarCard(level){
+  const c=currentGrammarCard();if(!c)return;
+  const p=ensureProgress(c),now=Date.now();
+  p.reviews=(p.reviews||0)+1;
+  p.lastReviewed=now;
+  p.ease=p.ease||2.5;
+  const prev=p.interval||0;
+  switch(level){
+    case 'again':p.interval=0;p.ease=Math.max(1.3,p.ease-.2);p.dueAt=now+10*60*1000;break;
+    case 'hard':p.interval=Math.max(1,Math.round(prev?prev*1.2:1));p.ease=Math.max(1.3,p.ease-.15);p.dueAt=isoAfter(p.interval);break;
+    case 'good':p.interval=prev?Math.max(3,Math.round(prev*p.ease)):3;p.dueAt=isoAfter(p.interval);break;
+    case 'easy':p.interval=prev?Math.max(5,Math.round(prev*(p.ease+.35))):5;p.ease+=.12;p.dueAt=isoAfter(p.interval);break;
+  }
+  activeProfile().history.push({id:c.id,time:now,level});
+  grammarSession.done++;
+  if(level==='again')grammarSession.again++;
+  grammarSession.index++;
+  grammarSession.revealed=false;
+  persist();
+  render();
+}
+function grammarCardSessionView(){
+  const c=currentGrammarCard(),all=grammarSession.ids.length;
+  if(!c||grammarSession.index>=all){
+    return `<div class="review-layout">
+      <div class="review-top">
+        <div><div class="eyebrow">GRAMMAR FLASHCARDS</div><h2>Session Complete!</h2></div>
+        <button class="btn btn-secondary btn-sm" data-action="exit-grammar-session">All Grammar Rules</button>
+      </div>
+      <div class="empty">
+        <div class="empty-emoji">🎉</div>
+        <h2>Bravo !</h2>
+        <p class="subline">You completed ${grammarSession.done} grammar rule flashcards.</p>
+        <button class="btn btn-primary" data-action="restart-grammar-session">Review Again ${icon('arrow')}</button>
+        <button class="btn btn-white" data-action="exit-grammar-session">Back to Rules</button>
+      </div>
+    </div>`;
+  }
+  const picture=activeProfile().prefs.frontMode==='english'?`<div class="english-front">${esc(c.englishPrompt)}</div>`:visual(c);
+  const answer=`<div class="answer">
+    <div class="eyebrow">RÈGLE DE GRAMMAIRE</div>
+    <h2>${esc(c.frenchAnswer)}</h2>
+    <div class="english">${esc(c.englishPrompt)}</div>
+    <div class="answer-actions">
+      <button class="btn btn-secondary" data-action="say-grammar-answer">${icon('sound')} Listen</button>
+    </div>
+    ${c.frenchExample?`<div class="example"><b>Exemple clé</b><p lang="fr">${esc(c.frenchExample)}</p>${c.exampleEnglish?`<p class="example-meaning">${esc(c.exampleEnglish)}</p>`:''}</div>`:''}
+    ${c.grammarNote?`<div class="vocab-note"><small>${esc(c.grammarNote)}</small></div>`:''}
+  </div>
+  <div class="eyebrow rating-title">HOW WELL DID YOU REMEMBER?</div>
+  <div class="rating-row">${[['Again','10 min','again'],['Hard','1 day','hard'],['Good','3+ days','good'],['Easy','5+ days','easy']].map(([label,sub,rate])=>`<button data-grammar-rate="${rate}" class="btn ${rate==='good'?'btn-primary':'btn-white'}">${label}<span>${sub}</span></button>`).join('')}</div>`;
+  const prompt=`<div class="simple-review-actions"><button class="btn btn-primary btn-lg" data-action="grammar-reveal">Reveal Rule ${icon('eye')}</button></div>`;
+  return `<div class="review-layout">
+    <div class="review-top">
+      <div><div class="eyebrow">${esc(c.lesson||'GRAMMAR RULE')}</div><h2>${esc(c.topic||'Grammar')}</h2></div>
+      <button class="btn btn-white btn-sm" data-action="exit-grammar-session">Exit Deck ✕</button>
+    </div>
+    <div class="small muted mb">Rule ${grammarSession.index+1} of ${all}</div>
+    <div class="review-progress"><div style="width:${100*grammarSession.index/Math.max(all,1)}%"></div></div>
+    <div class="review-card ${grammarSession.revealed?'revealed':''}">
+      <div class="review-scene">${picture}<span class="corner">${esc(c.topic)}</span></div>
+      ${grammarSession.revealed?answer:prompt}
+    </div>
+  </div>`;
+}
+function grammarFlashcardsView(){
+  const allGrammar=state.cards.filter(c=>c.kind==='grammar');
+  const distinctTopics=['All',...new Set(allGrammar.map(c=>c.topic).filter(Boolean))];
+  const pool=getGrammarPool();
+  return `<div>
+    <div class="library-toolbar" style="margin-top:10px">
+      <div class="tabline" style="margin:0;flex-wrap:wrap">
+        ${distinctTopics.map(t=>`<button class="chip ${grammarTopicFilter===t?'active':''}" data-grammar-topic="${esc(t)}">${esc(t)}</button>`).join('')}
+      </div>
+      <button class="btn btn-primary btn-sm" data-action="study-grammar-pool">Study ${pool.length} Cards ${icon('arrow')}</button>
+    </div>
+    <div class="library-grid" style="margin-top:16px">
+      ${pool.map(c=>`<div class="lib-card hover-card">
+        <div class="lib-scene">${visual(c)}</div>
+        <div class="lib-content">
+          <span class="meta">${esc(c.topic)}</span>
+          <h3>${esc(c.frenchAnswer)}</h3>
+          <p>${esc(c.englishPrompt)}</p>
+          ${c.frenchExample?`<div class="vocab-example"><p lang="fr">${esc(c.frenchExample)}</p>${c.exampleEnglish?`<p class="example-meaning">${esc(c.exampleEnglish)}</p>`:''}</div>`:''}
+          ${c.grammarNote?`<div class="vocab-note" style="margin-top:8px"><small>${esc(c.grammarNote)}</small></div>`:''}
+          <div class="lib-footer">
+            <button class="btn btn-secondary btn-sm" data-say-card="${esc(c.frenchExample||c.frenchAnswer)}">${icon('sound')} Listen</button>
+            <button class="btn btn-white btn-sm" data-practice="${esc(c.id)}">Flashcard ${icon('arrow')}</button>
+          </div>
+        </div>
+      </div>`).join('')}
+    </div>
+  </div>`;
+}
+function grammarPage(){
+  return `<div>
+    ${grammarSession?'':`<div class="tabline" style="margin-bottom:16px">
+      <button class="chip ${grammarSubView==='game'?'active':''}" data-grammar-subview="game">🎮 Verb Game (10 rounds)</button>
+      <button class="chip ${grammarSubView==='cards'?'active':''}" data-grammar-subview="cards">🗂️ Grammar Flashcards</button>
+    </div>`}
+    ${grammarSubView==='game'?window.ParlezGrammarGame.page():(grammarSession?grammarCardSessionView():grammarFlashcardsView())}
+  </div>`;
+}
 function grammarPracticePage(){let groups=['All',...new Set(grammarExercises.map(g=>g.group))],filtered=grammarExercises.filter(g=>gramTab==='All'||g.group===gramTab);return `<div><div class="eyebrow">LEARN BY DOING</div><h2>Other practice</h2><div class="tabline">${groups.map(t=>`<button class="chip ${t===gramTab?'active':''}" data-gramtab="${esc(t)}">${esc(t)}</button>`).join('')}</div><div class="exercise">${filtered.map((g,i)=>`<div class="exercise-card"><div class="review-scene">${sceneSVG(g.scene)}<span class="corner">${esc(g.group)}</span></div><h3 style="margin:17px 0 5px">${esc(g.title)}</h3><div class="small muted" style="margin-bottom:8px">${esc(g.prompt)}</div><p style="font-weight:600">${esc(g.fill)}</p><div class="field"><label for="gr-${grammarExercises.indexOf(g)}">Fill the blank</label><input class="input" id="gr-${grammarExercises.indexOf(g)}" data-grammar-input="${grammarExercises.indexOf(g)}" placeholder="Type the missing word" autocomplete="off"/></div><button class="btn btn-secondary" data-check-grammar="${grammarExercises.indexOf(g)}">Check answer</button><div id="res-${grammarExercises.indexOf(g)}"></div></div>`).join('')}</div></div>`;}
 const speakExercises=[
 {scene:'morning',title:'Morning routine',optional:'Describe two things you do in the morning.',suggested:'Le matin, je me réveille à sept heures. Ensuite, je prends mon petit-déjeuner.',tip:'Use sequence words: ensuite, puis, après.'},
@@ -672,14 +974,14 @@ function importData(file){
  }).catch(()=>toast('Could not read this backup.'));
 }
 function say(text){if(!('speechSynthesis' in window)){toast('Speech playback is not supported in this browser.');return;}window.speechSynthesis.cancel();let u=new SpeechSynthesisUtterance(text);u.lang='fr-FR';u.rate=.83;const voices=window.speechSynthesis.getVoices();const v=voices.find(v=>v.lang.toLowerCase().startsWith('fr'));if(v)u.voice=v;window.speechSynthesis.speak(u);}
-function page(){switch(view){case 'review':return reviewPage();case 'grammar':return grammarPage();case 'speak':return speakPage();case 'library':return libraryPage();case 'settings':return settingsPage();default:return homePage();}}
+function page(){switch(view){case 'vocab':return vocabPage();case 'review':return reviewPage();case 'grammar':return grammarPage();case 'speak':return speakPage();case 'library':return libraryPage();case 'settings':return settingsPage();default:return homePage();}}
 function render(){document.querySelector('#modal-backdrop')?.remove();modalOpen=false;$('#app').innerHTML=shell(page());if(view==='library'&&libSearch){const i=$('#lib-search');if(i)i.setSelectionRange(i.value.length,i.value.length);}}
-function navigate(to){view=to;window.location.hash=to;reviewSession=null;speakShown=false;speakHint=false;speakResponse='';render();scrollTo({top:0,behavior:'instant'});}
+function navigate(to){view=to;window.location.hash=to;reviewSession=null;vocabSession=null;speakShown=false;speakHint=false;speakResponse='';render();scrollTo({top:0,behavior:'instant'});}
 function startPracticeCard(id){view='review';reviewSession={ids:[id],index:0,done:0,again:0};reviewFilter='All cards';revealed=false;window.location.hash='review';render();scrollTo(0,0);}
 // Delegated controls: stable even when cards and views re-render.
-document.addEventListener('click',e=>{const el=e.target.closest('button');if(!el)return;if(el.dataset.view){navigate(el.dataset.view);return;}if(el.dataset.rate){rateCard(el.dataset.rate);return;}if(el.dataset.edit){cardModal(state.cards.find(c=>c.id===el.dataset.edit));return;}if(el.dataset.practice){startPracticeCard(el.dataset.practice);return;}if(el.dataset.chooseScene){editScene=el.dataset.chooseScene;editImage=null;$('#uploaded-preview').innerHTML='';document.querySelectorAll('[data-choose-scene]').forEach(b=>b.classList.toggle('selected',b.dataset.chooseScene===editScene));return;}if(el.dataset.gramtab){gramTab=el.dataset.gramtab;render();return;}if(el.dataset.checkGrammar!==undefined){let i=Number(el.dataset.checkGrammar),g=grammarExercises[i],v=$('#gr-'+i)?.value||'',correct=textNormalized(v)===textNormalized(g.answer);activeProfile().grammarHistory.push({time:Date.now(),item:i,correct});persist();$('#res-'+i).innerHTML=`<div class="result ${correct?'correct':'incorrect'}">${correct?'Correct!':'Answer: '+esc(g.answer)}<br/>${esc(g.explain)}</div>`;return;}let action=el.dataset.action;if(!action)return;switch(action){case 'open-profiles':profileModal();break;case 'create-profile':{const name=$('#new-profile-name')?.value.trim().replace(/\s+/g,' ');if(!profileNameAvailable(name)){toast('Enter a unique name, up to 30 characters.');return;}const p=makeProfile(name);p.color=PROFILE_COLORS[state.profiles.length%PROFILE_COLORS.length];state.profiles.push(p);state.activeProfileId=p.id;if(!persist())return;modalClose();reviewSession=null;navigate('home');toast('Created '+name+'. Ready to study!');break;}case 'rename-profile':{const id=el.dataset.profileId,p=state.profiles.find(x=>x.id===id);const name=document.getElementById('profile-name-'+id)?.value.trim().replace(/\s+/g,' ');if(!p)return;if(!profileNameAvailable(name,id)){toast('Enter a unique name, up to 30 characters.');return;}p.name=name;if(persist()){render();profileModal();toast('Profile name updated.');}break;}case 'switch-profile':switchProfile(el.dataset.profileId);break;case 'delete-profile':{if(state.profiles.length<2){toast('Keep at least one learner profile.');return;}const p=state.profiles.find(x=>x.id===el.dataset.profileId);if(!p)return;if(!confirm('Delete '+p.name+' and their study progress on this device? Shared cards will remain. This cannot be undone.'))return;state.profiles=state.profiles.filter(x=>x.id!==p.id);if(state.activeProfileId===p.id)state.activeProfileId=state.profiles[0].id;if(!persist())return;reviewSession=null;modalClose();navigate('home');profileModal();toast('Profile deleted.');break;}case 'start-review':reviewFilter='Due now';view='review';initReview();window.location.hash='review';render();break;case 'practice-all':reviewFilter='All cards';initReview();render();break;case 'reveal':revealed=true;render();break;case 'speak-french':{let c=currentReviewCard();if(c)say(c.frenchAnswer);break;}case 'speech-example':say(speakExercises[speakAt].suggested);break;case 'speak-reveal':speakResponse=$('#speaking-answer')?.value||'';speakShown=true;render();break;case 'speak-retry':speakShown=false;render();break;case 'speak-done':activeProfile().speakingHistory.push({time:Date.now(),item:speakAt,spoken:true});persist();speakAt=(speakAt+1)%speakExercises.length;speakShown=false;speakHint=false;speakResponse='';render();break;case 'add-card':cardModal(null);break;case 'close-modal':modalClose();break;case 'clear-upload':editImage=null;$('#uploaded-preview').innerHTML='';break;case 'save-card':saveCard();break;case 'delete-card':if(confirm('Delete this card and its history? This cannot be undone.')){const id=el.dataset.cardId;state.cards=state.cards.filter(c=>c.id!==id);for(const p of state.profiles){p.history=p.history.filter(h=>h.id!==id);delete p.progress[id];}persist();modalClose();render();toast('Card deleted.');}break;case 'export-json':exportData('json');break;case 'export-csv':exportData('csv');break;case 'import-json':$('#import-input')?.click();break;case 'reset-data':if(confirm('Reset ALL profiles, shared cards, and review history on this device? Export a backup first.'))if(confirm('Second confirmation: erase every learner\'s local progress?')){state=initial();persist();reviewSession=null;render();toast('Data reset.');}break;}});
-document.addEventListener('change',e=>{const el=e.target;if(el.id==='review-filter'){reviewFilter=el.value;initReview();render();}if(el.id==='lib-topic'){libTopic=el.value;render();}if(el.id==='lib-type'){libType=el.value;render();}if(el.id==='front-mode'){activeProfile().prefs.frontMode=el.value;persist();toast('Flashcard prompt mode updated.');}if(el.id==='own-image')uploadImage(el.files[0]);if(el.id==='import-input')importData(el.files[0]);});
-document.addEventListener('input',e=>{if(e.target.id==='lib-search'){const el=e.target;let pos=el.selectionStart;libSearch=el.value;const grid=$('.library-grid'),cards=libCards();if(grid){grid.outerHTML=`<div class="library-grid">${cards.map(c=>`<div class="lib-card hover-card"><div class="lib-scene">${visual(c)}</div><div class="lib-content"><span class="meta">${esc(c.topic)}</span><h3>${esc(c.frenchAnswer)}</h3><p>${esc(c.englishPrompt)}</p>${c.frenchExample?`<div class="vocab-example"><p lang="fr">${esc(c.frenchExample)}</p>${c.exampleEnglish?`<p class="example-meaning">${esc(c.exampleEnglish)}</p>`:''}</div>`:''}<div class="lib-footer"><button class="btn btn-secondary" data-edit="${esc(c.id)}">${icon('edit')} Edit</button><button class="btn btn-white" data-practice="${esc(c.id)}">Practice ${icon('arrow')}</button></div></div></div>`).join('')}</div>`;}}});
-window.addEventListener('hashchange',()=>{const hash=location.hash.slice(1);if(['home','review','grammar','speak','library','settings'].includes(hash)&&view!==hash){view=hash;reviewSession=null;render();}});
-const initialHash=location.hash.slice(1);if(['home','review','grammar','speak','library','settings'].includes(initialHash))view=initialHash;render();
+document.addEventListener('click',e=>{const el=e.target.closest('button');if(!el)return;if(el.dataset.view){navigate(el.dataset.view);return;}if(el.dataset.grammarSubview){grammarSubView=el.dataset.grammarSubview;grammarSession=null;render();return;}if(el.dataset.grammarTopic){grammarTopicFilter=el.dataset.grammarTopic;render();return;}if(el.dataset.grammarRate){rateGrammarCard(el.dataset.grammarRate);return;}if(el.dataset.rate){rateCard(el.dataset.rate);return;}if(el.dataset.vocabRate){rateVocabCard(el.dataset.vocabRate);return;}if(el.dataset.startDeck){vocabLessonFilter=el.dataset.startDeck;initVocabSession();render();return;}if(el.dataset.filterDeck){vocabLessonFilter=el.dataset.filterDeck;render();return;}if(el.dataset.sayCard){say(el.dataset.sayCard);return;}if(el.dataset.edit){cardModal(state.cards.find(c=>c.id===el.dataset.edit));return;}if(el.dataset.practice){startPracticeCard(el.dataset.practice);return;}if(el.dataset.chooseScene){editScene=el.dataset.chooseScene;editImage=null;$('#uploaded-preview').innerHTML='';document.querySelectorAll('[data-choose-scene]').forEach(b=>b.classList.toggle('selected',b.dataset.chooseScene===editScene));return;}if(el.dataset.gramtab){gramTab=el.dataset.gramtab;render();return;}if(el.dataset.checkGrammar!==undefined){let i=Number(el.dataset.checkGrammar),g=grammarExercises[i],v=$('#gr-'+i)?.value||'',correct=textNormalized(v)===textNormalized(g.answer);activeProfile().grammarHistory.push({time:Date.now(),item:i,correct});persist();$('#res-'+i).innerHTML=`<div class="result ${correct?'correct':'incorrect'}">${correct?'Correct!':'Answer: '+esc(g.answer)}<br/>${esc(g.explain)}</div>`;return;}let action=el.dataset.action;if(!action)return;switch(action){case 'grammar-reveal':if(grammarSession){grammarSession.revealed=true;render();}break;case 'exit-grammar-session':grammarSession=null;render();break;case 'restart-grammar-session':initGrammarSession(grammarSession?grammarSession.ids:null);render();break;case 'study-grammar-pool':initGrammarSession();render();break;case 'say-grammar-answer':{let c=currentGrammarCard();if(c)say(c.frenchExample||c.frenchAnswer);break;}case 'open-profiles':profileModal();break;case 'create-profile':{const name=$('#new-profile-name')?.value.trim().replace(/\s+/g,' ');if(!profileNameAvailable(name)){toast('Enter a unique name, up to 30 characters.');return;}const p=makeProfile(name);p.color=PROFILE_COLORS[state.profiles.length%PROFILE_COLORS.length];state.profiles.push(p);state.activeProfileId=p.id;if(!persist())return;modalClose();reviewSession=null;navigate('home');toast('Created '+name+'. Ready to study!');break;}case 'rename-profile':{const id=el.dataset.profileId,p=state.profiles.find(x=>x.id===id);const name=document.getElementById('profile-name-'+id)?.value.trim().replace(/\s+/g,' ');if(!p)return;if(!profileNameAvailable(name,id)){toast('Enter a unique name, up to 30 characters.');return;}p.name=name;if(persist()){render();profileModal();toast('Profile name updated.');}break;}case 'switch-profile':switchProfile(el.dataset.profileId);break;case 'delete-profile':{if(state.profiles.length<2){toast('Keep at least one learner profile.');return;}const p=state.profiles.find(x=>x.id===el.dataset.profileId);if(!p)return;if(!confirm('Delete '+p.name+' and their study progress on this device? Shared cards will remain. This cannot be undone.'))return;state.profiles=state.profiles.filter(x=>x.id!==p.id);if(state.activeProfileId===p.id)state.activeProfileId=state.profiles[0].id;if(!persist())return;reviewSession=null;modalClose();navigate('home');profileModal();toast('Profile deleted.');break;}case 'start-review':reviewFilter='Due now';view='review';initReview();window.location.hash='review';render();break;case 'practice-all':reviewFilter='All cards';initReview();render();break;case 'reveal':revealed=true;render();break;case 'vocab-reveal':if(vocabSession){vocabSession.revealed=true;render();}break;case 'exit-vocab-session':vocabSession=null;render();break;case 'restart-vocab-session':initVocabSession(vocabSession?vocabSession.ids:null);render();break;case 'study-all-vocab':vocabLessonFilter='All';vocabTopicFilter='All';vocabSearch='';initVocabSession();render();break;case 'study-filtered-vocab':initVocabSession();render();break;case 'reset-vocab-filter':vocabLessonFilter='All';vocabTopicFilter='All';vocabSearch='';render();break;case 'say-vocab-answer':{let c=currentVocabCard();if(c)say(c.frenchAnswer);break;}case 'speak-french':{let c=currentReviewCard();if(c)say(c.frenchAnswer);break;}case 'speech-example':say(speakExercises[speakAt].suggested);break;case 'speak-reveal':speakResponse=$('#speaking-answer')?.value||'';speakShown=true;render();break;case 'speak-retry':speakShown=false;render();break;case 'speak-done':activeProfile().speakingHistory.push({time:Date.now(),item:speakAt,spoken:true});persist();speakAt=(speakAt+1)%speakExercises.length;speakShown=false;speakHint=false;speakResponse='';render();break;case 'add-card':cardModal(null);break;case 'close-modal':modalClose();break;case 'clear-upload':editImage=null;$('#uploaded-preview').innerHTML='';break;case 'save-card':saveCard();break;case 'delete-card':if(confirm('Delete this card and its history? This cannot be undone.')){const id=el.dataset.cardId;state.cards=state.cards.filter(c=>c.id!==id);for(const p of state.profiles){p.history=p.history.filter(h=>h.id!==id);delete p.progress[id];}persist();modalClose();render();toast('Card deleted.');}break;case 'export-json':exportData('json');break;case 'export-csv':exportData('csv');break;case 'import-json':$('#import-input')?.click();break;case 'reset-data':if(confirm('Reset ALL profiles, shared cards, and review history on this device? Export a backup first.'))if(confirm('Second confirmation: erase every learner\'s local progress?')){state=initial();persist();reviewSession=null;vocabSession=null;render();toast('Data reset.');}break;}});
+document.addEventListener('change',e=>{const el=e.target;if(el.id==='vocab-lesson-select'){vocabLessonFilter=el.value;render();}if(el.id==='vocab-topic-select'){vocabTopicFilter=el.value;render();}if(el.id==='review-filter'){reviewFilter=el.value;initReview();render();}if(el.id==='lib-topic'){libTopic=el.value;render();}if(el.id==='lib-type'){libType=el.value;render();}if(el.id==='front-mode'){activeProfile().prefs.frontMode=el.value;persist();toast('Flashcard prompt mode updated.');}if(el.id==='own-image')uploadImage(el.files[0]);if(el.id==='import-input')importData(el.files[0]);});
+document.addEventListener('input',e=>{if(e.target.id==='vocab-search-input'){vocabSearch=e.target.value;render();}if(e.target.id==='lib-search'){const el=e.target;let pos=el.selectionStart;libSearch=el.value;const grid=$('.library-grid'),cards=libCards();if(grid){grid.outerHTML=`<div class="library-grid">${cards.map(c=>`<div class="lib-card hover-card"><div class="lib-scene">${visual(c)}</div><div class="lib-content"><span class="meta">${esc(c.topic)}</span><h3>${esc(c.frenchAnswer)}</h3><p>${esc(c.englishPrompt)}</p>${c.frenchExample?`<div class="vocab-example"><p lang="fr">${esc(c.frenchExample)}</p>${c.exampleEnglish?`<p class="example-meaning">${esc(c.exampleEnglish)}</p>`:''}</div>`:''}<div class="lib-footer"><button class="btn btn-secondary" data-edit="${esc(c.id)}">${icon('edit')} Edit</button><button class="btn btn-white" data-practice="${esc(c.id)}">Practice ${icon('arrow')}</button></div></div></div>`).join('')}</div>`;}}});
+window.addEventListener('hashchange',()=>{const hash=location.hash.slice(1);if(['home','vocab','review','grammar','speak','library','settings'].includes(hash)&&view!==hash){view=hash;reviewSession=null;render();}});
+const initialHash=location.hash.slice(1);if(['home','vocab','review','grammar','speak','library','settings'].includes(initialHash))view=initialHash;render();
 if('serviceWorker' in navigator && location.protocol.startsWith('http'))navigator.serviceWorker.register('./sw.js').catch(()=>{});

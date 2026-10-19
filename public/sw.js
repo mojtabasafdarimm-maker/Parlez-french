@@ -1,5 +1,5 @@
-const CACHE = 'parlez-v13-verb-game';
-const ASSETS = ['./', './index.html', './styles.css', './app.js', './grammar-game.js', './illustrations.js', './manifest.webmanifest', './assets/icon.svg', './assets/icon-192.png', './assets/icon-512.png', './assets/icon-apple.png'];
+const CACHE = 'parlez-v15-curriculum-a12';
+const ASSETS = ['./', './index.html', './styles.css', './app.js', './cards-curriculum.js', './grammar-game.js', './illustrations.js', './manifest.webmanifest', './assets/icon.svg', './assets/icon-192.png', './assets/icon-512.png', './assets/icon-apple.png'];
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(ASSETS)).then(() => self.skipWaiting()));
 });
