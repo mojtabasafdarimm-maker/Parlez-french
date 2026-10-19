@@ -378,6 +378,11 @@
 
 
     // --- A1.2 & Grammar Scenes ---
+    if (name==='watch-screen' || name==='mexican-film') return `<rect x="110" y="70" width="300" height="180" rx="16" fill="#1e293b" stroke="#475569" stroke-width="8"/>` +
+      `<rect x="130" y="90" width="260" height="140" rx="6" fill="#38bdf8" opacity=".85"/>` +
+      `<polygon points="230,130 230,190 290,160" fill="#fff"/>` +
+      path('M220 250l-20 40h120l-20-40', '#475569', 10);
+
     if (name==='finish-flag') return `<path d="M160 60v220" stroke="#718096" stroke-width="12" stroke-linecap="round"/>` +
       `<rect x="172" y="60" width="160" height="110" fill="#fff" stroke="#4a5568" stroke-width="4"/>` +
       `<g transform="translate(172,60)">${Array.from({length:4},(_,r)=>Array.from({length:6},(_,c)=>`<rect x="${c*26.6}" y="${r*27.5}" width="26.6" height="27.5" fill="${(r+c)%2===0?'#2d3748':'#fff'}"/>`).join('')).join('')}</g>` +

@@ -158,7 +158,77 @@ function startServer() {
     await page.locator('[data-action="exit-grammar-session"]').click();
     await page.waitForTimeout(200);
 
-    // 5. Test responsive layout across mobile viewports
+    // 5. Test Group & Conjugation Drills Subview
+    console.log('Testing Group & Conjugation Drills subview...');
+    await page.locator('[data-grammar-subview="drills"]').click();
+    await page.waitForTimeout(200);
+
+    // Verify 4 group filter buttons exist
+    const groupChipsCount = await page.locator('[data-drill-group]').count();
+    console.log('Group filter chips:', groupChipsCount);
+    assert.equal(groupChipsCount, 4, 'Expected 4 group filter chips (All, 1, 2, 3)');
+
+    // Verify default prompt sentence with blank
+    const blankPromptText = await page.locator('.drill-sentence').textContent();
+    console.log('Initial drill blank prompt:', blankPromptText.trim());
+    assert.ok(blankPromptText.includes('_____'), 'Prompt sentence should contain a blank');
+    await page.screenshot({ path: path.join(out, 'drill-front-390.png') });
+
+    // Click "Reveal Answer & Structure"
+    console.log('Revealing drill conjugation structure...');
+    await page.locator('[data-action="drill-reveal"]').click();
+    await page.waitForTimeout(200);
+
+    // Verify revealed sentence has filled verb and highlight
+    const revealedText = await page.locator('.drill-sentence').textContent();
+    console.log('Revealed sentence:', revealedText.trim());
+    assert.ok(revealedText.includes('parle'), 'Revealed sentence should contain conjugated form "parle"');
+    assert.equal(await page.locator('.drill-highlight').count(), 1, 'Target verb should be highlighted');
+
+    // Verify full 6-pronoun structural guide table
+    const paradigmRowsCount = await page.locator('.drill-paradigm-row').count();
+    console.log('Conjugation paradigm guide rows visible:', paradigmRowsCount);
+    assert.equal(paradigmRowsCount, 6, 'Expected full 6-person conjugation table (je, tu, il, nous, vous, ils)');
+
+    // Verify target row is highlighted
+    const activeTargetRows = await page.locator('.drill-paradigm-row.active-target-row').count();
+    assert.equal(activeTargetRows, 1, 'Exactly one active target row should be highlighted in paradigm guide');
+    await page.screenshot({ path: path.join(out, 'drill-back-390.png') });
+
+    // Test 2e groupe filter (-ir)
+    console.log('Switching to 2e groupe (-ir)...');
+    await page.locator('[data-drill-group="2"]').click();
+    await page.waitForTimeout(200);
+
+    const verb2Options = await page.locator('#drill-verb-select option').allTextContents();
+    console.log('2e groupe verbs in selector:', verb2Options);
+    assert.ok(verb2Options.some(t => t.includes('finir')), '2e groupe should include finir');
+
+    // Reveal 2e groupe structure
+    await page.locator('[data-action="drill-reveal"]').click();
+    await page.waitForTimeout(200);
+    const finirRows = await page.locator('.drill-paradigm-row').allTextContents();
+    console.log('finir paradigm sample:', finirRows.slice(0, 3).map(s => s.trim().replace(/\s+/g, ' ')));
+    assert.ok(finirRows.some(s => s.includes('finissons')), 'Should contain regular -issons ending for nous');
+    await page.screenshot({ path: path.join(out, 'drill-2e-groupe-390.png') });
+
+    // Test 3e groupe filter (irréguliers)
+    console.log('Switching to 3e groupe (irréguliers)...');
+    await page.locator('[data-drill-group="3"]').click();
+    await page.waitForTimeout(200);
+
+    // Select "prendre"
+    await page.locator('#drill-verb-select').selectOption('prendre');
+    await page.waitForTimeout(200);
+    await page.locator('[data-action="drill-reveal"]').click();
+    await page.waitForTimeout(200);
+    const prendreRows = await page.locator('.drill-paradigm-row').allTextContents();
+    console.log('prendre paradigm sample:', prendreRows.map(s => s.trim().replace(/\s+/g, ' ')));
+    assert.ok(prendreRows.some(s => s.includes('prenons')), 'Should contain irregular nous prenons');
+    assert.ok(prendreRows.some(s => s.includes('prennent')), 'Should contain irregular ils prennent');
+    await page.screenshot({ path: path.join(out, 'drill-3e-groupe-390.png') });
+
+    // 6. Test responsive layout across mobile viewports
     for (const width of [320, 375, 390, 430]) {
       await page.setViewportSize({ width, height: 844 });
       const overflow = await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth);

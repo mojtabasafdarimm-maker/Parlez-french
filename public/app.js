@@ -565,6 +565,7 @@ persist();
 let view='home',reviewSession=null,revealed=false,libSearch='',libTopic='All',libType='All',modalOpen=false,editId=null,editImage=null,editScene='wake',gramTab='All',grammarInput='',grammarFeedback='',grammarAt=0,speakAt=0,speakShown=false,speakHint=false,speakResponse='',speakResult='';
 let vocabSession=null,vocabLessonFilter='All',vocabTopicFilter='All',vocabSearch='';
 let grammarSubView='game',grammarTopicFilter='All',grammarSession=null;
+let drillGroupFilter='all',drillVerbId='parler',drillPronounKey='je',drillRevealed=false;
 function todayHistory(){return activeProfile().history.filter(e=>todayKey(e.time)===todayKey());}
 function lastStreak(){const dates=new Set(activeProfile().history.map(e=>todayKey(e.time)));let streak=0;let d=new Date();if(!dates.has(todayKey(d)))d.setDate(d.getDate()-1);while(dates.has(todayKey(d))){streak++;d.setDate(d.getDate()-1);}return streak;}
 function dueCards(){return state.cards.filter(c=>{const p=progressFor(c);return !p.dueAt||p.dueAt<=Date.now();});}
@@ -890,13 +891,192 @@ function grammarFlashcardsView(){
     </div>
   </div>`;
 }
+function getDrillVerbs(){
+  const all = window.ParlezVerbConjugations?.verbs || [];
+  if(drillGroupFilter === 'all') return all;
+  return all.filter(v => v.groupCode === drillGroupFilter);
+}
+
+function getCurrentDrillVerb(){
+  const list = getDrillVerbs();
+  if(!list.length) return (window.ParlezVerbConjugations?.verbs || [])[0];
+  return list.find(v => v.id === drillVerbId) || list[0];
+}
+
+function getActiveDrillPronounKey(verb){
+  if(drillPronounKey === 'random') return 'je';
+  return drillPronounKey;
+}
+
+function conjugationDrillPage(){
+  const allVerbs = window.ParlezVerbConjugations?.verbs || [];
+  const groups = [
+    { code: 'all', name: `All (${allVerbs.length})` },
+    { code: '1', name: '1er (-er)' },
+    { code: '2', name: '2e (-ir)' },
+    { code: '3', name: '3e (irrég.)' }
+  ];
+  const pronouns = window.ParlezVerbConjugations?.pronouns || [
+    { key: 'je', label: 'Je / J’' },
+    { key: 'tu', label: 'Tu' },
+    { key: 'il', label: 'Il / Elle / On' },
+    { key: 'nous', label: 'Nous' },
+    { key: 'vous', label: 'Vous' },
+    { key: 'ils', label: 'Ils / Elles' }
+  ];
+
+  const filteredVerbs = getDrillVerbs();
+  const verb = getCurrentDrillVerb();
+  if(!verb) return '<div class="empty"><h3>Verb database loading...</h3></div>';
+
+  drillVerbId = verb.id;
+  const activePronoun = getActiveDrillPronounKey(verb);
+  const sentenceData = verb.sentences?.[activePronoun] || verb.sentences?.je || {
+    pronoun: 'Je',
+    sentence: verb.infinitive,
+    blank: 'Je _____ ...',
+    english: verb.english
+  };
+  const conjugatedForm = verb.conjugation?.[activePronoun] || '';
+
+  const blankSentence = sentenceData.blank;
+  const revealedSentence = sentenceData.blank.replace('_____', `<strong class="drill-highlight">${esc(conjugatedForm)}</strong>`);
+
+  const pronounRowData = [
+    { key: 'je', pronoun: (verb.infinitive.match(/^[aeiouh]/i) ? "j’" : "je"), form: verb.conjugation.je },
+    { key: 'tu', pronoun: "tu", form: verb.conjugation.tu },
+    { key: 'il', pronoun: "il / elle / on", form: verb.conjugation.il },
+    { key: 'nous', pronoun: "nous", form: verb.conjugation.nous },
+    { key: 'vous', pronoun: "vous", form: verb.conjugation.vous },
+    { key: 'ils', pronoun: "ils / elles", form: verb.conjugation.ils }
+  ];
+
+  return `<div class="drill-page">
+    <div class="drill-controls-panel">
+      <div class="tabline" style="margin:0 0 6px;flex-wrap:wrap;gap:5px">
+        ${groups.map(g => `<button class="chip ${drillGroupFilter === g.code ? 'active' : ''}" data-drill-group="${esc(g.code)}">${esc(g.name)}</button>`).join('')}
+      </div>
+
+      <div class="drill-selector-row">
+        <div class="field drill-field-verb">
+          <label for="drill-verb-select" class="small muted" style="margin-bottom:2px">Verb (${filteredVerbs.length})</label>
+          <div style="display:flex;gap:4px;align-items:center">
+            <select id="drill-verb-select" class="select" aria-label="Select verb" style="flex:1;min-width:0">
+              ${filteredVerbs.map(v => `<option value="${esc(v.id)}" ${v.id === verb.id ? 'selected' : ''}>${esc(v.infinitive)} · ${esc(v.english)}</option>`).join('')}
+            </select>
+            <button class="round-btn btn-sm" data-action="drill-random-verb" title="Pick random verb" aria-label="Random verb" style="width:38px;height:38px;flex-shrink:0">
+              🎲
+            </button>
+          </div>
+        </div>
+
+        <div class="field drill-field-pronoun">
+          <label for="drill-pronoun-select" class="small muted" style="margin-bottom:2px">Pronoun</label>
+          <select id="drill-pronoun-select" class="select" aria-label="Select pronoun" style="min-width:0">
+            ${pronouns.map(p => `<option value="${esc(p.key)}" ${drillPronounKey === p.key ? 'selected' : ''}>${esc(p.label)}</option>`).join('')}
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="review-card drill-card ${drillRevealed ? 'revealed' : ''}" style="margin-top:10px">
+      <div class="drill-card-header">
+        <span class="badge" style="background:#efeafb;color:var(--primary);font-weight:700">${esc(verb.group)}</span>
+        <span class="mini-step">${esc(verb.english)}</span>
+        <span class="corner" style="position:static;margin-left:auto">${esc(sentenceData.pronoun)}</span>
+      </div>
+
+      <div class="review-scene prompt-scene" style="margin-top:8px">
+        ${sceneSVG(verb.scene)}
+        <span class="corner">${esc(verb.infinitive)}</span>
+      </div>
+
+      <div class="drill-sentence-box ${drillRevealed ? 'revealed' : ''}">
+        <div class="drill-verb-infinitive-pill">
+          Infinitive: <strong>${esc(verb.infinitive)}</strong>
+        </div>
+        <p class="drill-sentence" lang="fr">
+          ${drillRevealed ? revealedSentence : esc(blankSentence)}
+        </p>
+        <p class="drill-sentence-english">
+          ${esc(sentenceData.english)}
+        </p>
+      </div>
+
+      ${!drillRevealed ? `
+        <div style="text-align:center;margin:12px 0 16px">
+          <p class="small muted" style="margin:0 0 14px">
+            🗣️ <strong>Say the sentence out loud</strong> with the correct verb form before revealing!
+          </p>
+          <button class="btn btn-primary btn-lg" style="width:100%" data-action="drill-reveal">
+            ${icon('eye')} Reveal Answer & Structure
+          </button>
+        </div>
+      ` : `
+        <div class="drill-audio-actions">
+          <button class="btn btn-secondary btn-sm" data-action="drill-listen-sentence">
+            ${icon('sound')} Listen to sentence
+          </button>
+          <button class="btn btn-white btn-sm" data-action="drill-listen-verb">
+            ${icon('sound')} Verb only (<strong>${esc(conjugatedForm)}</strong>)
+          </button>
+        </div>
+
+        <div class="drill-paradigm-card">
+          <div class="drill-paradigm-header">
+            <div>
+              <span class="eyebrow" style="margin:0">CONJUGATION STRUCTURE · PRÉSENT</span>
+              <div style="font-weight:700;font-size:16px;color:var(--text);margin-top:2px">
+                ${esc(verb.infinitive)} <span class="muted small font-normal">(${esc(verb.group)})</span>
+              </div>
+            </div>
+            <span class="meta">${esc(verb.english)}</span>
+          </div>
+
+          <div class="drill-paradigm-grid">
+            ${pronounRowData.map(row => {
+              const isTarget = activePronoun === row.key;
+              return `<div class="drill-paradigm-row ${isTarget ? 'active-target-row' : ''}">
+                <span class="drill-pronoun">${esc(row.pronoun)}</span>
+                <span class="drill-verb-form">
+                  <strong>${esc(row.form)}</strong>
+                </span>
+                <button class="round-btn btn-sm" data-say-drill="${esc(row.pronoun)} ${esc(row.form)}" title="Pronounce ${esc(row.pronoun)} ${esc(row.form)}" aria-label="Listen">
+                  ${icon('sound')}
+                </button>
+              </div>`;
+            }).join('')}
+          </div>
+
+          ${verb.rule ? `<div class="drill-rule-footer">
+            <small>💡 <strong>Structure rule:</strong> ${esc(verb.rule)}</small>
+          </div>` : ''}
+        </div>
+
+        <div class="drill-action-row">
+          <button class="btn btn-primary" data-action="drill-next-pronoun">
+            Next Pronoun ${icon('arrow')}
+          </button>
+          <button class="btn btn-secondary" data-action="drill-next-verb">
+            Next Verb ${icon('arrow')}
+          </button>
+          <button class="btn btn-white" data-action="drill-retry">
+            Hide Answer
+          </button>
+        </div>
+      `}
+    </div>
+  </div>`;
+}
+
 function grammarPage(){
   return `<div>
-    ${grammarSession?'':`<div class="tabline" style="margin-bottom:16px">
-      <button class="chip ${grammarSubView==='game'?'active':''}" data-grammar-subview="game">🎮 Verb Game (10 rounds)</button>
-      <button class="chip ${grammarSubView==='cards'?'active':''}" data-grammar-subview="cards">🗂️ Grammar Flashcards</button>
+    ${grammarSession?'':`<div class="tabline" style="margin-bottom:12px;flex-wrap:wrap;gap:6px">
+      <button class="chip ${grammarSubView==='game'?'active':''}" data-grammar-subview="game">🎮 Verb Game</button>
+      <button class="chip ${grammarSubView==='drills'?'active':''}" data-grammar-subview="drills">🧩 Verb Drills</button>
+      <button class="chip ${grammarSubView==='cards'?'active':''}" data-grammar-subview="cards">🗂️ Rules</button>
     </div>`}
-    ${grammarSubView==='game'?window.ParlezGrammarGame.page():(grammarSession?grammarCardSessionView():grammarFlashcardsView())}
+    ${grammarSubView==='game'?window.ParlezGrammarGame.page():(grammarSubView==='drills'?conjugationDrillPage():(grammarSession?grammarCardSessionView():grammarFlashcardsView()))}
   </div>`;
 }
 function grammarPracticePage(){let groups=['All',...new Set(grammarExercises.map(g=>g.group))],filtered=grammarExercises.filter(g=>gramTab==='All'||g.group===gramTab);return `<div><div class="eyebrow">LEARN BY DOING</div><h2>Other practice</h2><div class="tabline">${groups.map(t=>`<button class="chip ${t===gramTab?'active':''}" data-gramtab="${esc(t)}">${esc(t)}</button>`).join('')}</div><div class="exercise">${filtered.map((g,i)=>`<div class="exercise-card"><div class="review-scene">${sceneSVG(g.scene)}<span class="corner">${esc(g.group)}</span></div><h3 style="margin:17px 0 5px">${esc(g.title)}</h3><div class="small muted" style="margin-bottom:8px">${esc(g.prompt)}</div><p style="font-weight:600">${esc(g.fill)}</p><div class="field"><label for="gr-${grammarExercises.indexOf(g)}">Fill the blank</label><input class="input" id="gr-${grammarExercises.indexOf(g)}" data-grammar-input="${grammarExercises.indexOf(g)}" placeholder="Type the missing word" autocomplete="off"/></div><button class="btn btn-secondary" data-check-grammar="${grammarExercises.indexOf(g)}">Check answer</button><div id="res-${grammarExercises.indexOf(g)}"></div></div>`).join('')}</div></div>`;}
@@ -979,8 +1159,8 @@ function render(){document.querySelector('#modal-backdrop')?.remove();modalOpen=
 function navigate(to){view=to;window.location.hash=to;reviewSession=null;vocabSession=null;speakShown=false;speakHint=false;speakResponse='';render();scrollTo({top:0,behavior:'instant'});}
 function startPracticeCard(id){view='review';reviewSession={ids:[id],index:0,done:0,again:0};reviewFilter='All cards';revealed=false;window.location.hash='review';render();scrollTo(0,0);}
 // Delegated controls: stable even when cards and views re-render.
-document.addEventListener('click',e=>{const el=e.target.closest('button');if(!el)return;if(el.dataset.view){navigate(el.dataset.view);return;}if(el.dataset.grammarSubview){grammarSubView=el.dataset.grammarSubview;grammarSession=null;render();return;}if(el.dataset.grammarTopic){grammarTopicFilter=el.dataset.grammarTopic;render();return;}if(el.dataset.grammarRate){rateGrammarCard(el.dataset.grammarRate);return;}if(el.dataset.rate){rateCard(el.dataset.rate);return;}if(el.dataset.vocabRate){rateVocabCard(el.dataset.vocabRate);return;}if(el.dataset.startDeck){vocabLessonFilter=el.dataset.startDeck;initVocabSession();render();return;}if(el.dataset.filterDeck){vocabLessonFilter=el.dataset.filterDeck;render();return;}if(el.dataset.sayCard){say(el.dataset.sayCard);return;}if(el.dataset.edit){cardModal(state.cards.find(c=>c.id===el.dataset.edit));return;}if(el.dataset.practice){startPracticeCard(el.dataset.practice);return;}if(el.dataset.chooseScene){editScene=el.dataset.chooseScene;editImage=null;$('#uploaded-preview').innerHTML='';document.querySelectorAll('[data-choose-scene]').forEach(b=>b.classList.toggle('selected',b.dataset.chooseScene===editScene));return;}if(el.dataset.gramtab){gramTab=el.dataset.gramtab;render();return;}if(el.dataset.checkGrammar!==undefined){let i=Number(el.dataset.checkGrammar),g=grammarExercises[i],v=$('#gr-'+i)?.value||'',correct=textNormalized(v)===textNormalized(g.answer);activeProfile().grammarHistory.push({time:Date.now(),item:i,correct});persist();$('#res-'+i).innerHTML=`<div class="result ${correct?'correct':'incorrect'}">${correct?'Correct!':'Answer: '+esc(g.answer)}<br/>${esc(g.explain)}</div>`;return;}let action=el.dataset.action;if(!action)return;switch(action){case 'grammar-reveal':if(grammarSession){grammarSession.revealed=true;render();}break;case 'exit-grammar-session':grammarSession=null;render();break;case 'restart-grammar-session':initGrammarSession(grammarSession?grammarSession.ids:null);render();break;case 'study-grammar-pool':initGrammarSession();render();break;case 'say-grammar-answer':{let c=currentGrammarCard();if(c)say(c.frenchExample||c.frenchAnswer);break;}case 'open-profiles':profileModal();break;case 'create-profile':{const name=$('#new-profile-name')?.value.trim().replace(/\s+/g,' ');if(!profileNameAvailable(name)){toast('Enter a unique name, up to 30 characters.');return;}const p=makeProfile(name);p.color=PROFILE_COLORS[state.profiles.length%PROFILE_COLORS.length];state.profiles.push(p);state.activeProfileId=p.id;if(!persist())return;modalClose();reviewSession=null;navigate('home');toast('Created '+name+'. Ready to study!');break;}case 'rename-profile':{const id=el.dataset.profileId,p=state.profiles.find(x=>x.id===id);const name=document.getElementById('profile-name-'+id)?.value.trim().replace(/\s+/g,' ');if(!p)return;if(!profileNameAvailable(name,id)){toast('Enter a unique name, up to 30 characters.');return;}p.name=name;if(persist()){render();profileModal();toast('Profile name updated.');}break;}case 'switch-profile':switchProfile(el.dataset.profileId);break;case 'delete-profile':{if(state.profiles.length<2){toast('Keep at least one learner profile.');return;}const p=state.profiles.find(x=>x.id===el.dataset.profileId);if(!p)return;if(!confirm('Delete '+p.name+' and their study progress on this device? Shared cards will remain. This cannot be undone.'))return;state.profiles=state.profiles.filter(x=>x.id!==p.id);if(state.activeProfileId===p.id)state.activeProfileId=state.profiles[0].id;if(!persist())return;reviewSession=null;modalClose();navigate('home');profileModal();toast('Profile deleted.');break;}case 'start-review':reviewFilter='Due now';view='review';initReview();window.location.hash='review';render();break;case 'practice-all':reviewFilter='All cards';initReview();render();break;case 'reveal':revealed=true;render();break;case 'vocab-reveal':if(vocabSession){vocabSession.revealed=true;render();}break;case 'exit-vocab-session':vocabSession=null;render();break;case 'restart-vocab-session':initVocabSession(vocabSession?vocabSession.ids:null);render();break;case 'study-all-vocab':vocabLessonFilter='All';vocabTopicFilter='All';vocabSearch='';initVocabSession();render();break;case 'study-filtered-vocab':initVocabSession();render();break;case 'reset-vocab-filter':vocabLessonFilter='All';vocabTopicFilter='All';vocabSearch='';render();break;case 'say-vocab-answer':{let c=currentVocabCard();if(c)say(c.frenchAnswer);break;}case 'speak-french':{let c=currentReviewCard();if(c)say(c.frenchAnswer);break;}case 'speech-example':say(speakExercises[speakAt].suggested);break;case 'speak-reveal':speakResponse=$('#speaking-answer')?.value||'';speakShown=true;render();break;case 'speak-retry':speakShown=false;render();break;case 'speak-done':activeProfile().speakingHistory.push({time:Date.now(),item:speakAt,spoken:true});persist();speakAt=(speakAt+1)%speakExercises.length;speakShown=false;speakHint=false;speakResponse='';render();break;case 'add-card':cardModal(null);break;case 'close-modal':modalClose();break;case 'clear-upload':editImage=null;$('#uploaded-preview').innerHTML='';break;case 'save-card':saveCard();break;case 'delete-card':if(confirm('Delete this card and its history? This cannot be undone.')){const id=el.dataset.cardId;state.cards=state.cards.filter(c=>c.id!==id);for(const p of state.profiles){p.history=p.history.filter(h=>h.id!==id);delete p.progress[id];}persist();modalClose();render();toast('Card deleted.');}break;case 'export-json':exportData('json');break;case 'export-csv':exportData('csv');break;case 'import-json':$('#import-input')?.click();break;case 'reset-data':if(confirm('Reset ALL profiles, shared cards, and review history on this device? Export a backup first.'))if(confirm('Second confirmation: erase every learner\'s local progress?')){state=initial();persist();reviewSession=null;vocabSession=null;render();toast('Data reset.');}break;}});
-document.addEventListener('change',e=>{const el=e.target;if(el.id==='vocab-lesson-select'){vocabLessonFilter=el.value;render();}if(el.id==='vocab-topic-select'){vocabTopicFilter=el.value;render();}if(el.id==='review-filter'){reviewFilter=el.value;initReview();render();}if(el.id==='lib-topic'){libTopic=el.value;render();}if(el.id==='lib-type'){libType=el.value;render();}if(el.id==='front-mode'){activeProfile().prefs.frontMode=el.value;persist();toast('Flashcard prompt mode updated.');}if(el.id==='own-image')uploadImage(el.files[0]);if(el.id==='import-input')importData(el.files[0]);});
+document.addEventListener('click',e=>{const el=e.target.closest('button');if(!el)return;if(el.dataset.view){navigate(el.dataset.view);return;}if(el.dataset.grammarSubview){grammarSubView=el.dataset.grammarSubview;grammarSession=null;render();return;}if(el.dataset.drillGroup){drillGroupFilter=el.dataset.drillGroup;const avail=getDrillVerbs();if(!avail.some(v=>v.id===drillVerbId)&&avail.length)drillVerbId=avail[0].id;drillRevealed=false;render();return;}if(el.dataset.drillPronoun){drillPronounKey=el.dataset.drillPronoun;drillRevealed=false;render();return;}if(el.dataset.sayDrill){say(el.dataset.sayDrill);return;}if(el.dataset.grammarTopic){grammarTopicFilter=el.dataset.grammarTopic;render();return;}if(el.dataset.grammarRate){rateGrammarCard(el.dataset.grammarRate);return;}if(el.dataset.rate){rateCard(el.dataset.rate);return;}if(el.dataset.vocabRate){rateVocabCard(el.dataset.vocabRate);return;}if(el.dataset.startDeck){vocabLessonFilter=el.dataset.startDeck;initVocabSession();render();return;}if(el.dataset.filterDeck){vocabLessonFilter=el.dataset.filterDeck;render();return;}if(el.dataset.sayCard){say(el.dataset.sayCard);return;}if(el.dataset.edit){cardModal(state.cards.find(c=>c.id===el.dataset.edit));return;}if(el.dataset.practice){startPracticeCard(el.dataset.practice);return;}if(el.dataset.chooseScene){editScene=el.dataset.chooseScene;editImage=null;$('#uploaded-preview').innerHTML='';document.querySelectorAll('[data-choose-scene]').forEach(b=>b.classList.toggle('selected',b.dataset.chooseScene===editScene));return;}if(el.dataset.gramtab){gramTab=el.dataset.gramtab;render();return;}if(el.dataset.checkGrammar!==undefined){let i=Number(el.dataset.checkGrammar),g=grammarExercises[i],v=$('#gr-'+i)?.value||'',correct=textNormalized(v)===textNormalized(g.answer);activeProfile().grammarHistory.push({time:Date.now(),item:i,correct});persist();$('#res-'+i).innerHTML=`<div class="result ${correct?'correct':'incorrect'}">${correct?'Correct!':'Answer: '+esc(g.answer)}<br/>${esc(g.explain)}</div>`;return;}let action=el.dataset.action;if(!action)return;switch(action){case 'drill-reveal':drillRevealed=true;render();break;case 'drill-retry':drillRevealed=false;render();break;case 'drill-random-verb':{const avail=getDrillVerbs();if(avail.length){const other=avail.filter(v=>v.id!==drillVerbId);drillVerbId=(other.length?other[Math.floor(Math.random()*other.length)]:avail[0]).id;drillRevealed=false;render();}break;}case 'drill-next-verb':{const avail=getDrillVerbs();if(avail.length){const idx=avail.findIndex(v=>v.id===drillVerbId);drillVerbId=avail[(idx+1)%avail.length].id;drillRevealed=false;render();}break;}case 'drill-next-pronoun':{const pKeys=['je','tu','il','nous','vous','ils'];const cur=drillPronounKey==='random'?'je':drillPronounKey;const idx=pKeys.indexOf(cur);drillPronounKey=pKeys[(idx+1)%pKeys.length];drillRevealed=false;render();break;}case 'drill-listen-sentence':{const v=getCurrentDrillVerb();const p=getActiveDrillPronounKey(v);const s=v?.sentences?.[p]||v?.sentences?.je;if(s)say(s.sentence);break;}case 'drill-listen-verb':{const v=getCurrentDrillVerb();const p=getActiveDrillPronounKey(v);if(v&&v.conjugation?.[p]){const lead=(p==='je'&&(v.infinitive.match(/^[aeiouh]/i)?'j’':'je'))||(p==='il'?'il':p==='ils'?'ils':p);say(lead+' '+v.conjugation[p]);}break;}case 'grammar-reveal':if(grammarSession){grammarSession.revealed=true;render();}break;case 'exit-grammar-session':grammarSession=null;render();break;case 'restart-grammar-session':initGrammarSession(grammarSession?grammarSession.ids:null);render();break;case 'study-grammar-pool':initGrammarSession();render();break;case 'say-grammar-answer':{let c=currentGrammarCard();if(c)say(c.frenchExample||c.frenchAnswer);break;}case 'open-profiles':profileModal();break;case 'create-profile':{const name=$('#new-profile-name')?.value.trim().replace(/\s+/g,' ');if(!profileNameAvailable(name)){toast('Enter a unique name, up to 30 characters.');return;}const p=makeProfile(name);p.color=PROFILE_COLORS[state.profiles.length%PROFILE_COLORS.length];state.profiles.push(p);state.activeProfileId=p.id;if(!persist())return;modalClose();reviewSession=null;navigate('home');toast('Created '+name+'. Ready to study!');break;}case 'rename-profile':{const id=el.dataset.profileId,p=state.profiles.find(x=>x.id===id);const name=document.getElementById('profile-name-'+id)?.value.trim().replace(/\s+/g,' ');if(!p)return;if(!profileNameAvailable(name,id)){toast('Enter a unique name, up to 30 characters.');return;}p.name=name;if(persist()){render();profileModal();toast('Profile name updated.');}break;}case 'switch-profile':switchProfile(el.dataset.profileId);break;case 'delete-profile':{if(state.profiles.length<2){toast('Keep at least one learner profile.');return;}const p=state.profiles.find(x=>x.id===el.dataset.profileId);if(!p)return;if(!confirm('Delete '+p.name+' and their study progress on this device? Shared cards will remain. This cannot be undone.'))return;state.profiles=state.profiles.filter(x=>x.id!==p.id);if(state.activeProfileId===p.id)state.activeProfileId=state.profiles[0].id;if(!persist())return;reviewSession=null;modalClose();navigate('home');profileModal();toast('Profile deleted.');break;}case 'start-review':reviewFilter='Due now';view='review';initReview();window.location.hash='review';render();break;case 'practice-all':reviewFilter='All cards';initReview();render();break;case 'reveal':revealed=true;render();break;case 'vocab-reveal':if(vocabSession){vocabSession.revealed=true;render();}break;case 'exit-vocab-session':vocabSession=null;render();break;case 'restart-vocab-session':initVocabSession(vocabSession?vocabSession.ids:null);render();break;case 'study-all-vocab':vocabLessonFilter='All';vocabTopicFilter='All';vocabSearch='';initVocabSession();render();break;case 'study-filtered-vocab':initVocabSession();render();break;case 'reset-vocab-filter':vocabLessonFilter='All';vocabTopicFilter='All';vocabSearch='';render();break;case 'say-vocab-answer':{let c=currentVocabCard();if(c)say(c.frenchAnswer);break;}case 'speak-french':{let c=currentReviewCard();if(c)say(c.frenchAnswer);break;}case 'speech-example':say(speakExercises[speakAt].suggested);break;case 'speak-reveal':speakResponse=$('#speaking-answer')?.value||'';speakShown=true;render();break;case 'speak-retry':speakShown=false;render();break;case 'speak-done':activeProfile().speakingHistory.push({time:Date.now(),item:speakAt,spoken:true});persist();speakAt=(speakAt+1)%speakExercises.length;speakShown=false;speakHint=false;speakResponse='';render();break;case 'add-card':cardModal(null);break;case 'close-modal':modalClose();break;case 'clear-upload':editImage=null;$('#uploaded-preview').innerHTML='';break;case 'save-card':saveCard();break;case 'delete-card':if(confirm('Delete this card and its history? This cannot be undone.')){const id=el.dataset.cardId;state.cards=state.cards.filter(c=>c.id!==id);for(const p of state.profiles){p.history=p.history.filter(h=>h.id!==id);delete p.progress[id];}persist();modalClose();render();toast('Card deleted.');}break;case 'export-json':exportData('json');break;case 'export-csv':exportData('csv');break;case 'import-json':$('#import-input')?.click();break;case 'reset-data':if(confirm('Reset ALL profiles, shared cards, and review history on this device? Export a backup first.'))if(confirm('Second confirmation: erase every learner\'s local progress?')){state=initial();persist();reviewSession=null;vocabSession=null;render();toast('Data reset.');}break;}});
+document.addEventListener('change',e=>{const el=e.target;if(el.id==='drill-verb-select'){drillVerbId=el.value;drillRevealed=false;render();}if(el.id==='drill-pronoun-select'){drillPronounKey=el.value;drillRevealed=false;render();}if(el.id==='vocab-lesson-select'){vocabLessonFilter=el.value;render();}if(el.id==='vocab-topic-select'){vocabTopicFilter=el.value;render();}if(el.id==='review-filter'){reviewFilter=el.value;initReview();render();}if(el.id==='lib-topic'){libTopic=el.value;render();}if(el.id==='lib-type'){libType=el.value;render();}if(el.id==='front-mode'){activeProfile().prefs.frontMode=el.value;persist();toast('Flashcard prompt mode updated.');}if(el.id==='own-image')uploadImage(el.files[0]);if(el.id==='import-input')importData(el.files[0]);});
 document.addEventListener('input',e=>{if(e.target.id==='vocab-search-input'){vocabSearch=e.target.value;render();}if(e.target.id==='lib-search'){const el=e.target;let pos=el.selectionStart;libSearch=el.value;const grid=$('.library-grid'),cards=libCards();if(grid){grid.outerHTML=`<div class="library-grid">${cards.map(c=>`<div class="lib-card hover-card"><div class="lib-scene">${visual(c)}</div><div class="lib-content"><span class="meta">${esc(c.topic)}</span><h3>${esc(c.frenchAnswer)}</h3><p>${esc(c.englishPrompt)}</p>${c.frenchExample?`<div class="vocab-example"><p lang="fr">${esc(c.frenchExample)}</p>${c.exampleEnglish?`<p class="example-meaning">${esc(c.exampleEnglish)}</p>`:''}</div>`:''}<div class="lib-footer"><button class="btn btn-secondary" data-edit="${esc(c.id)}">${icon('edit')} Edit</button><button class="btn btn-white" data-practice="${esc(c.id)}">Practice ${icon('arrow')}</button></div></div></div>`).join('')}</div>`;}}});
 window.addEventListener('hashchange',()=>{const hash=location.hash.slice(1);if(['home','vocab','review','grammar','speak','library','settings'].includes(hash)&&view!==hash){view=hash;reviewSession=null;render();}});
 const initialHash=location.hash.slice(1);if(['home','vocab','review','grammar','speak','library','settings'].includes(initialHash))view=initialHash;render();
