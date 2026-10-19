@@ -111,7 +111,41 @@ function startServer() {
     console.log('Vocab example phonetic reading guide:', phonText);
     assert.ok(phonText.startsWith('[') && phonText.endsWith(']'), 'Phonetic guide must be formatted in brackets');
 
+    // Verify quiet card back structure (no large review-scene taking up screen)
+    const isQuiet = await page.locator('.quiet-card').count();
+    console.log('Quiet card back container visible:', isQuiet);
+    assert.equal(isQuiet, 1, 'Revealed card must use .quiet-card container');
+    const revealedScenes = await page.locator('.quiet-card .review-scene').count();
+    assert.equal(revealedScenes, 0, 'Revealed quiet card back must NOT contain large review-scene');
+
+    // Verify 3-dot details button
+    const dotsBtnCount = await page.locator('.quiet-card [data-action="card-details"]').count();
+    console.log('3-dot details button count on revealed card:', dotsBtnCount);
+    assert.equal(dotsBtnCount, 1, 'Expected 3-dot details button on card back');
+
     await page.screenshot({ path: path.join(out, 'vocab-card-back-390.png') });
+
+    // Click 3-dot details button to open modal
+    console.log('Clicking 3-dot details button to inspect modal...');
+    await page.locator('.quiet-card [data-action="card-details"]').click();
+    await page.waitForTimeout(200);
+
+    // Verify details modal opened
+    const modalVisible = await page.locator('.card-details-modal').count();
+    console.log('Card details modal visible:', modalVisible);
+    assert.equal(modalVisible, 1, 'Card details modal must open upon clicking 3-dot button');
+
+    // Verify modal contains illustration scene and details
+    const modalScene = await page.locator('.card-details-scene svg, .card-details-scene img').count();
+    assert.ok(modalScene >= 1, 'Details modal must display visual illustration scene');
+    console.log('Verified: Details modal displays full visual illustration and detailed notes!');
+
+    await page.screenshot({ path: path.join(out, 'card-details-modal-390.png') });
+
+    // Close modal via Got it / close-modal button
+    await page.locator('.card-details-modal [data-action="close-modal"]').last().click();
+    await page.waitForTimeout(200);
+    assert.equal(await page.locator('.card-details-modal').count(), 0, 'Modal must close cleanly');
 
     // Rate "good"
     await page.locator('[data-vocab-rate="good"]').click();

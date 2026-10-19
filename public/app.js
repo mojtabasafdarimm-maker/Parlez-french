@@ -2,7 +2,7 @@
 'use strict';
 const STORE='parlez-v3-state', LEGACY_STORE='parlez-v2-state';
 const $=s=>document.querySelector(s);
-const icons={home:'<path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/>',vocab:'<rect x="3" y="4" width="18" height="16" rx="3"/><path d="M7 8h10M7 12h7"/>',review:'<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 7h8M8 11h8M8 15h4"/>',grammar:'<path d="M3 5h7a4 4 0 0 1 4 4v12a4 4 0 0 0-4-4H3zM21 5h-3a4 4 0 0 0-4 4v12a4 4 0 0 1 4-4h3z"/>',speak:'<rect x="9" y="2" width="6" height="13" rx="3"/><path d="M5 10a7 7 0 0 0 14 0M12 17v5M8 22h8"/>',library:'<path d="M4 4h16v16H4zM9 4v16M13 9h4M13 13h4"/>',settings:'<circle cx="12" cy="12" r="3"/><path d="m19.4 15 1 1.7-2 2-1.7-1a8 8 0 0 1-2 .8l-.5 2.2H9.8l-.5-2.2a8 8 0 0 1-2-.8l-1.7 1-2-2 1-1.7a8 8 0 0 1-.8-2L1.5 12l2.3-.5a8 8 0 0 1 .8-2L3.6 7.8l2-2 1.7 1a8 8 0 0 1 2-.8l.5-2.2h4.4l.5 2.2a8 8 0 0 1 2 .8l1.7-1 2 2-1 1.7a8 8 0 0 1 .8 2l2.3.5-2.3.5a8 8 0 0 1-.8 2z"/>',arrow:'<path d="M5 12h14m-6-6 6 6-6 6"/>',sound:'<path d="M11 5 6 9H3v6h3l5 4zM15 9a5 5 0 0 1 0 6M18 6a9 9 0 0 1 0 12"/>',edit:'<path d="M12 20h9M16 4l4 4L9 19l-5 1 1-5z"/>',plus:'<path d="M12 5v14M5 12h14"/>',search:'<circle cx="11" cy="11" r="7"/><path d="m16 16 5 5"/>',check:'<path d="m5 12 4 4L19 6"/>',close:'<path d="M5 5 19 19M19 5 5 19"/>',clock:'<circle cx="12" cy="12" r="9"/><path d="M12 6v6l4 2"/>',fire:'<path d="M12 22c5 0 8-4 8-8 0-4-3-7-5-9 0 4-2 5-3 6 0-4-2-6-4-8-1 4-4 7-4 11 0 4 3 8 8 8z"/>',brain:'<path d="M12 5a4 4 0 0 0-7 2 4 4 0 0 0-1 7 5 5 0 0 0 8 5M12 5a4 4 0 0 1 7 2 4 4 0 0 1 1 7 5 5 0 0 1-8 5zM12 5v14"/>',download:'<path d="M12 3v13m-5-5 5 5 5-5M4 18v3h16v-3"/>',upload:'<path d="M12 17V4m-5 5 5-5 5 5M4 18v3h16v-3"/>',trash:'<path d="M4 7h16M10 11v7m4-7v7M6 7l1 14h10l1-14M9 7V4h6v3"/>',eye:'<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',spark:'<path d="M12 2l2.5 7.5L22 12l-7.5 2.5L12 22l-2.5-7.5L2 12l7.5-2.5z"/>',left:'<path d="m14 5-7 7 7 7"/>',book:'<path d="M4 3h13a3 3 0 0 1 3 3v15H7a3 3 0 0 1-3-3zM4 18a3 3 0 0 1 3-3h13"/>',info:'<circle cx="12" cy="12" r="10"/><path d="M12 11v6M12 7h.01"/>'};
+const icons={home:'<path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/>',vocab:'<rect x="3" y="4" width="18" height="16" rx="3"/><path d="M7 8h10M7 12h7"/>',review:'<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 7h8M8 11h8M8 15h4"/>',grammar:'<path d="M3 5h7a4 4 0 0 1 4 4v12a4 4 0 0 0-4-4H3zM21 5h-3a4 4 0 0 0-4 4v12a4 4 0 0 1 4-4h3z"/>',speak:'<rect x="9" y="2" width="6" height="13" rx="3"/><path d="M5 10a7 7 0 0 0 14 0M12 17v5M8 22h8"/>',library:'<path d="M4 4h16v16H4zM9 4v16M13 9h4M13 13h4"/>',settings:'<circle cx="12" cy="12" r="3"/><path d="m19.4 15 1 1.7-2 2-1.7-1a8 8 0 0 1-2 .8l-.5 2.2H9.8l-.5-2.2a8 8 0 0 1-2-.8l-1.7 1-2-2 1-1.7a8 8 0 0 1-.8-2L1.5 12l2.3-.5a8 8 0 0 1 .8-2L3.6 7.8l2-2 1.7 1a8 8 0 0 1 2-.8l.5-2.2h4.4l.5 2.2a8 8 0 0 1 2 .8l1.7-1 2 2-1 1.7a8 8 0 0 1 .8 2l2.3.5-2.3.5a8 8 0 0 1-.8 2z"/>',arrow:'<path d="M5 12h14m-6-6 6 6-6 6"/>',sound:'<path d="M11 5 6 9H3v6h3l5 4zM15 9a5 5 0 0 1 0 6M18 6a9 9 0 0 1 0 12"/>',edit:'<path d="M12 20h9M16 4l4 4L9 19l-5 1 1-5z"/>',plus:'<path d="M12 5v14M5 12h14"/>',search:'<circle cx="11" cy="11" r="7"/><path d="m16 16 5 5"/>',check:'<path d="m5 12 4 4L19 6"/>',close:'<path d="M5 5 19 19M19 5 5 19"/>',clock:'<circle cx="12" cy="12" r="9"/><path d="M12 6v6l4 2"/>',fire:'<path d="M12 22c5 0 8-4 8-8 0-4-3-7-5-9 0 4-2 5-3 6 0-4-2-6-4-8-1 4-4 7-4 11 0 4 3 8 8 8z"/>',brain:'<path d="M12 5a4 4 0 0 0-7 2 4 4 0 0 0-1 7 5 5 0 0 0 8 5M12 5a4 4 0 0 1 7 2 4 4 0 0 1 1 7 5 5 0 0 1-8 5zM12 5v14"/>',download:'<path d="M12 3v13m-5-5 5 5 5-5M4 18v3h16v-3"/>',upload:'<path d="M12 17V4m-5 5 5-5 5 5M4 18v3h16v-3"/>',trash:'<path d="M4 7h16M10 11v7m4-7v7M6 7l1 14h10l1-14M9 7V4h6v3"/>',eye:'<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',spark:'<path d="M12 2l2.5 7.5L22 12l-7.5 2.5L12 22l-2.5-7.5L2 12l7.5-2.5z"/>',left:'<path d="m14 5-7 7 7 7"/>',book:'<path d="M4 3h13a3 3 0 0 1 3 3v15H7a3 3 0 0 1-3-3zM4 18a3 3 0 0 1 3-3h13"/>',info:'<circle cx="12" cy="12" r="10"/><path d="M12 11v6M12 7h.01"/>',dots:'<circle cx="5" cy="12" r="2" fill="currentColor"/><circle cx="12" cy="12" r="2" fill="currentColor"/><circle cx="19" cy="12" r="2" fill="currentColor"/>'};
 function icon(name,cl='icon'){return `<svg class="${cl}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${icons[name]||icons.spark}</svg>`;}
 function esc(s=''){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function textNormalized(s){return String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[’']/g,'').replace(/[^a-z0-9 ]/g,' ').replace(/\s+/g,' ').trim();}
@@ -598,9 +598,50 @@ function simpleReviewPage(){
   if(!c)return `<div class="review-layout">${header}<div class="empty"><div class="empty-emoji">✨</div><h2>${all?'Session complete!':'No cards due right now'}</h2><p class="subline">${all?`You reviewed ${reviewSession.done} cards. ${reviewSession.again} were marked Again.`:'Nice work. You can review all cards or choose a topic to practice more.'}</p><button class="btn btn-primary" data-action="practice-all">Practice all cards ${icon('arrow')}</button> <button class="btn btn-white" data-view="home">Back home</button></div></div>`;
   const picture=activeProfile().prefs.frontMode==='english'?`<div class="english-front">${esc(c.englishPrompt)}</div>`:visual(c);
   const phon=c.examplePhonetic||(window.ParlezPhonetics&&window.ParlezPhonetics[c.frenchExample])||'';
-  const answer=`<div class="answer"><div class="eyebrow">FRENCH</div><h2>${esc(c.frenchAnswer)}</h2><div class="english">${esc(c.englishPrompt)}</div><div class="answer-actions"><button class="btn btn-secondary" data-action="speak-french">${icon('sound')} Listen</button></div>${c.frenchExample?`<div class="example"><b>Example</b><p lang="fr">${esc(c.frenchExample)}</p>${phon?`<p class="example-phonetic">${esc(phon)}</p>`:''}${c.exampleEnglish?`<p class="example-meaning">${esc(c.exampleEnglish)}</p>`:''}</div>`:''}</div><div class="rating-row">${[['Again','10 min','again'],['Hard','1 day','hard'],['Good','3+ days','good'],['Easy','5+ days','easy']].map(([label,sub,rate])=>`<button data-rate="${rate}" class="btn ${rate==='good'?'btn-primary':'btn-white'}">${label}<span>${sub}</span></button>`).join('')}</div>`;
-  const prompt=`<div class="simple-review-actions"><button class="btn btn-primary btn-lg" data-action="reveal">Reveal French ${icon('eye')}</button></div>`;
-  return `<div class="review-layout">${header}<div class="small muted mb">Card ${reviewSession.index+1} of ${all}</div><div class="review-progress"><div style="width:${100*reviewSession.index/Math.max(all,1)}%"></div></div><div class="review-card ${revealed?'revealed':''}"><div class="review-scene">${picture}<span class="corner">${esc(c.topic)}</span></div>${revealed?answer:prompt}</div></div>`;
+
+  const prompt=`<div class="review-card">
+    <div class="review-scene">
+      ${picture}
+      <span class="corner">${esc(c.topic)}</span>
+      <button class="round-btn quiet-dots-btn card-corner-dots" type="button" data-action="card-details" data-card-id="${esc(c.id)}" aria-label="Card details" title="More details">${icon('dots')}</button>
+    </div>
+    <div class="simple-review-actions">
+      <button class="btn btn-primary btn-lg" data-action="reveal">Reveal French ${icon('eye')}</button>
+    </div>
+  </div>`;
+
+  const answer=`<div class="review-card quiet-card revealed">
+    <div class="quiet-card-top">
+      <span class="small muted">Card ${reviewSession.index+1} of ${all} · ${esc(c.topic)}</span>
+      <button class="round-btn quiet-dots-btn" type="button" data-action="card-details" data-card-id="${esc(c.id)}" aria-label="Card details" title="More details">${icon('dots')}</button>
+    </div>
+
+    <div class="answer quiet-answer-section">
+      <h2 class="quiet-french-word">${esc(c.frenchAnswer)}</h2>
+      <div class="quiet-english-meaning">${esc(c.englishPrompt)}</div>
+      <div class="quiet-audio-row">
+        <button class="btn btn-secondary btn-sm" type="button" data-action="speak-french" aria-label="Listen to French answer">${icon('sound')} Listen</button>
+      </div>
+    </div>
+
+    ${c.frenchExample?`<div class="quiet-example-section">
+      <div class="quiet-example-french-row">
+        <p class="quiet-example-french" lang="fr">${esc(c.frenchExample)}</p>
+        <button class="round-btn btn-sm quiet-listen-sub" type="button" data-action="say-example" data-say="${esc(c.frenchExample)}" title="Listen to example sentence" aria-label="Listen to example">${icon('sound')}</button>
+      </div>
+      ${phon?`<p class="example-phonetic">${esc(phon)}</p>`:''}
+      ${c.exampleEnglish?`<p class="quiet-example-meaning">${esc(c.exampleEnglish)}</p>`:''}
+    </div>`:''}
+
+    <div class="rating-row">${[['Again','10 min','again'],['Hard','1 day','hard'],['Good','3+ days','good'],['Easy','5+ days','easy']].map(([label,sub,rate])=>`<button data-rate="${rate}" class="btn ${rate==='good'?'btn-primary':'btn-white'}">${label}<span>${sub}</span></button>`).join('')}</div>
+  </div>`;
+
+  return `<div class="review-layout">
+    ${header}
+    <div class="small muted mb">Card ${reviewSession.index+1} of ${all}</div>
+    <div class="review-progress"><div style="width:${100*reviewSession.index/Math.max(all,1)}%"></div></div>
+    ${revealed?answer:prompt}
+  </div>`;
 }
 const reviewPage=simpleReviewPage;
 function rateCard(level){const c=currentReviewCard();if(!c)return;const p=ensureProgress(c),now=Date.now();p.reviews=(p.reviews||0)+1;p.lastReviewed=now;p.ease=p.ease||2.5;const prev=p.interval||0;switch(level){case 'again':p.interval=0;p.ease=Math.max(1.3,p.ease-.2);p.dueAt=now+10*60*1000;break;case 'hard':p.interval=Math.max(1,Math.round(prev?prev*1.2:1));p.ease=Math.max(1.3,p.ease-.15);p.dueAt=isoAfter(p.interval);break;case 'good':p.interval=prev?Math.max(3,Math.round(prev*p.ease)):3;p.dueAt=isoAfter(p.interval);break;case 'easy':p.interval=prev?Math.max(5,Math.round(prev*(p.ease+.35))):5;p.ease+=.12;p.dueAt=isoAfter(p.interval);break;}activeProfile().history.push({id:c.id,time:now,level});reviewSession.done++;if(level==='again')reviewSession.again++;reviewSession.index++;revealed=false;persist();render();}
@@ -659,8 +700,44 @@ function vocabCardSessionView(){
   }
   const picture=activeProfile().prefs.frontMode==='english'?`<div class="english-front">${esc(c.englishPrompt)}</div>`:visual(c);
   const phon=c.examplePhonetic||(window.ParlezPhonetics&&window.ParlezPhonetics[c.frenchExample])||'';
-  const answer=`<div class="answer"><div class="eyebrow">FRENCH</div><h2>${esc(c.frenchAnswer)}</h2><div class="english">${esc(c.englishPrompt)}</div><div class="answer-actions"><button class="btn btn-secondary" data-action="say-vocab-answer">${icon('sound')} Listen</button></div>${c.frenchExample?`<div class="example"><b>Example</b><p lang="fr">${esc(c.frenchExample)}</p>${phon?`<p class="example-phonetic">${esc(phon)}</p>`:''}${c.exampleEnglish?`<p class="example-meaning">${esc(c.exampleEnglish)}</p>`:''}</div>`:''}${c.grammarNote?`<div class="vocab-note"><small>${esc(c.grammarNote)}</small></div>`:''}</div><div class="rating-row">${[['Again','10 min','again'],['Hard','1 day','hard'],['Good','3+ days','good'],['Easy','5+ days','easy']].map(([label,sub,rate])=>`<button data-vocab-rate="${rate}" class="btn ${rate==='good'?'btn-primary':'btn-white'}">${label}<span>${sub}</span></button>`).join('')}</div>`;
-  const prompt=`<div class="simple-review-actions"><button class="btn btn-primary btn-lg" data-action="vocab-reveal">Reveal French ${icon('eye')}</button></div>`;
+
+  const prompt=`<div class="review-card">
+    <div class="review-scene">
+      ${picture}
+      <span class="corner">${esc(c.topic||'Vocab')}</span>
+      <button class="round-btn quiet-dots-btn card-corner-dots" type="button" data-action="card-details" data-card-id="${esc(c.id)}" aria-label="Card details" title="More details">${icon('dots')}</button>
+    </div>
+    <div class="simple-review-actions">
+      <button class="btn btn-primary btn-lg" data-action="vocab-reveal">Reveal French ${icon('eye')}</button>
+    </div>
+  </div>`;
+
+  const answer=`<div class="review-card quiet-card revealed">
+    <div class="quiet-card-top">
+      <span class="small muted">Card ${vocabSession.index+1} of ${all} · ${esc(c.topic||'Vocab')}</span>
+      <button class="round-btn quiet-dots-btn" type="button" data-action="card-details" data-card-id="${esc(c.id)}" aria-label="Card details" title="More details">${icon('dots')}</button>
+    </div>
+
+    <div class="answer quiet-answer-section">
+      <h2 class="quiet-french-word">${esc(c.frenchAnswer)}</h2>
+      <div class="quiet-english-meaning">${esc(c.englishPrompt)}</div>
+      <div class="quiet-audio-row">
+        <button class="btn btn-secondary btn-sm" type="button" data-action="say-vocab-answer" aria-label="Listen to French answer">${icon('sound')} Listen</button>
+      </div>
+    </div>
+
+    ${c.frenchExample?`<div class="quiet-example-section">
+      <div class="quiet-example-french-row">
+        <p class="quiet-example-french" lang="fr">${esc(c.frenchExample)}</p>
+        <button class="round-btn btn-sm quiet-listen-sub" type="button" data-action="say-example" data-say="${esc(c.frenchExample)}" title="Listen to example sentence" aria-label="Listen to example">${icon('sound')}</button>
+      </div>
+      ${phon?`<p class="example-phonetic">${esc(phon)}</p>`:''}
+      ${c.exampleEnglish?`<p class="quiet-example-meaning">${esc(c.exampleEnglish)}</p>`:''}
+    </div>`:''}
+
+    <div class="rating-row">${[['Again','10 min','again'],['Hard','1 day','hard'],['Good','3+ days','good'],['Easy','5+ days','easy']].map(([label,sub,rate])=>`<button data-vocab-rate="${rate}" class="btn ${rate==='good'?'btn-primary':'btn-white'}">${label}<span>${sub}</span></button>`).join('')}</div>
+  </div>`;
+
   return `<div class="review-layout">
     <div class="review-top">
       <div><div class="eyebrow">${esc(c.lesson||'A1.1 FLASHCARDS')}</div><h2>${esc(c.topic||'Vocabulary')}</h2></div>
@@ -668,10 +745,7 @@ function vocabCardSessionView(){
     </div>
     <div class="small muted mb">Card ${vocabSession.index+1} of ${all}</div>
     <div class="review-progress"><div style="width:${100*vocabSession.index/Math.max(all,1)}%"></div></div>
-    <div class="review-card ${vocabSession.revealed?'revealed':''}">
-      <div class="review-scene">${picture}<span class="corner">${esc(c.topic)}</span></div>
-      ${vocabSession.revealed?answer:prompt}
-    </div>
+    ${vocabSession.revealed?answer:prompt}
   </div>`;
 }
 function vocabCatalogView(){
@@ -846,18 +920,45 @@ function grammarCardSessionView(){
   }
   const picture=activeProfile().prefs.frontMode==='english'?`<div class="english-front">${esc(c.englishPrompt)}</div>`:visual(c);
   const phon=c.examplePhonetic||(window.ParlezPhonetics&&window.ParlezPhonetics[c.frenchExample])||'';
-  const answer=`<div class="answer">
-    <div class="eyebrow">RÈGLE DE GRAMMAIRE</div>
-    <h2>${esc(c.frenchAnswer)}</h2>
-    <div class="english">${esc(c.englishPrompt)}</div>
-    <div class="answer-actions">
-      <button class="btn btn-secondary" data-action="say-grammar-answer">${icon('sound')} Listen</button>
+
+  const prompt=`<div class="review-card">
+    <div class="review-scene">
+      ${picture}
+      <span class="corner">${esc(c.topic||'Grammar')}</span>
+      <button class="round-btn quiet-dots-btn card-corner-dots" type="button" data-action="card-details" data-card-id="${esc(c.id)}" aria-label="Card details" title="More details">${icon('dots')}</button>
     </div>
-    ${c.frenchExample?`<div class="example"><b>Exemple clé</b><p lang="fr">${esc(c.frenchExample)}</p>${phon?`<p class="example-phonetic">${esc(phon)}</p>`:''}${c.exampleEnglish?`<p class="example-meaning">${esc(c.exampleEnglish)}</p>`:''}</div>`:''}
-    ${c.grammarNote?`<div class="vocab-note"><small>${esc(c.grammarNote)}</small></div>`:''}
-  </div>
-  <div class="rating-row">${[['Again','10 min','again'],['Hard','1 day','hard'],['Good','3+ days','good'],['Easy','5+ days','easy']].map(([label,sub,rate])=>`<button data-grammar-rate="${rate}" class="btn ${rate==='good'?'btn-primary':'btn-white'}">${label}<span>${sub}</span></button>`).join('')}</div>`;
-  const prompt=`<div class="simple-review-actions"><button class="btn btn-primary btn-lg" data-action="grammar-reveal">Reveal Rule ${icon('eye')}</button></div>`;
+    <div class="simple-review-actions">
+      <button class="btn btn-primary btn-lg" data-action="grammar-reveal">Reveal Rule ${icon('eye')}</button>
+    </div>
+  </div>`;
+
+  const answer=`<div class="review-card quiet-card revealed">
+    <div class="quiet-card-top">
+      <span class="small muted">Rule ${grammarSession.index+1} of ${all} · ${esc(c.topic||'Grammar')}</span>
+      <button class="round-btn quiet-dots-btn" type="button" data-action="card-details" data-card-id="${esc(c.id)}" aria-label="Card details" title="More details">${icon('dots')}</button>
+    </div>
+
+    <div class="answer quiet-answer-section">
+      <div class="eyebrow" style="font-size:11px;letter-spacing:1px;margin-bottom:4px">RÈGLE DE GRAMMAIRE</div>
+      <h2 class="quiet-french-word">${esc(c.frenchAnswer)}</h2>
+      <div class="quiet-english-meaning">${esc(c.englishPrompt)}</div>
+      <div class="quiet-audio-row">
+        <button class="btn btn-secondary btn-sm" type="button" data-action="say-grammar-answer" aria-label="Listen to French answer">${icon('sound')} Listen</button>
+      </div>
+    </div>
+
+    ${c.frenchExample?`<div class="quiet-example-section">
+      <div class="quiet-example-french-row">
+        <p class="quiet-example-french" lang="fr">${esc(c.frenchExample)}</p>
+        <button class="round-btn btn-sm quiet-listen-sub" type="button" data-action="say-example" data-say="${esc(c.frenchExample)}" title="Listen to example sentence" aria-label="Listen to example">${icon('sound')}</button>
+      </div>
+      ${phon?`<p class="example-phonetic">${esc(phon)}</p>`:''}
+      ${c.exampleEnglish?`<p class="quiet-example-meaning">${esc(c.exampleEnglish)}</p>`:''}
+    </div>`:''}
+
+    <div class="rating-row">${[['Again','10 min','again'],['Hard','1 day','hard'],['Good','3+ days','good'],['Easy','5+ days','easy']].map(([label,sub,rate])=>`<button data-grammar-rate="${rate}" class="btn ${rate==='good'?'btn-primary':'btn-white'}">${label}<span>${sub}</span></button>`).join('')}</div>
+  </div>`;
+
   return `<div class="review-layout">
     <div class="review-top">
       <div><div class="eyebrow">${esc(c.lesson||'GRAMMAR RULE')}</div><h2>${esc(c.topic||'Grammar')}</h2></div>
@@ -865,10 +966,7 @@ function grammarCardSessionView(){
     </div>
     <div class="small muted mb">Rule ${grammarSession.index+1} of ${all}</div>
     <div class="review-progress"><div style="width:${100*grammarSession.index/Math.max(all,1)}%"></div></div>
-    <div class="review-card ${grammarSession.revealed?'revealed':''}">
-      <div class="review-scene">${picture}<span class="corner">${esc(c.topic)}</span></div>
-      ${grammarSession.revealed?answer:prompt}
-    </div>
+    ${grammarSession.revealed?answer:prompt}
   </div>`;
 }
 function grammarFlashcardsView(){
@@ -1106,6 +1204,58 @@ function libraryPage(){const cs=libCards();return `<div><div class="eyebrow">YOU
 function settingsPage(){return `<div><div class="eyebrow">YOUR APP, YOUR RULES</div><h1>Settings & backups.</h1><p class="header-desc">Visual French practice works offline after installation. Each learner has independent progress saved on this device only; there is no cross-device synchronization.</p><div class="settings-grid"><div class="panel"><h3>Study profiles</h3><p>Each learner has separate reviews, streaks, grammar and speaking history. Everyone shares one vocabulary library.</p><p class="mini-step">Studying as: ${esc(activeProfile().name)}</p><div style="margin-top:17px"><button class="btn btn-primary" data-action="open-profiles">${icon("plus")} Manage profiles</button></div></div><div class="panel"><h3>Flashcard front</h3><p>Choose what appears before you reveal French. Visual is the recommended speaking-focused mode.</p><div class="field"><label for="front-mode">Card prompt mode</label><select id="front-mode" class="select"><option value="visual" ${activeProfile().prefs.frontMode==='visual'?'selected':''}>Picture only (recommended)</option><option value="english" ${activeProfile().prefs.frontMode==='english'?'selected':''}>English prompt</option><option value="mixed" ${activeProfile().prefs.frontMode==='mixed'?'selected':''}>Picture + English</option></select></div></div><div class="panel"><h3>Backup your progress</h3><p>Download a complete backup of your shared cards, uploaded pictures and every learner profile with its own study history. Importing a backup replaces all existing local profiles on that device.</p><button class="btn btn-primary" data-action="export-json">${icon('download')} Export backup</button> <button class="btn btn-white" data-action="import-json">${icon('upload')} Import backup</button><input id="import-input" type="file" accept="application/json,.json" hidden/></div><div class="panel"><h3>Add to your iPhone</h3><p>After deploying to a secure HTTPS address, open it in Safari → Share → Add to Home Screen. Then Parlez appears as an app icon.</p><p class="small muted">Offline files are cached after the first successful visit. Your card data remains local.</p></div><div class="panel"><h3>Data controls</h3><p><b>${state.cards.length}</b> cards · <b>${activeProfile().history.length}</b> reviews · <b>${activeProfile().speakingHistory.length}</b> speaking attempts.</p><button class="btn btn-white" data-action="export-csv">${icon('download')} Export cards CSV</button> <button class="btn btn-danger" style="margin-top:12px" data-action="reset-data">${icon('trash')} Reset entire app</button></div></div><div class="notice">${icon('info')} Important: all profiles are stored only in this browser. Different phones do not synchronize. Clearing Safari data removes all local profiles and your edited cards. Export a full JSON backup regularly.</div></div>`;}
 function cardModal(c){modalOpen=true;editId=c?.id||null;editScene=c?.scene||'wake';editImage=c?.customImage||null;const sceneKeys=['wake','rise','brush','shower','dress','hair','walk','bedtime','sleep','breakfast','makebed','dishes','plants','work','coffee','bike','hat','scarf','dressobj','shoes','shirt','pants','skirt','socks','gloves','red-dress','rain','snow','sun','wind','clouds','cold','hot','write','eat-before','eat-now','eat-after','clock-215','clock-230','clock-245','sport','cinema','mexican-film'];const fields=[['frenchAnswer','French word or expression','e.g. une écharpe'],['englishPrompt','English meaning','e.g. a scarf'],['frenchExample','Simple example in French','e.g. Je porte une écharpe.'],['exampleEnglish','Example in English','e.g. I wear a scarf.']];const f=(key,title,placeholder)=>`<div class="field"><label for="ed-${key}">${title}</label><input class="input" id="ed-${key}" value="${esc(c?.[key]||'')}" placeholder="${esc(placeholder)}" ${key==='frenchAnswer'?'required':''}/></div>`;const html=`<div class="modal-backdrop" id="modal-backdrop"><div class="modal" role="dialog" aria-modal="true" aria-label="${c?'Edit':'Add'} card"><div class="modal-header"><h2>${c?'Edit your card':'Create a new card'}</h2><button class="round-btn" data-action="close-modal" aria-label="Close dialog">${icon('close')}</button></div><div class="field-row"><div class="field"><label for="ed-topic">Topic</label><input class="input" id="ed-topic" value="${esc(c?.topic||'My own cards')}"/></div><div class="field"><label for="ed-kind">Card type</label><select class="select" id="ed-kind">${['vocab','action','sentence','grammar','speaking'].map(t=>`<option ${c?.kind===t?'selected':''}>${t}</option>`).join('')}</select></div></div><div class="field"><label>Choose a picture for the FRONT</label><div class="image-chooser">${sceneKeys.map(key=>`<button class="${editScene===key?'selected':''}" data-choose-scene="${key}" title="${key}">${sceneSVG(key)}<span>${key.replace(/-/g,' ')}</span></button>`).join('')}</div><small style="margin-top:5px">Pick an illustration or upload a photo below.</small></div><div class="field"><label for="own-image">Upload your own image (optional)</label><input id="own-image" type="file" accept="image/*" class="input"/><small>Images are compressed on your device to fit local storage. A custom image replaces the illustration.</small></div><div id="uploaded-preview">${editImage?`<img alt="User image" src="${esc(editImage)}" style="max-height:110px;max-width:160px;border-radius:10px"/> <button class="btn btn-white" data-action="clear-upload">Remove image</button>`:''}</div>${fields.map(x=>f(...x)).join('')}<div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:18px">${c?`<button class="btn btn-danger" data-action="delete-card" data-card-id="${esc(c.id)}">${icon('trash')} Delete</button>`:'<span></span>'}<div style="display:flex;gap:9px"><button class="btn btn-white" data-action="close-modal">Cancel</button><button class="btn btn-primary" data-action="save-card">${icon('check')} Save card</button></div></div></div></div>`;document.body.insertAdjacentHTML('beforeend',html);}
 function modalClose(){document.querySelector('#modal-backdrop')?.remove();modalOpen=false;}
+function cardDetailsModal(c){
+  if(!c)return;
+  modalClose();
+  modalOpen=true;
+  const phon=c.examplePhonetic||(window.ParlezPhonetics&&window.ParlezPhonetics[c.frenchExample])||'';
+  const html=`<div class="modal-backdrop" id="modal-backdrop">
+    <div class="modal card-details-modal" role="dialog" aria-modal="true" aria-label="Card Details: ${esc(c.frenchAnswer)}">
+      <div class="modal-header">
+        <div>
+          <div class="eyebrow">${esc(c.topic||'VOCABULARY')}${c.lesson?` · ${esc(c.lesson)}`:''}</div>
+          <h2 style="margin-top:4px">${esc(c.frenchAnswer)}</h2>
+        </div>
+        <button class="round-btn" type="button" data-action="close-modal" aria-label="Close details">${icon('close')}</button>
+      </div>
+
+      <div class="card-details-scene">
+        ${visual(c)}
+      </div>
+
+      <div class="card-details-content">
+        <div class="card-details-row">
+          <div style="flex:1">
+            <span class="small muted">English meaning</span>
+            <div style="font-size:16px;font-weight:600;color:var(--text,#2d263b);margin-top:2px">${esc(c.englishPrompt)}</div>
+          </div>
+          <button class="btn btn-secondary btn-sm" type="button" data-action="say-card-details" data-say="${esc(c.frenchAnswer)}" aria-label="Listen to word">${icon('sound')} Listen</button>
+        </div>
+
+        ${c.frenchExample?`<div class="card-details-box">
+          <span class="small muted">Example sentence</span>
+          <div class="card-details-example-fr" lang="fr">
+            <span>${esc(c.frenchExample)}</span>
+            <button class="round-btn btn-sm" type="button" data-action="say-card-details" data-say="${esc(c.frenchExample)}" aria-label="Listen to example">${icon('sound')}</button>
+          </div>
+          ${phon?`<p class="example-phonetic" style="margin:4px 0 0">${esc(phon)}</p>`:''}
+          ${c.exampleEnglish?`<p class="small muted" style="margin:4px 0 0">${esc(c.exampleEnglish)}</p>`:''}
+        </div>`:''}
+
+        ${c.grammarNote?`<div class="card-details-box note-box">
+          <span class="small muted" style="font-weight:600;color:var(--purple-dark,#515097)">Grammar & Usage Note</span>
+          <p style="margin:6px 0 0;font-size:13.5px;line-height:1.5">${esc(c.grammarNote)}</p>
+        </div>`:''}
+      </div>
+
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:16px">
+        <button class="btn btn-white btn-sm" type="button" data-edit="${esc(c.id)}">${icon('edit')} Edit card</button>
+        <button class="btn btn-primary btn-sm" type="button" data-action="close-modal">Got it</button>
+      </div>
+    </div>
+  </div>`;
+  document.body.insertAdjacentHTML('beforeend',html);
+}
 function profileModal(){
  modalClose();
  const html=`<div class="modal-backdrop" id="modal-backdrop">
@@ -1169,7 +1319,7 @@ function render(){document.querySelector('#modal-backdrop')?.remove();modalOpen=
 function navigate(to){view=to;window.location.hash=to;reviewSession=null;vocabSession=null;speakShown=false;speakHint=false;speakResponse='';render();scrollTo({top:0,behavior:'instant'});}
 function startPracticeCard(id){view='review';reviewSession={ids:[id],index:0,done:0,again:0};reviewFilter='All cards';revealed=false;window.location.hash='review';render();scrollTo(0,0);}
 // Delegated controls: stable even when cards and views re-render.
-document.addEventListener('click',e=>{const el=e.target.closest('button');if(!el)return;if(el.dataset.view){navigate(el.dataset.view);return;}if(el.dataset.grammarSubview){grammarSubView=el.dataset.grammarSubview;grammarSession=null;render();return;}if(el.dataset.drillGroup){drillGroupFilter=el.dataset.drillGroup;const avail=getDrillVerbs();if(!avail.some(v=>v.id===drillVerbId)&&avail.length)drillVerbId=avail[0].id;drillRevealed=false;render();return;}if(el.dataset.drillPronoun){drillPronounKey=el.dataset.drillPronoun;drillRevealed=false;render();return;}if(el.dataset.sayDrill){say(el.dataset.sayDrill);return;}if(el.dataset.grammarTopic){grammarTopicFilter=el.dataset.grammarTopic;render();return;}if(el.dataset.grammarRate){rateGrammarCard(el.dataset.grammarRate);return;}if(el.dataset.rate){rateCard(el.dataset.rate);return;}if(el.dataset.vocabRate){rateVocabCard(el.dataset.vocabRate);return;}if(el.dataset.startDeck){vocabLessonFilter=el.dataset.startDeck;initVocabSession();render();return;}if(el.dataset.filterDeck){vocabLessonFilter=el.dataset.filterDeck;render();return;}if(el.dataset.sayCard){say(el.dataset.sayCard);return;}if(el.dataset.edit){cardModal(state.cards.find(c=>c.id===el.dataset.edit));return;}if(el.dataset.practice){startPracticeCard(el.dataset.practice);return;}if(el.dataset.chooseScene){editScene=el.dataset.chooseScene;editImage=null;$('#uploaded-preview').innerHTML='';document.querySelectorAll('[data-choose-scene]').forEach(b=>b.classList.toggle('selected',b.dataset.chooseScene===editScene));return;}if(el.dataset.gramtab){gramTab=el.dataset.gramtab;render();return;}if(el.dataset.checkGrammar!==undefined){let i=Number(el.dataset.checkGrammar),g=grammarExercises[i],v=$('#gr-'+i)?.value||'',correct=textNormalized(v)===textNormalized(g.answer);activeProfile().grammarHistory.push({time:Date.now(),item:i,correct});persist();$('#res-'+i).innerHTML=`<div class="result ${correct?'correct':'incorrect'}">${correct?'Correct!':'Answer: '+esc(g.answer)}<br/>${esc(g.explain)}</div>`;return;}let action=el.dataset.action;if(!action)return;switch(action){case 'drill-reveal':drillRevealed=true;render();break;case 'drill-retry':drillRevealed=false;render();break;case 'drill-random-verb':{const avail=getDrillVerbs();if(avail.length){const other=avail.filter(v=>v.id!==drillVerbId);drillVerbId=(other.length?other[Math.floor(Math.random()*other.length)]:avail[0]).id;drillRevealed=false;render();}break;}case 'drill-next-verb':{const avail=getDrillVerbs();if(avail.length){const idx=avail.findIndex(v=>v.id===drillVerbId);drillVerbId=avail[(idx+1)%avail.length].id;drillRevealed=false;render();}break;}case 'drill-next-pronoun':{const pKeys=['je','tu','il','nous','vous','ils'];const cur=drillPronounKey==='random'?'je':drillPronounKey;const idx=pKeys.indexOf(cur);drillPronounKey=pKeys[(idx+1)%pKeys.length];drillRevealed=false;render();break;}case 'drill-listen-sentence':{const v=getCurrentDrillVerb();const p=getActiveDrillPronounKey(v);const s=v?.sentences?.[p]||v?.sentences?.je;if(s)say(s.sentence);break;}case 'drill-listen-verb':{const v=getCurrentDrillVerb();const p=getActiveDrillPronounKey(v);if(v&&v.conjugation?.[p]){const lead=(p==='je'&&(v.infinitive.match(/^[aeiouh]/i)?'j’':'je'))||(p==='il'?'il':p==='ils'?'ils':p);say(lead+' '+v.conjugation[p]);}break;}case 'grammar-reveal':if(grammarSession){grammarSession.revealed=true;render();}break;case 'exit-grammar-session':grammarSession=null;render();break;case 'restart-grammar-session':initGrammarSession(grammarSession?grammarSession.ids:null);render();break;case 'study-grammar-pool':initGrammarSession();render();break;case 'say-grammar-answer':{let c=currentGrammarCard();if(c)say(c.frenchExample||c.frenchAnswer);break;}case 'open-profiles':profileModal();break;case 'create-profile':{const name=$('#new-profile-name')?.value.trim().replace(/\s+/g,' ');if(!profileNameAvailable(name)){toast('Enter a unique name, up to 30 characters.');return;}const p=makeProfile(name);p.color=PROFILE_COLORS[state.profiles.length%PROFILE_COLORS.length];state.profiles.push(p);state.activeProfileId=p.id;if(!persist())return;modalClose();reviewSession=null;navigate('home');toast('Created '+name+'. Ready to study!');break;}case 'rename-profile':{const id=el.dataset.profileId,p=state.profiles.find(x=>x.id===id);const name=document.getElementById('profile-name-'+id)?.value.trim().replace(/\s+/g,' ');if(!p)return;if(!profileNameAvailable(name,id)){toast('Enter a unique name, up to 30 characters.');return;}p.name=name;if(persist()){render();profileModal();toast('Profile name updated.');}break;}case 'switch-profile':switchProfile(el.dataset.profileId);break;case 'delete-profile':{if(state.profiles.length<2){toast('Keep at least one learner profile.');return;}const p=state.profiles.find(x=>x.id===el.dataset.profileId);if(!p)return;if(!confirm('Delete '+p.name+' and their study progress on this device? Shared cards will remain. This cannot be undone.'))return;state.profiles=state.profiles.filter(x=>x.id!==p.id);if(state.activeProfileId===p.id)state.activeProfileId=state.profiles[0].id;if(!persist())return;reviewSession=null;modalClose();navigate('home');profileModal();toast('Profile deleted.');break;}case 'start-review':reviewFilter='Due now';view='review';initReview();window.location.hash='review';render();break;case 'practice-all':reviewFilter='All cards';initReview();render();break;case 'reveal':revealed=true;render();break;case 'vocab-reveal':if(vocabSession){vocabSession.revealed=true;render();}break;case 'exit-vocab-session':vocabSession=null;render();break;case 'restart-vocab-session':initVocabSession(vocabSession?vocabSession.ids:null);render();break;case 'study-all-vocab':vocabLessonFilter='All';vocabTopicFilter='All';vocabSearch='';initVocabSession();render();break;case 'study-filtered-vocab':initVocabSession();render();break;case 'reset-vocab-filter':vocabLessonFilter='All';vocabTopicFilter='All';vocabSearch='';render();break;case 'say-vocab-answer':{let c=currentVocabCard();if(c)say(c.frenchAnswer);break;}case 'speak-french':{let c=currentReviewCard();if(c)say(c.frenchAnswer);break;}case 'speech-example':say(speakExercises[speakAt].suggested);break;case 'speak-reveal':speakResponse=$('#speaking-answer')?.value||'';speakShown=true;render();break;case 'speak-retry':speakShown=false;render();break;case 'speak-done':activeProfile().speakingHistory.push({time:Date.now(),item:speakAt,spoken:true});persist();speakAt=(speakAt+1)%speakExercises.length;speakShown=false;speakHint=false;speakResponse='';render();break;case 'add-card':cardModal(null);break;case 'close-modal':modalClose();break;case 'clear-upload':editImage=null;$('#uploaded-preview').innerHTML='';break;case 'save-card':saveCard();break;case 'delete-card':if(confirm('Delete this card and its history? This cannot be undone.')){const id=el.dataset.cardId;state.cards=state.cards.filter(c=>c.id!==id);for(const p of state.profiles){p.history=p.history.filter(h=>h.id!==id);delete p.progress[id];}persist();modalClose();render();toast('Card deleted.');}break;case 'export-json':exportData('json');break;case 'export-csv':exportData('csv');break;case 'import-json':$('#import-input')?.click();break;case 'reset-data':if(confirm('Reset ALL profiles, shared cards, and review history on this device? Export a backup first.'))if(confirm('Second confirmation: erase every learner\'s local progress?')){state=initial();persist();reviewSession=null;vocabSession=null;render();toast('Data reset.');}break;}});
+document.addEventListener('click',e=>{const el=e.target.closest('button');if(!el)return;if(el.dataset.view){navigate(el.dataset.view);return;}if(el.dataset.grammarSubview){grammarSubView=el.dataset.grammarSubview;grammarSession=null;render();return;}if(el.dataset.drillGroup){drillGroupFilter=el.dataset.drillGroup;const avail=getDrillVerbs();if(!avail.some(v=>v.id===drillVerbId)&&avail.length)drillVerbId=avail[0].id;drillRevealed=false;render();return;}if(el.dataset.drillPronoun){drillPronounKey=el.dataset.drillPronoun;drillRevealed=false;render();return;}if(el.dataset.sayDrill){say(el.dataset.sayDrill);return;}if(el.dataset.grammarTopic){grammarTopicFilter=el.dataset.grammarTopic;render();return;}if(el.dataset.grammarRate){rateGrammarCard(el.dataset.grammarRate);return;}if(el.dataset.rate){rateCard(el.dataset.rate);return;}if(el.dataset.vocabRate){rateVocabCard(el.dataset.vocabRate);return;}if(el.dataset.startDeck){vocabLessonFilter=el.dataset.startDeck;initVocabSession();render();return;}if(el.dataset.filterDeck){vocabLessonFilter=el.dataset.filterDeck;render();return;}if(el.dataset.sayCard){say(el.dataset.sayCard);return;}if(el.dataset.edit){cardModal(state.cards.find(c=>c.id===el.dataset.edit));return;}if(el.dataset.practice){startPracticeCard(el.dataset.practice);return;}if(el.dataset.chooseScene){editScene=el.dataset.chooseScene;editImage=null;$('#uploaded-preview').innerHTML='';document.querySelectorAll('[data-choose-scene]').forEach(b=>b.classList.toggle('selected',b.dataset.chooseScene===editScene));return;}if(el.dataset.gramtab){gramTab=el.dataset.gramtab;render();return;}if(el.dataset.checkGrammar!==undefined){let i=Number(el.dataset.checkGrammar),g=grammarExercises[i],v=$('#gr-'+i)?.value||'',correct=textNormalized(v)===textNormalized(g.answer);activeProfile().grammarHistory.push({time:Date.now(),item:i,correct});persist();$('#res-'+i).innerHTML=`<div class="result ${correct?'correct':'incorrect'}">${correct?'Correct!':'Answer: '+esc(g.answer)}<br/>${esc(g.explain)}</div>`;return;}let action=el.dataset.action;if(!action)return;switch(action){case 'drill-reveal':drillRevealed=true;render();break;case 'drill-retry':drillRevealed=false;render();break;case 'drill-random-verb':{const avail=getDrillVerbs();if(avail.length){const other=avail.filter(v=>v.id!==drillVerbId);drillVerbId=(other.length?other[Math.floor(Math.random()*other.length)]:avail[0]).id;drillRevealed=false;render();}break;}case 'drill-next-verb':{const avail=getDrillVerbs();if(avail.length){const idx=avail.findIndex(v=>v.id===drillVerbId);drillVerbId=avail[(idx+1)%avail.length].id;drillRevealed=false;render();}break;}case 'drill-next-pronoun':{const pKeys=['je','tu','il','nous','vous','ils'];const cur=drillPronounKey==='random'?'je':drillPronounKey;const idx=pKeys.indexOf(cur);drillPronounKey=pKeys[(idx+1)%pKeys.length];drillRevealed=false;render();break;}case 'drill-listen-sentence':{const v=getCurrentDrillVerb();const p=getActiveDrillPronounKey(v);const s=v?.sentences?.[p]||v?.sentences?.je;if(s)say(s.sentence);break;}case 'drill-listen-verb':{const v=getCurrentDrillVerb();const p=getActiveDrillPronounKey(v);if(v&&v.conjugation?.[p]){const lead=(p==='je'&&(v.infinitive.match(/^[aeiouh]/i)?'j’':'je'))||(p==='il'?'il':p==='ils'?'ils':p);say(lead+' '+v.conjugation[p]);}break;}case 'grammar-reveal':if(grammarSession){grammarSession.revealed=true;render();}break;case 'exit-grammar-session':grammarSession=null;render();break;case 'restart-grammar-session':initGrammarSession(grammarSession?grammarSession.ids:null);render();break;case 'study-grammar-pool':initGrammarSession();render();break;case 'say-grammar-answer':{let c=currentGrammarCard();if(c)say(c.frenchExample||c.frenchAnswer);break;}case 'open-profiles':profileModal();break;case 'create-profile':{const name=$('#new-profile-name')?.value.trim().replace(/\s+/g,' ');if(!profileNameAvailable(name)){toast('Enter a unique name, up to 30 characters.');return;}const p=makeProfile(name);p.color=PROFILE_COLORS[state.profiles.length%PROFILE_COLORS.length];state.profiles.push(p);state.activeProfileId=p.id;if(!persist())return;modalClose();reviewSession=null;navigate('home');toast('Created '+name+'. Ready to study!');break;}case 'rename-profile':{const id=el.dataset.profileId,p=state.profiles.find(x=>x.id===id);const name=document.getElementById('profile-name-'+id)?.value.trim().replace(/\s+/g,' ');if(!p)return;if(!profileNameAvailable(name,id)){toast('Enter a unique name, up to 30 characters.');return;}p.name=name;if(persist()){render();profileModal();toast('Profile name updated.');}break;}case 'switch-profile':switchProfile(el.dataset.profileId);break;case 'delete-profile':{if(state.profiles.length<2){toast('Keep at least one learner profile.');return;}const p=state.profiles.find(x=>x.id===el.dataset.profileId);if(!p)return;if(!confirm('Delete '+p.name+' and their study progress on this device? Shared cards will remain. This cannot be undone.'))return;state.profiles=state.profiles.filter(x=>x.id!==p.id);if(state.activeProfileId===p.id)state.activeProfileId=state.profiles[0].id;if(!persist())return;reviewSession=null;modalClose();navigate('home');profileModal();toast('Profile deleted.');break;}case 'start-review':reviewFilter='Due now';view='review';initReview();window.location.hash='review';render();break;case 'practice-all':reviewFilter='All cards';initReview();render();break;case 'reveal':revealed=true;render();break;case 'vocab-reveal':if(vocabSession){vocabSession.revealed=true;render();}break;case 'exit-vocab-session':vocabSession=null;render();break;case 'restart-vocab-session':initVocabSession(vocabSession?vocabSession.ids:null);render();break;case 'study-all-vocab':vocabLessonFilter='All';vocabTopicFilter='All';vocabSearch='';initVocabSession();render();break;case 'study-filtered-vocab':initVocabSession();render();break;case 'reset-vocab-filter':vocabLessonFilter='All';vocabTopicFilter='All';vocabSearch='';render();break;case 'say-vocab-answer':{let c=currentVocabCard();if(c)say(c.frenchAnswer);break;}case 'speak-french':{let c=currentReviewCard();if(c)say(c.frenchAnswer);break;}case 'speech-example':say(speakExercises[speakAt].suggested);break;case 'speak-reveal':speakResponse=$('#speaking-answer')?.value||'';speakShown=true;render();break;case 'speak-retry':speakShown=false;render();break;case 'speak-done':activeProfile().speakingHistory.push({time:Date.now(),item:speakAt,spoken:true});persist();speakAt=(speakAt+1)%speakExercises.length;speakShown=false;speakHint=false;speakResponse='';render();break;case 'add-card':cardModal(null);break;case 'card-details':{const id=el.dataset.cardId;const c=(id&&state.cards.find(x=>x.id===id))||currentReviewCard()||currentVocabCard()||currentGrammarCard();if(c)cardDetailsModal(c);break;}case 'say-card-details':{const t=el.dataset.say;if(t)say(t);break;}case 'say-example':{const t=el.dataset.say;if(t)say(t);break;}case 'close-modal':modalClose();break;case 'clear-upload':editImage=null;$('#uploaded-preview').innerHTML='';break;case 'save-card':saveCard();break;case 'delete-card':if(confirm('Delete this card and its history? This cannot be undone.')){const id=el.dataset.cardId;state.cards=state.cards.filter(c=>c.id!==id);for(const p of state.profiles){p.history=p.history.filter(h=>h.id!==id);delete p.progress[id];}persist();modalClose();render();toast('Card deleted.');}break;case 'export-json':exportData('json');break;case 'export-csv':exportData('csv');break;case 'import-json':$('#import-input')?.click();break;case 'reset-data':if(confirm('Reset ALL profiles, shared cards, and review history on this device? Export a backup first.'))if(confirm('Second confirmation: erase every learner\'s local progress?')){state=initial();persist();reviewSession=null;vocabSession=null;render();toast('Data reset.');}break;}});
 document.addEventListener('change',e=>{const el=e.target;if(el.id==='drill-verb-select'){drillVerbId=el.value;drillRevealed=false;render();}if(el.id==='drill-pronoun-select'){drillPronounKey=el.value;drillRevealed=false;render();}if(el.id==='vocab-lesson-select'){vocabLessonFilter=el.value;render();}if(el.id==='vocab-topic-select'){vocabTopicFilter=el.value;render();}if(el.id==='review-filter'){reviewFilter=el.value;initReview();render();}if(el.id==='lib-topic'){libTopic=el.value;render();}if(el.id==='lib-type'){libType=el.value;render();}if(el.id==='front-mode'){activeProfile().prefs.frontMode=el.value;persist();toast('Flashcard prompt mode updated.');}if(el.id==='own-image')uploadImage(el.files[0]);if(el.id==='import-input')importData(el.files[0]);});
 document.addEventListener('input',e=>{if(e.target.id==='vocab-search-input'){vocabSearch=e.target.value;render();}if(e.target.id==='lib-search'){const el=e.target;let pos=el.selectionStart;libSearch=el.value;const grid=$('.library-grid'),cards=libCards();if(grid){grid.outerHTML=`<div class="library-grid">${cards.map(c=>`<div class="lib-card hover-card"><div class="lib-scene">${visual(c)}</div><div class="lib-content"><span class="meta">${esc(c.topic)}</span><h3>${esc(c.frenchAnswer)}</h3><p>${esc(c.englishPrompt)}</p>${c.frenchExample?`<div class="vocab-example"><p lang="fr">${esc(c.frenchExample)}</p>${c.exampleEnglish?`<p class="example-meaning">${esc(c.exampleEnglish)}</p>`:''}</div>`:''}<div class="lib-footer"><button class="btn btn-secondary" data-edit="${esc(c.id)}">${icon('edit')} Edit</button><button class="btn btn-white" data-practice="${esc(c.id)}">Practice ${icon('arrow')}</button></div></div></div>`).join('')}</div>`;}}});
 window.addEventListener('hashchange',()=>{const hash=location.hash.slice(1);if(['home','vocab','review','grammar','speak','library','settings'].includes(hash)&&view!==hash){view=hash;reviewSession=null;render();}});
