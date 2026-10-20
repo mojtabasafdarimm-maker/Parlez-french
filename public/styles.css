@@ -204,6 +204,21 @@
   border: 1px solid #eeebe2;
   border-radius: 16px;
 }
+
+.word-phonetic {
+  color: var(--purple, #706bbc);
+  font-size: 14.5px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  letter-spacing: 0.25px;
+  margin: 3px 0 8px !important;
+  font-weight: 600;
+  background: #f4f1fc;
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 6px;
+  line-height: 1.4;
+}
+
 .quiet-french-word {
   font-size: 30px;
   font-weight: 700;

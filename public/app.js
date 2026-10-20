@@ -540,10 +540,24 @@ function upgradeVocabularyContent(){
       if(c.englishPrompt===old.englishPrompt)c.englishPrompt=updated.englishPrompt;
       if(sameExample){c.frenchExample=updated.frenchExample;if(!c.exampleEnglish)c.exampleEnglish=updated.exampleEnglish;}
     }
-    if(c.frenchExample && !c.examplePhonetic && window.ParlezPhonetics?.[c.frenchExample]){
-      c.examplePhonetic = window.ParlezPhonetics[c.frenchExample];
+    if(c.frenchExample && (!c.examplePhonetic || !c.examplePhonetic.startsWith('['))){
+      if(window.ParlezPhonetics?.[c.frenchExample]){
+        c.examplePhonetic = window.ParlezPhonetics[c.frenchExample];
+      }
+    }
+    if(!c.pronunciation && window.ParlezPhonetics?.[c.frenchAnswer]){
+      c.pronunciation = window.ParlezPhonetics[c.frenchAnswer];
     }
   }
+}
+function cardPhonetic(c){
+  if(!c) return { word: '', example: '' };
+  if(window.getCardPhonetic) return window.getCardPhonetic(c);
+  const rawWord = c.pronunciation || c.wordPhonetic || c.phonetic || (window.ParlezPhonetics && window.ParlezPhonetics[c.frenchAnswer]) || '';
+  const word = rawWord ? (rawWord.startsWith('[') ? rawWord : `[${rawWord}]`) : '';
+  const rawEx = c.examplePhonetic || (window.ParlezPhonetics && window.ParlezPhonetics[c.frenchExample]) || '';
+  const example = rawEx ? (rawEx.startsWith('[') ? rawEx : `[${rawEx}]`) : '';
+  return { word, example };
 }
 function mergeCurriculumCards(){
   if(typeof window.ParlezCurriculumCards==='object'&&window.ParlezCurriculumCards){
@@ -820,7 +834,7 @@ function simpleReviewPage(){
   const header=`<div class="review-top"><div><div class="eyebrow">PICTURE → FRENCH</div><h2>Visual flashcards</h2></div><select class="select select-sm" id="review-filter" aria-label="Choose review topic">${['Due now','All cards',...Object.keys(topicEmoji)].map(t=>`<option ${t===reviewFilter?'selected':''}>${esc(t)}</option>`).join('')}</select></div>`;
   if(!c||reviewSession.index>=all)return `<div class="review-layout">${header}<div class="empty"><div class="empty-emoji">✨</div><h2>${all?'Session complete!':'No cards due right now'}</h2><p class="subline">${all?`You reviewed ${reviewSession.done} cards. ${reviewSession.again?`${reviewSession.again} were re-tested until memorized.`:'All remembered!'}`:'Nice work. Your cards are safely memorized and scheduled for future review.'}</p><button class="btn btn-primary" data-action="practice-all">Practice all cards ${icon('arrow')}</button> <button class="btn btn-white" data-view="home">Back home</button></div></div>`;
   const picture=activeProfile().prefs.frontMode==='english'?`<div class="english-front">${esc(c.englishPrompt)}</div>`:visual(c);
-  const phon=c.examplePhonetic||(window.ParlezPhonetics&&window.ParlezPhonetics[c.frenchExample])||'';
+  const phon=cardPhonetic(c);
   const mem=cardMemoryStatus(c);
   const sched={again:calcNextSchedule(c,'again'),hard:calcNextSchedule(c,'hard'),good:calcNextSchedule(c,'good'),easy:calcNextSchedule(c,'easy')};
 
@@ -847,6 +861,7 @@ function simpleReviewPage(){
 
     <div class="answer quiet-answer-section">
       <h2 class="quiet-french-word">${esc(c.frenchAnswer)}</h2>
+      ${phon.word?`<p class="word-phonetic">${esc(phon.word)}</p>`:''}
       <div class="quiet-english-meaning">${esc(c.englishPrompt)}</div>
       <div class="quiet-audio-row">
         <button class="btn btn-secondary btn-sm" type="button" data-action="speak-french" aria-label="Listen to French answer">${icon('sound')} Listen</button>
@@ -858,7 +873,7 @@ function simpleReviewPage(){
         <p class="quiet-example-french" lang="fr">${esc(c.frenchExample)}</p>
         <button class="round-btn btn-sm quiet-listen-sub" type="button" data-action="say-example" data-say="${esc(c.frenchExample)}" title="Listen to example sentence" aria-label="Listen to example">${icon('sound')}</button>
       </div>
-      ${phon?`<p class="example-phonetic">${esc(phon)}</p>`:''}
+      ${phon.example?`<p class="example-phonetic">${esc(phon.example)}</p>`:''}
       ${c.exampleEnglish?`<p class="quiet-example-meaning">${esc(c.exampleEnglish)}</p>`:''}
     </div>`:''}
 
@@ -917,7 +932,7 @@ function vocabCardSessionView(){
     </div>`;
   }
   const picture=activeProfile().prefs.frontMode==='english'?`<div class="english-front">${esc(c.englishPrompt)}</div>`:visual(c);
-  const phon=c.examplePhonetic||(window.ParlezPhonetics&&window.ParlezPhonetics[c.frenchExample])||'';
+  const phon=cardPhonetic(c);
   const mem=cardMemoryStatus(c);
   const sched={again:calcNextSchedule(c,'again'),hard:calcNextSchedule(c,'hard'),good:calcNextSchedule(c,'good'),easy:calcNextSchedule(c,'easy')};
 
@@ -944,6 +959,7 @@ function vocabCardSessionView(){
 
     <div class="answer quiet-answer-section">
       <h2 class="quiet-french-word">${esc(c.frenchAnswer)}</h2>
+      ${phon.word?`<p class="word-phonetic">${esc(phon.word)}</p>`:''}
       <div class="quiet-english-meaning">${esc(c.englishPrompt)}</div>
       <div class="quiet-audio-row">
         <button class="btn btn-secondary btn-sm" type="button" data-action="say-vocab-answer" aria-label="Listen to French answer">${icon('sound')} Listen</button>
@@ -955,7 +971,7 @@ function vocabCardSessionView(){
         <p class="quiet-example-french" lang="fr">${esc(c.frenchExample)}</p>
         <button class="round-btn btn-sm quiet-listen-sub" type="button" data-action="say-example" data-say="${esc(c.frenchExample)}" title="Listen to example sentence" aria-label="Listen to example">${icon('sound')}</button>
       </div>
-      ${phon?`<p class="example-phonetic">${esc(phon)}</p>`:''}
+      ${phon.example?`<p class="example-phonetic">${esc(phon.example)}</p>`:''}
       ${c.exampleEnglish?`<p class="quiet-example-meaning">${esc(c.exampleEnglish)}</p>`:''}
     </div>`:''}
 
@@ -1085,19 +1101,20 @@ function vocabCatalogView(){
         <button class="btn btn-primary btn-sm" data-action="study-filtered-vocab">Study These ${pool.length} Cards ${icon('arrow')}</button>
       </div>
       <div class="library-grid">
-        ${pool.map(c=>`<div class="lib-card hover-card">
+        ${pool.map(c=>{const p=cardPhonetic(c);return `<div class="lib-card hover-card">
           <div class="lib-scene">${visual(c)}</div>
           <div class="lib-content">
             <span class="meta">${esc(c.lesson||c.topic)}</span>
             <h3>${esc(c.frenchAnswer)}</h3>
+            ${p.word?`<p class="word-phonetic" style="margin:2px 0 6px;font-size:12.5px">${esc(p.word)}</p>`:''}
             <p>${esc(c.englishPrompt)}</p>
-            ${c.frenchExample?`<div class="vocab-example"><p lang="fr">${esc(c.frenchExample)}</p>${c.exampleEnglish?`<p class="example-meaning">${esc(c.exampleEnglish)}</p>`:''}</div>`:''}
+            ${c.frenchExample?`<div class="vocab-example"><p lang="fr">${esc(c.frenchExample)}</p>${p.example?`<p class="example-phonetic">${esc(p.example)}</p>`:''}${c.exampleEnglish?`<p class="example-meaning">${esc(c.exampleEnglish)}</p>`:''}</div>`:''}
             <div class="lib-footer">
               <button class="btn btn-secondary btn-sm" data-say-card="${esc(c.frenchAnswer)}">${icon('sound')} Listen</button>
               <button class="btn btn-white btn-sm" data-practice="${esc(c.id)}">Flashcard ${icon('arrow')}</button>
             </div>
           </div>
-        </div>`).join('')}
+        </div>`;}).join('')}
       </div>
     `}
   </div>`;
@@ -1162,7 +1179,7 @@ function grammarCardSessionView(){
     </div>`;
   }
   const picture=activeProfile().prefs.frontMode==='english'?`<div class="english-front">${esc(c.englishPrompt)}</div>`:visual(c);
-  const phon=c.examplePhonetic||(window.ParlezPhonetics&&window.ParlezPhonetics[c.frenchExample])||'';
+  const phon=cardPhonetic(c);
   const mem=cardMemoryStatus(c);
   const sched={again:calcNextSchedule(c,'again'),hard:calcNextSchedule(c,'hard'),good:calcNextSchedule(c,'good'),easy:calcNextSchedule(c,'easy')};
 
@@ -1190,6 +1207,7 @@ function grammarCardSessionView(){
     <div class="answer quiet-answer-section">
       <div class="eyebrow" style="font-size:11px;letter-spacing:1px;margin-bottom:4px">RÈGLE DE GRAMMAIRE</div>
       <h2 class="quiet-french-word">${esc(c.frenchAnswer)}</h2>
+      ${phon.word?`<p class="word-phonetic">${esc(phon.word)}</p>`:''}
       <div class="quiet-english-meaning">${esc(c.englishPrompt)}</div>
       <div class="quiet-audio-row">
         <button class="btn btn-secondary btn-sm" type="button" data-action="say-grammar-answer" aria-label="Listen to French answer">${icon('sound')} Listen</button>
@@ -1201,7 +1219,7 @@ function grammarCardSessionView(){
         <p class="quiet-example-french" lang="fr">${esc(c.frenchExample)}</p>
         <button class="round-btn btn-sm quiet-listen-sub" type="button" data-action="say-example" data-say="${esc(c.frenchExample)}" title="Listen to example sentence" aria-label="Listen to example">${icon('sound')}</button>
       </div>
-      ${phon?`<p class="example-phonetic">${esc(phon)}</p>`:''}
+      ${phon.example?`<p class="example-phonetic">${esc(phon.example)}</p>`:''}
       ${c.exampleEnglish?`<p class="quiet-example-meaning">${esc(c.exampleEnglish)}</p>`:''}
     </div>`:''}
 
@@ -1449,7 +1467,7 @@ const speakExercises=[
 ];
 function speakPage(){const g=speakExercises[speakAt % speakExercises.length];return `<div class="speaking-box"><div class="eyebrow">PRACTICE YOUR VOICE</div><h1>Real-life moments.</h1><p class="header-desc">Imagine yourself in the scene. Say a response out loud, then optionally type it. You're not being automatically graded.</p><div class="review-top"><span class="small muted">Scene ${speakAt+1} / ${speakExercises.length}</span><span class="mini-step">SPEAK FIRST</span></div><div class="review-card"><div class="review-scene prompt-scene">${sceneSVG(g.scene)}<span class="corner">${esc(g.title)}</span></div><div class="field"><label for="speaking-answer">Draft your answer (optional)</label><textarea id="speaking-answer" class="textarea" rows="3" placeholder="Try saying it aloud first...">${esc(speakResponse)}</textarea></div><p class="small muted">${esc(g.optional)}</p>${!speakShown?`<div class="tabline"><button class="btn btn-primary" data-action="speak-reveal">Show example answer ${icon('eye')}</button></div>`:`<div class="answer"><div class="eyebrow">ONE NATURAL RESPONSE</div><h2 style="font-size:22px">${esc(g.suggested)}</h2><p class="mini">${esc(g.tip)}</p><button class="btn btn-secondary" data-action="speech-example">${icon('sound')} Listen to example</button></div><div class="rating-row" style="grid-template-columns:1fr 1fr"><button class="btn btn-white" data-action="speak-retry">Practice again</button><button class="btn btn-primary" data-action="speak-done">I said it ${icon('check')}</button></div>`}</div><div class="notice">${icon('info')} This mode offers model answers for self-practice. It does not pretend to recognize or assess your pronunciation. You can request more complex speaking feedback later.</div></div>`;}
 function libCards(){return state.cards.filter(c=>(libTopic==='All'||c.topic===libTopic)&&(libType==='All'||c.kind===libType)&&[c.frenchAnswer,c.englishPrompt,c.topic,c.frenchExample].some(v=>textNormalized(v).includes(textNormalized(libSearch))));}
-function libraryPage(){const cs=libCards();return `<div><div class="eyebrow">YOUR LEARNING LIBRARY</div><h1>Every idea has a picture.</h1><p class="header-desc">Browse your visual cards, change the illustrations, and add your own daily-life scenes. All edits are saved locally.</p><div class="library-toolbar"><div class="search-box">${icon('search')}<input class="input" placeholder="Find a concept or French expression..." id="lib-search" value="${esc(libSearch)}"/></div><select id="lib-topic" class="select" aria-label="Filter by topic"><option>All</option>${[...new Set(state.cards.map(c=>c.topic))].map(t=>`<option ${libTopic===t?'selected':''}>${esc(t)}</option>`).join('')}</select><select id="lib-type" class="select" aria-label="Filter by card type">${['All','vocab','action','sentence','grammar','speaking'].map(t=>`<option ${libType===t?'selected':''}>${esc(t)}</option>`).join('')}</select><button class="btn btn-primary" data-action="add-card">${icon('plus')} Add card</button></div><p class="small muted">${cs.length} cards · Pictures are the default prompt</p><div class="library-grid">${cs.map(c=>`<div class="lib-card hover-card"><div class="lib-scene">${visual(c)}</div><div class="lib-content"><span class="meta">${esc(c.topic)}</span><h3>${esc(c.frenchAnswer)}</h3><p>${esc(c.englishPrompt)}</p>${c.frenchExample?`<div class="vocab-example"><p lang="fr">${esc(c.frenchExample)}</p>${(c.examplePhonetic||window.ParlezPhonetics?.[c.frenchExample])?`<p class="example-phonetic">${esc(c.examplePhonetic||window.ParlezPhonetics[c.frenchExample])}</p>`:''}${c.exampleEnglish?`<p class="example-meaning">${esc(c.exampleEnglish)}</p>`:''}</div>`:''}<div class="lib-footer"><button class="btn btn-secondary" data-edit="${esc(c.id)}">${icon('edit')} Edit</button><button class="btn btn-white" data-practice="${esc(c.id)}">Practice ${icon('arrow')}</button></div></div></div>`).join('')}</div>${cs.length?'':`<div class="empty"><h3>No matching cards</h3><p>Adjust filters or add a new card.</p></div>`}</div>`;}
+function libraryPage(){const cs=libCards();return `<div><div class="eyebrow">YOUR LEARNING LIBRARY</div><h1>Every idea has a picture.</h1><p class="header-desc">Browse your visual cards, change the illustrations, and add your own daily-life scenes. All edits are saved locally.</p><div class="library-toolbar"><div class="search-box">${icon('search')}<input class="input" placeholder="Find a concept or French expression..." id="lib-search" value="${esc(libSearch)}"/></div><select id="lib-topic" class="select" aria-label="Filter by topic"><option>All</option>${[...new Set(state.cards.map(c=>c.topic))].map(t=>`<option ${libTopic===t?'selected':''}>${esc(t)}</option>`).join('')}</select><select id="lib-type" class="select" aria-label="Filter by card type">${['All','vocab','action','sentence','grammar','speaking'].map(t=>`<option ${libType===t?'selected':''}>${esc(t)}</option>`).join('')}</select><button class="btn btn-primary" data-action="add-card">${icon('plus')} Add card</button></div><p class="small muted">${cs.length} cards · Pictures are the default prompt</p><div class="library-grid">${cs.map(c=>{const p=cardPhonetic(c);return `<div class="lib-card hover-card"><div class="lib-scene">${visual(c)}</div><div class="lib-content"><span class="meta">${esc(c.topic)}</span><h3>${esc(c.frenchAnswer)}</h3>${p.word?`<p class="word-phonetic" style="margin:2px 0 6px;font-size:12.5px">${esc(p.word)}</p>`:''}<p>${esc(c.englishPrompt)}</p>${c.frenchExample?`<div class="vocab-example"><p lang="fr">${esc(c.frenchExample)}</p>${p.example?`<p class="example-phonetic">${esc(p.example)}</p>`:''}${c.exampleEnglish?`<p class="example-meaning">${esc(c.exampleEnglish)}</p>`:''}</div>`:''}<div class="lib-footer"><button class="btn btn-secondary" data-edit="${esc(c.id)}">${icon('edit')} Edit</button><button class="btn btn-white" data-practice="${esc(c.id)}">Practice ${icon('arrow')}</button></div></div></div>`;}).join('')}</div>${cs.length?'':`<div class="empty"><h3>No matching cards</h3><p>Adjust filters or add a new card.</p></div>`}</div>`;}
 function settingsPage(){return `<div><div class="eyebrow">YOUR APP, YOUR RULES</div><h1>Settings & backups.</h1><p class="header-desc">Visual French practice works offline after installation. Each learner has independent progress saved on this device only; there is no cross-device synchronization.</p><div class="settings-grid"><div class="panel"><h3>Study profiles</h3><p>Each learner has separate reviews, streaks, grammar and speaking history. Everyone shares one vocabulary library.</p><p class="mini-step">Studying as: ${esc(activeProfile().name)}</p><div style="margin-top:17px"><button class="btn btn-primary" data-action="open-profiles">${icon("plus")} Manage profiles</button></div></div><div class="panel"><h3>Flashcard front</h3><p>Choose what appears before you reveal French. Visual is the recommended speaking-focused mode.</p><div class="field"><label for="front-mode">Card prompt mode</label><select id="front-mode" class="select"><option value="visual" ${activeProfile().prefs.frontMode==='visual'?'selected':''}>Picture only (recommended)</option><option value="english" ${activeProfile().prefs.frontMode==='english'?'selected':''}>English prompt</option><option value="mixed" ${activeProfile().prefs.frontMode==='mixed'?'selected':''}>Picture + English</option></select></div></div><div class="panel"><h3>Backup your progress</h3><p>Download a complete backup of your shared cards, uploaded pictures and every learner profile with its own study history. Importing a backup replaces all existing local profiles on that device.</p><button class="btn btn-primary" data-action="export-json">${icon('download')} Export backup</button> <button class="btn btn-white" data-action="import-json">${icon('upload')} Import backup</button><input id="import-input" type="file" accept="application/json,.json" hidden/></div><div class="panel"><h3>Add to your iPhone</h3><p>After deploying to a secure HTTPS address, open it in Safari → Share → Add to Home Screen. Then Parlez appears as an app icon.</p><p class="small muted">Offline files are cached after the first successful visit. Your card data remains local.</p></div><div class="panel"><h3>Data controls</h3><p><b>${state.cards.length}</b> cards · <b>${activeProfile().history.length}</b> reviews · <b>${activeProfile().speakingHistory.length}</b> speaking attempts.</p><button class="btn btn-white" data-action="export-csv">${icon('download')} Export cards CSV</button> <button class="btn btn-danger" style="margin-top:12px" data-action="reset-data">${icon('trash')} Reset entire app</button></div></div><div class="notice">${icon('info')} Important: all profiles are stored only in this browser. Different phones do not synchronize. Clearing Safari data removes all local profiles and your edited cards. Export a full JSON backup regularly.</div></div>`;}
 function cardModal(c){modalOpen=true;editId=c?.id||null;editScene=c?.scene||'wake';editImage=c?.customImage||null;const sceneKeys=['wake','rise','brush','shower','dress','hair','walk','bedtime','sleep','breakfast','makebed','dishes','plants','work','coffee','bike','hat','scarf','dressobj','shoes','shirt','pants','skirt','socks','gloves','red-dress','rain','snow','sun','wind','clouds','cold','hot','write','eat-before','eat-now','eat-after','clock-215','clock-230','clock-245','sport','cinema','mexican-film'];const fields=[['frenchAnswer','French word or expression','e.g. une écharpe'],['englishPrompt','English meaning','e.g. a scarf'],['frenchExample','Simple example in French','e.g. Je porte une écharpe.'],['exampleEnglish','Example in English','e.g. I wear a scarf.']];const f=(key,title,placeholder)=>`<div class="field"><label for="ed-${key}">${title}</label><input class="input" id="ed-${key}" value="${esc(c?.[key]||'')}" placeholder="${esc(placeholder)}" ${key==='frenchAnswer'?'required':''}/></div>`;const html=`<div class="modal-backdrop" id="modal-backdrop"><div class="modal" role="dialog" aria-modal="true" aria-label="${c?'Edit':'Add'} card"><div class="modal-header"><h2>${c?'Edit your card':'Create a new card'}</h2><button class="round-btn" data-action="close-modal" aria-label="Close dialog">${icon('close')}</button></div><div class="field-row"><div class="field"><label for="ed-topic">Topic</label><input class="input" id="ed-topic" value="${esc(c?.topic||'My own cards')}"/></div><div class="field"><label for="ed-kind">Card type</label><select class="select" id="ed-kind">${['vocab','action','sentence','grammar','speaking'].map(t=>`<option ${c?.kind===t?'selected':''}>${t}</option>`).join('')}</select></div></div><div class="field"><label>Choose a picture for the FRONT</label><div class="image-chooser">${sceneKeys.map(key=>`<button class="${editScene===key?'selected':''}" data-choose-scene="${key}" title="${key}">${sceneSVG(key)}<span>${key.replace(/-/g,' ')}</span></button>`).join('')}</div><small style="margin-top:5px">Pick an illustration or upload a photo below.</small></div><div class="field"><label for="own-image">Upload your own image (optional)</label><input id="own-image" type="file" accept="image/*" class="input"/><small>Images are compressed on your device to fit local storage. A custom image replaces the illustration.</small></div><div id="uploaded-preview">${editImage?`<img alt="User image" src="${esc(editImage)}" style="max-height:110px;max-width:160px;border-radius:10px"/> <button class="btn btn-white" data-action="clear-upload">Remove image</button>`:''}</div>${fields.map(x=>f(...x)).join('')}<div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:18px">${c?`<button class="btn btn-danger" data-action="delete-card" data-card-id="${esc(c.id)}">${icon('trash')} Delete</button>`:'<span></span>'}<div style="display:flex;gap:9px"><button class="btn btn-white" data-action="close-modal">Cancel</button><button class="btn btn-primary" data-action="save-card">${icon('check')} Save card</button></div></div></div></div>`;document.body.insertAdjacentHTML('beforeend',html);}
 function modalClose(){document.querySelector('#modal-backdrop')?.remove();modalOpen=false;}
@@ -1457,7 +1475,7 @@ function cardDetailsModal(c){
   if(!c)return;
   modalClose();
   modalOpen=true;
-  const phon=c.examplePhonetic||(window.ParlezPhonetics&&window.ParlezPhonetics[c.frenchExample])||'';
+  const phon=cardPhonetic(c);
   const p=progressFor(c);
   const mem=cardMemoryStatus(c);
   const now=Date.now();
@@ -1504,6 +1522,7 @@ function cardDetailsModal(c){
           <div style="flex:1">
             <span class="small muted">English meaning</span>
             <div style="font-size:16px;font-weight:600;color:var(--text,#2d263b);margin-top:2px">${esc(c.englishPrompt)}</div>
+            ${phon.word?`<p class="word-phonetic" style="margin:6px 0 0">${esc(phon.word)}</p>`:''}
           </div>
           <button class="btn btn-secondary btn-sm" type="button" data-action="say-card-details" data-say="${esc(c.frenchAnswer)}" aria-label="Listen to word">${icon('sound')} Listen</button>
         </div>
@@ -1514,7 +1533,7 @@ function cardDetailsModal(c){
             <span>${esc(c.frenchExample)}</span>
             <button class="round-btn btn-sm" type="button" data-action="say-card-details" data-say="${esc(c.frenchExample)}" aria-label="Listen to example">${icon('sound')}</button>
           </div>
-          ${phon?`<p class="example-phonetic" style="margin:4px 0 0">${esc(phon)}</p>`:''}
+          ${phon.example?`<p class="example-phonetic" style="margin:4px 0 0">${esc(phon.example)}</p>`:''}
           ${c.exampleEnglish?`<p class="small muted" style="margin:4px 0 0">${esc(c.exampleEnglish)}</p>`:''}
         </div>`:''}
 
