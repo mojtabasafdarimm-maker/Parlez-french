@@ -611,9 +611,29 @@ window.ParlezSounds = (() => {
     return a;
   }
 
-  // --- Ear Trainer Game Logic ---
+  // --- Ear Trainer Game Logic (Adaptive Mistake Memory) ---
+  function roundWeakScore(round) {
+    let score = Math.random() * 0.5;
+    if (typeof window.activeProfile === 'function') {
+      const p = window.activeProfile();
+      const sh = (p && Array.isArray(p.soundsHistory)) ? p.soundsHistory : [];
+      for (const h of sh) {
+        if (!h) continue;
+        if (h.roundId === round.id) {
+          score += h.correct ? -0.6 : 4.0;
+        } else if (h.category && h.category === round.category && !h.correct) {
+          score += 1.2;
+        }
+      }
+    }
+    return score;
+  }
+
   function initGameSession() {
-    const selected = shuffle(earTrainingRounds).slice(0, 10);
+    const ranked = [...earTrainingRounds].sort((a, b) => roundWeakScore(b) - roundWeakScore(a));
+    const weakRounds = ranked.filter(r => roundWeakScore(r) >= 1.5);
+    const otherRounds = ranked.filter(r => !weakRounds.includes(r));
+    const selected = [...shuffle(weakRounds), ...shuffle(otherRounds)].slice(0, 10);
     gameSession = {
       rounds: selected,
       index: 0,

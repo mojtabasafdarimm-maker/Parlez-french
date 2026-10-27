@@ -487,21 +487,53 @@ function visual(c){if(c.customImage){const safe=c.customImage.startsWith('data:i
 
 const PROFILE_COLORS=['#706bbc','#4d977f','#b67b55','#a66a95','#607fa9','#8d7e5a'];
 function makeProfile(name='My profile'){
-  return {id:'profile-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8),name,color:PROFILE_COLORS[0],createdAt:Date.now(),history:[],grammarHistory:[],speakingHistory:[],progress:{},prefs:{frontMode:'visual',dailyNew:8}};
+  return {id:'profile-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8),name,color:PROFILE_COLORS[0],createdAt:Date.now(),history:[],grammarHistory:[],genderHistory:[],speakingHistory:[],extraNewToday:{},progress:{},prefs:{frontMode:'visual',dailyNew:10,targetRetention:0.90}};
 }
 function initial(){
   const profile=makeProfile();
   return {version:3,cards:starter.map(c=>({...c,tags:[...c.tags]})),profiles:[profile],activeProfileId:profile.id,createdAt:Date.now()};
 }
+function migrateProfileToFsrs(p){
+  if(!p||typeof p.progress!=='object')return p;
+  const firstSeenByCard={};
+  if(Array.isArray(p.history)){
+    for(const h of p.history){
+      if(h&&h.id&&h.time&&(!firstSeenByCard[h.id]||h.time<firstSeenByCard[h.id]))firstSeenByCard[h.id]=h.time;
+    }
+  }
+  for(const [cid,cp] of Object.entries(p.progress)){
+    if(!cp||typeof cp!=='object')continue;
+    if(cp.reviews>0){
+      if(cp.difficulty===undefined){
+        const e=cp.ease||2.5;
+        cp.difficulty=Math.max(1.0,Math.min(10.0,+(5.0-(e-2.5)*4.0).toFixed(2)));
+      }
+      if(cp.stability===undefined){
+        cp.stability=Math.max(0.4,+(cp.interval||1.0).toFixed(2));
+      }
+      if(cp.learningStep===undefined){
+        cp.learningStep=cp.interval>0?2:1;
+      }
+      if(!cp.firstReviewedDay){
+        const ts=firstSeenByCard[cid]||cp.lastReviewed;
+        if(ts)cp.firstReviewedDay=todayKey(ts);
+      }
+    }
+  }
+  p.fsrsMigrated=true;
+  return p;
+}
 function migrate(old){
   if(old?.version===3 && Array.isArray(old.cards) && Array.isArray(old.profiles) && old.profiles.length){
-    old.profiles=old.profiles.filter(p=>p&&typeof p.id==='string'&&typeof p.name==='string').map((p,i)=>({
+    old.profiles=old.profiles.filter(p=>p&&typeof p.id==='string'&&typeof p.name==='string').map((p,i)=>migrateProfileToFsrs({
       ...p,name:p.name.slice(0,30),color:p.color||PROFILE_COLORS[i%PROFILE_COLORS.length],
       history:Array.isArray(p.history)?p.history:[],
       grammarHistory:Array.isArray(p.grammarHistory)?p.grammarHistory:[],
+      genderHistory:Array.isArray(p.genderHistory)?p.genderHistory:[],
       speakingHistory:Array.isArray(p.speakingHistory)?p.speakingHistory:[],
+      extraNewToday:p.extraNewToday && typeof p.extraNewToday==='object'?p.extraNewToday:{},
       progress:p.progress && typeof p.progress==='object' && !Array.isArray(p.progress)?p.progress:{},
-      prefs:{frontMode:'visual',dailyNew:8,...p.prefs}
+      prefs:{frontMode:'visual',dailyNew:10,targetRetention:0.90,...p.prefs}
     }));
     if(!old.profiles.length)return initial();
     if(!old.profiles.some(p=>p.id===old.activeProfileId))old.activeProfileId=old.profiles[0].id;
@@ -519,6 +551,7 @@ function migrate(old){
       for(const key of ['interval','dueAt','reviews','ease','lastReviewed'])if(c[key]!==undefined)progress[key]=c[key];
       if(Object.keys(progress).length)p.progress[c.id]=progress;
     }
+    migrateProfileToFsrs(p);
     return {version:3,cards:old.cards,profiles:[p],activeProfileId:p.id,createdAt:old.createdAt||Date.now()};
   }
   return initial();
@@ -595,75 +628,232 @@ function ensureProgress(c){
   if(cp.reps===undefined) cp.reps=0;
   if(cp.dueAt===undefined) cp.dueAt=0;
   if(cp.lastReviewed===undefined) cp.lastReviewed=0;
+  if(cp.stability===undefined) cp.stability=0;
+  if(cp.difficulty===undefined) cp.difficulty=4.9;
+  if(cp.learningStep===undefined) cp.learningStep=cp.reviews>0?(cp.interval>0?2:1):0;
   return cp;
 }
 
-/* Scientific SM-2 Spaced Repetition (SRS) Engine */
+/* Scientific FSRS (Free Spaced Repetition Scheduler) + 2-Step Learning Engine */
+function fsrsRetrievability(elapsedDays, stability) {
+  if (!stability || stability <= 0 || elapsedDays <= 0) return 1.0;
+  const r = Math.pow(1 + (19 / 81) * (elapsedDays / stability), -0.5);
+  return Math.max(0.05, Math.min(1.0, r));
+}
+
+function fsrsIntervalFromStability(stability, targetRetention = 0.90) {
+  const r = Math.max(0.75, Math.min(0.97, Number(targetRetention) || 0.90));
+  const factor = (81 / 19) * (Math.pow(r, -2) - 1);
+  return Math.max(1, Math.round(stability * factor));
+}
+
+function cardRetrievabilityPct(c) {
+  const p = progressFor(c);
+  if (!p.lastReviewed || !p.reviews) return null;
+  if (p.interval === 0) return 85;
+  const elapsed = Math.max(0, (Date.now() - p.lastReviewed) / 86400000);
+  const stab = p.stability || Math.max(0.5, p.interval || 1);
+  return Math.round(fsrsRetrievability(elapsed, stab) * 100);
+}
+
 function calcNextSchedule(c, level) {
   const p = ensureProgress(c);
   const now = Date.now();
-  const ease = p.ease || 2.5;
+  const targetRetention = Number(activeProfile()?.prefs?.targetRetention) || 0.90;
   const prevInterval = p.interval || 0;
+  const prevStability = p.stability || (prevInterval > 0 ? prevInterval : 0);
+  const prevDiff = p.difficulty || 4.9;
   const reps = p.reps || 0;
   const isNew = !p.lastReviewed || p.reviews === 0;
+  const step = isNew ? 0 : (p.learningStep ?? (prevInterval > 0 ? 2 : 1));
 
   let interval = 0;
-  let nextEase = ease;
+  let nextStability = prevStability;
+  let nextDiff = prevDiff;
   let nextReps = reps;
+  let nextStep = step;
   let dueAt = now;
   let label = '';
+  let requeue = null; // 'soon' (3 cards later) | 'end' (end of session confirmation) | null
 
-  switch (level) {
-    case 'again':
+  if (isNew || step === 0) {
+    // Step 1/2: First exposure of a brand-new or reset card
+    switch (level) {
+      case 'again':
+        interval = 0;
+        nextStability = 0.4;
+        nextDiff = 7.2;
+        nextReps = 0;
+        nextStep = 0;
+        dueAt = now + 5 * 60 * 1000;
+        label = '< 10 min';
+        requeue = 'soon';
+        break;
+      case 'hard':
+        interval = 0;
+        nextStability = 0.9;
+        nextDiff = 6.2;
+        nextReps = 0;
+        nextStep = 1;
+        dueAt = now + 10 * 60 * 1000;
+        label = '10 min';
+        requeue = 'end';
+        break;
+      case 'good':
+        // 2-step learning: tests once more at end of session (10m) before graduating to 1 day
+        interval = 0;
+        nextStability = 1.4;
+        nextDiff = 4.9;
+        nextReps = 0;
+        nextStep = 1;
+        dueAt = now + 10 * 60 * 1000;
+        label = '10m → 1 day';
+        requeue = 'end';
+        break;
+      case 'easy':
+        // Easy skips confirmation step and graduates immediately to 4 days
+        nextStability = 4.0;
+        nextDiff = 3.2;
+        interval = Math.max(4, fsrsIntervalFromStability(nextStability, targetRetention));
+        nextReps = 1;
+        nextStep = 2;
+        dueAt = now + interval * 86400000;
+        label = `${interval} days`;
+        requeue = null;
+        break;
+    }
+  } else if (step === 1 && prevInterval === 0) {
+    // Step 2/2: Confirmation pass in session (or relearning pass after a lapse)
+    switch (level) {
+      case 'again':
+        interval = 0;
+        nextStability = Math.max(0.4, +(prevStability * 0.55).toFixed(2));
+        nextDiff = Math.min(10.0, +(prevDiff + 0.8).toFixed(2));
+        nextReps = 0;
+        nextStep = 0;
+        dueAt = now + 5 * 60 * 1000;
+        label = '< 10 min';
+        requeue = 'soon';
+        break;
+      case 'hard':
+        interval = 0;
+        nextStability = Math.max(0.8, prevStability);
+        nextDiff = Math.min(10.0, +(prevDiff + 0.35).toFixed(2));
+        nextReps = 0;
+        nextStep = 1;
+        dueAt = now + 10 * 60 * 1000;
+        label = '10 min';
+        requeue = 'end';
+        break;
+      case 'good':
+        nextStability = Math.max(1.2, prevStability || 1.2);
+        nextDiff = Math.max(1.0, Math.min(10.0, prevDiff));
+        interval = (p.lapses > 0 && prevStability >= 1.8)
+          ? Math.max(1, fsrsIntervalFromStability(nextStability, targetRetention))
+          : 1;
+        nextReps = 1;
+        nextStep = 2;
+        dueAt = now + interval * 86400000;
+        label = interval === 1 ? '1 day' : `${interval} days`;
+        requeue = null;
+        break;
+      case 'easy':
+        nextStability = Math.max(3.5, +((prevStability || 1.5) * 2.4).toFixed(2));
+        nextDiff = Math.max(1.0, +(prevDiff - 0.5).toFixed(2));
+        interval = Math.max(3, fsrsIntervalFromStability(nextStability, targetRetention));
+        nextReps = 1;
+        nextStep = 2;
+        dueAt = now + interval * 86400000;
+        label = `${interval} days`;
+        requeue = null;
+        break;
+    }
+  } else {
+    // Graduated Long-Term FSRS Review (accounts for real elapsed time & forgetting curve)
+    const realElapsed = Math.max(0.1, (now - (p.lastReviewed || now)) / 86400000);
+    const effectiveElapsed = Math.max(realElapsed, prevInterval * 0.5);
+    const S = Math.max(0.8, prevStability || prevInterval || 1);
+    const R = fsrsRetrievability(effectiveElapsed, S);
+    const gNum = level === 'again' ? 1 : level === 'hard' ? 2 : level === 'good' ? 3 : 4;
+    // FSRS Difficulty update with mean reversion toward D0(3)=4.9
+    nextDiff = Math.max(1.0, Math.min(10.0, +(0.15 * 4.9 + 0.85 * (prevDiff - 0.9 * (gNum - 3))).toFixed(2)));
+
+    if (level === 'again') {
+      // FSRS post-lapse stability formula
+      nextStability = Math.max(0.8, Math.min(S, +(0.35 * Math.pow(nextDiff, -0.3) * Math.pow(S + 1, 0.2) * Math.exp(0.2 * (1 - R))).toFixed(2)));
       interval = 0;
-      nextEase = Math.max(1.3, +(ease - 0.2).toFixed(2));
       nextReps = 0;
+      nextStep = 1;
       dueAt = now + 10 * 60 * 1000;
       label = '< 10 min';
-      break;
-
-    case 'hard':
-      if (isNew || prevInterval === 0) {
-        interval = 1;
+      requeue = 'soon';
+    } else {
+      const h = level === 'hard' ? 0.45 : (level === 'easy' ? 1.38 : 1.0);
+      const inc = Math.exp(1.85) * (11 - nextDiff) * Math.pow(S, -0.18) * (Math.exp(0.95 * (1 - R)) - 1) * h;
+      nextStability = Math.max(S + (level === 'hard' ? 0.3 : 1.0), +(S * (1 + inc)).toFixed(2));
+      const rawIv = fsrsIntervalFromStability(nextStability, targetRetention);
+      if (level === 'hard') {
+        interval = Math.max(prevInterval + 1, Math.min(rawIv, Math.round(prevInterval * 1.35) || 2));
+      } else if (level === 'good') {
+        interval = Math.max(prevInterval + 1, rawIv);
       } else {
-        interval = Math.max(1, Math.round(prevInterval * 1.2));
+        interval = Math.max(prevInterval + 2, rawIv);
       }
-      nextEase = Math.max(1.3, +(ease - 0.15).toFixed(2));
       nextReps = reps + 1;
+      nextStep = 2;
       dueAt = now + interval * 86400000;
       label = interval === 1 ? '1 day' : `${interval} days`;
-      break;
-
-    case 'good':
-      if (isNew || reps === 0) {
-        interval = 1;
-      } else if (reps === 1) {
-        interval = 3;
-      } else {
-        interval = Math.max(1, Math.round(prevInterval * ease));
-      }
-      nextEase = ease;
-      nextReps = reps + 1;
-      dueAt = now + interval * 86400000;
-      label = interval === 1 ? '1 day' : `${interval} days`;
-      break;
-
-    case 'easy':
-      if (isNew || reps === 0) {
-        interval = 4;
-      } else if (reps === 1) {
-        interval = 6;
-      } else {
-        interval = Math.max(2, Math.round(prevInterval * ease * 1.3));
-      }
-      nextEase = Math.min(3.0, +(ease + 0.15).toFixed(2));
-      nextReps = reps + 1;
-      dueAt = now + interval * 86400000;
-      label = interval === 1 ? '1 day' : `${interval} days`;
-      break;
+      requeue = null;
+    }
   }
 
-  return { interval, ease: nextEase, reps: nextReps, dueAt, label };
+  // Mirror Difficulty into legacy ease (1.30 - 3.00) for full compatibility
+  const nextEase = (isNew && level === 'easy')
+    ? 2.65
+    : Math.max(1.3, Math.min(3.0, +(2.8 - (nextDiff - 3.0) * 0.18).toFixed(2)));
+
+  return {
+    interval,
+    ease: nextEase,
+    stability: nextStability,
+    difficulty: nextDiff,
+    reps: nextReps,
+    learningStep: nextStep,
+    dueAt,
+    label,
+    requeue
+  };
+}
+
+function isTrickyCard(c) {
+  if (!c) return false;
+  const p = progressFor(c);
+  if ((p.lapses || 0) >= 1) return true;
+  if ((p.genderMisses || 0) >= 1) return true;
+  if (p.reviews > 0 && (p.difficulty || 0) >= 6.5) return true;
+  if (p.reviews >= 2 && p.ease && p.ease <= 2.2) return true;
+  return false;
+}
+
+function trickyCards() {
+  return state.cards.filter(c => c.kind !== 'speaking' && isTrickyCard(c));
+}
+
+function newCardsIntroducedToday(profile = activeProfile()) {
+  if (!profile || !profile.progress) return 0;
+  const tk = todayKey();
+  return Object.values(profile.progress).filter(cp => cp && cp.reviews > 0 && cp.firstReviewedDay === tk).length;
+}
+
+function dailyNewCap(profile = activeProfile()) {
+  const base = Number(profile?.prefs?.dailyNew);
+  const limit = Number.isFinite(base) && base > 0 ? base : 10;
+  const extra = Number(profile?.extraNewToday?.[todayKey()]) || 0;
+  return limit + extra;
+}
+
+function remainingDailyNewAllowance(profile = activeProfile()) {
+  return Math.max(0, dailyNewCap(profile) - newCardsIntroducedToday(profile));
 }
 
 function cardMemoryStatus(c) {
@@ -673,10 +863,11 @@ function cardMemoryStatus(c) {
     return { state: 'new', label: '🌱 New card', badgeClass: 'badge-new', isDue: true };
   }
   if (p.interval === 0) {
-    return { state: 'learning', label: '🔄 In learning', badgeClass: 'badge-learning', isDue: true };
+    const stepLabel = (p.learningStep === 1) ? '🔄 Confirming (2/2)' : '🔄 In learning';
+    return { state: 'learning', label: stepLabel, badgeClass: 'badge-learning', isDue: true };
   }
   if (!p.dueAt || p.dueAt <= now) {
-    return { state: 'due', label: '🧠 Due for review', badgeClass: 'badge-due', isDue: true };
+    return { state: 'due', label: isTrickyCard(c) ? '⚡ Tricky · Due' : '🧠 Due for review', badgeClass: 'badge-due', isDue: true };
   }
   const days = Math.max(1, Math.ceil((p.dueAt - now) / 86400000));
   if (p.interval >= 21) {
@@ -713,7 +904,7 @@ function scheduledCards(){
 }
 
 function buildSrsSessionQueue(candidateCards, options = {}) {
-  const { mode = 'srs', dailyNewLimit = 10 } = options;
+  const { mode = 'srs', dailyNewLimit = null, ignoreDailyCap = false } = options;
   const now = Date.now();
 
   if (mode === 'all') {
@@ -726,26 +917,34 @@ function buildSrsSessionQueue(candidateCards, options = {}) {
     }).map(c => c.id);
   }
 
-  // SRS mode:
-  // 1. Due reviews (cards already graduated whose dueAt <= now, sorted most overdue first)
+  // SRS / FSRS mode:
+  // 1. Due reviews (sorted by lowest retrievability / most overdue first)
   const dueReviews = candidateCards.filter(c => {
     const p = progressFor(c);
     return p.lastReviewed && p.reviews > 0 && p.interval > 0 && p.dueAt <= now;
-  }).sort((a, b) => (progressFor(a).dueAt || 0) - (progressFor(b).dueAt || 0));
+  }).sort((a, b) => {
+    const ra = cardRetrievabilityPct(a) ?? 90;
+    const rb = cardRetrievabilityPct(b) ?? 90;
+    if (ra !== rb) return ra - rb;
+    return (progressFor(a).dueAt || 0) - (progressFor(b).dueAt || 0);
+  });
 
-  // 2. Learning cards (lapsed or interval === 0)
+  // 2. Learning cards (step 1 confirmation or lapsed)
   const learning = candidateCards.filter(c => {
     const p = progressFor(c);
     return p.reviews > 0 && p.interval === 0;
   });
 
-  // 3. New cards (never studied)
+  // 3. New cards (capped by true daily new allowance across the day)
   const newUnseen = candidateCards.filter(c => {
     const p = progressFor(c);
     return !p.lastReviewed || p.reviews === 0;
   });
 
-  const selectedNew = newUnseen.slice(0, Math.max(0, dailyNewLimit));
+  const allowance = ignoreDailyCap
+    ? (dailyNewLimit ?? dailyNewCap())
+    : (dailyNewLimit !== null ? Math.min(dailyNewLimit, remainingDailyNewAllowance()) : remainingDailyNewAllowance());
+  const selectedNew = newUnseen.slice(0, Math.max(0, allowance));
   const queue = [...learning, ...dueReviews, ...selectedNew];
 
   return queue.map(c => c.id);
@@ -755,27 +954,47 @@ function applyCardRating(session, c, level) {
   if (!c || !session) return;
   const p = ensureProgress(c);
   const now = Date.now();
+  const wasNew = !p.lastReviewed || p.reviews === 0;
   const next = calcNextSchedule(c, level);
 
+  if (wasNew && !p.firstReviewedDay) {
+    p.firstReviewedDay = todayKey(now);
+  }
   p.reviews = (p.reviews || 0) + 1;
   p.lastReviewed = now;
   p.interval = next.interval;
   p.ease = next.ease;
+  p.stability = next.stability;
+  p.difficulty = next.difficulty;
   p.reps = next.reps;
+  p.learningStep = next.learningStep;
   p.dueAt = next.dueAt;
   if (level === 'again') {
     p.lapses = (p.lapses || 0) + 1;
   }
 
-  activeProfile().history.push({ id: c.id, time: now, level });
+  activeProfile().history.push({
+    id: c.id,
+    time: now,
+    level,
+    interval: next.interval,
+    stability: next.stability,
+    difficulty: next.difficulty
+  });
   session.done++;
 
-  if (level === 'again') {
+  if (next.requeue === 'soon') {
     session.again++;
     const remaining = session.ids.length - session.index - 1;
     if (remaining > 3) {
       session.ids.splice(session.index + 4, 0, c.id);
     } else {
+      session.ids.push(c.id);
+    }
+  } else if (next.requeue === 'end') {
+    // 2-step learning confirmation pass at the end of the session (avoid duplicate pending entries)
+    const pendingAfter = session.ids.slice(session.index + 1);
+    if (!pendingAfter.includes(c.id)) {
       session.ids.push(c.id);
     }
   }
@@ -814,16 +1033,23 @@ function homePage(){
   const dueReviews = dueReviewCards().length;
   const learnCount = learningCards().length;
   const newCount = newCards().length;
-  const waitingCount = dueReviews + learnCount + Math.min(newCount, 10);
+  const newAllowance = remainingDailyNewAllowance();
+  const waitingCount = dueReviews + learnCount + Math.min(newCount, newAllowance);
   const done = todayHistory().length;
+  const trickyCount = trickyCards().length;
   const byTopic=Object.entries(topicEmoji).map(([t,emoji])=>{let cs=state.cards.filter(c=>c.topic===t),remembered=cs.filter(c=>progressFor(c).interval>=7).length;return cs.length?`<div class="topic-row"><div class="topic-icon">${emoji}</div><div style="flex:1"><div style="display:flex;justify-content:space-between"><span class="topic-name">${esc(t)}</span><span class="small muted">${remembered}/${cs.length}</span></div><div class="progress-track"><div class="progress-fill" style="width:${100*remembered/cs.length}%"></div></div></div></div>`:''}).join('');
-  return `<section class="hero"><div><div class="eyebrow">WELCOME, ${esc(activeProfile().name.toUpperCase())}</div><h1>See it. Say it.<br/>Remember it.</h1><p>Train yourself to think in French through pictures, real-life actions and tiny daily practice.</p><div style="display:flex;gap:10px;flex-wrap:wrap">${btn(`Start visual review ${icon('arrow')}`,'btn-primary btn-lg','data-action="start-review"')}${btn(`Vocab flashcards ${icon('vocab')}`,'btn-secondary btn-lg','data-view="vocab"')}${btn(`Sounds Lab ${icon('sound')}`,'btn-white btn-lg','data-view="sounds"')}</div></div><div class="hero-illustration">${heroArt()}</div></section><div class="stats">${stat(waitingCount,'Cards ready','clock')}${stat(done,'Reviewed today','check')}${stat(lastStreak()+' days','Study streak','fire')}</div><div class="section-head"><h2>Your learning space</h2><button class="link" data-view="library">See all cards →</button></div><div class="panels"><div class="panel"><div style="display:flex;align-items:center;justify-content:space-between"><h3>Today's focus</h3><span class="mini-step">VISUAL FIRST</span></div><p class="subline">Start with the picture, speak out loud, then reveal French. Ratings schedule your next review.</p><div style="display:flex;gap:12px;align-items:center;background:#f7f5fd;padding:17px;border-radius:16px"><span style="font-size:33px">🧠</span><div style="flex:1"><b>${waitingCount} cards waiting</b><div class="small muted">${dueReviews ? `${dueReviews} reviews due · ` : ''}${Math.min(waitingCount,10)}-card focused session</div></div><button class="btn btn-secondary" data-action="start-review">Review ${icon('arrow')}</button></div></div><div class="panel"><h3>Progress by topic</h3>${byTopic}</div></div><div class="notice">${icon('info')} Review progress belongs to ${esc(activeProfile().name)} on this device. The card library is shared between profiles, but nothing syncs between phones yet.</div>`;
+  return `<section class="hero"><div><div class="eyebrow">WELCOME, ${esc(activeProfile().name.toUpperCase())}</div><h1>See it. Say it.<br/>Remember it.</h1><p>Train yourself to think in French through pictures, real-life actions and tiny daily practice.</p><div style="display:flex;gap:10px;flex-wrap:wrap">${btn(`Start visual review ${icon('arrow')}`,'btn-primary btn-lg','data-action="start-review"')}${btn(`Vocab flashcards ${icon('vocab')}`,'btn-secondary btn-lg','data-view="vocab"')}${btn(`Sounds Lab ${icon('sound')}`,'btn-white btn-lg','data-view="sounds"')}</div></div><div class="hero-illustration">${heroArt()}</div></section><div class="stats">${stat(waitingCount,'Cards ready','clock')}${stat(done,'Reviewed today','check')}${stat(lastStreak()+' days','Study streak','fire')}</div><div class="section-head"><h2>Your learning space</h2><button class="link" data-view="library">See all cards →</button></div><div class="panels"><div class="panel"><div style="display:flex;align-items:center;justify-content:space-between"><h3>Today's focus</h3><span class="mini-step">FSRS · 90% RECALL</span></div><p class="subline">Start with the picture, speak out loud, then reveal French. New words repeat once at the end of the session before graduating.</p><div style="display:flex;gap:12px;align-items:center;background:#f7f5fd;padding:17px;border-radius:16px"><span style="font-size:33px">🧠</span><div style="flex:1"><b>${waitingCount} cards waiting</b><div class="small muted">${dueReviews ? `${dueReviews} reviews due · ` : ''}${newCardsIntroducedToday()}/${dailyNewCap()} daily new used${trickyCount?` · ⚡ ${trickyCount} tricky`:''}</div></div><button class="btn btn-secondary" data-action="start-review">Review ${icon('arrow')}</button></div></div><div class="panel"><h3>Progress by topic</h3>${byTopic}</div></div><div class="notice">${icon('info')} Review progress belongs to ${esc(activeProfile().name)} on this device. The card library is shared between profiles, but nothing syncs between phones yet.</div>`;
 }
 function getReviewPool(filter, mode = 'srs'){
   let pool = state.cards;
+  if(filter==='Tricky words'||filter==='⚡ Tricky words'){
+    const tricky = trickyCards();
+    return tricky.map(c=>c.id);
+  }
   if(filter!=='Due now'&&filter!=='All cards'&&filter!=='') pool = pool.filter(c=>c.topic===filter);
   if(filter==='All cards') return buildSrsSessionQueue(pool, { mode: 'all' });
-  return buildSrsSessionQueue(pool, { mode: 'srs', dailyNewLimit: 10 });
+  const isSpecificTopic = filter!=='Due now'&&filter!=='All cards'&&filter!=='';
+  return buildSrsSessionQueue(pool, { mode: 'srs', ignoreDailyCap: isSpecificTopic });
 }
 let reviewFilter='Due now';
 function initReview(mode = 'srs'){
@@ -851,8 +1077,11 @@ function currentReviewCard(){if(!reviewSession||!reviewSession.ids.length)return
 function simpleReviewPage(){
   if(!reviewSession)initReview();
   const c=currentReviewCard(),all=reviewSession.ids.length;
-  const header=`<div class="review-top"><div><div class="eyebrow">PICTURE → FRENCH</div><h2>Visual flashcards</h2></div><select class="select select-sm" id="review-filter" aria-label="Choose review topic">${['Due now','All cards',...Object.keys(topicEmoji)].map(t=>`<option ${t===reviewFilter?'selected':''}>${esc(t)}</option>`).join('')}</select></div>`;
-  if(!c||reviewSession.index>=all)return `<div class="review-layout">${header}<div class="empty"><div class="empty-emoji">✨</div><h2>${all?'Session complete!':'No cards due right now'}</h2><p class="subline">${all?`You reviewed ${reviewSession.done} cards. ${reviewSession.again?`${reviewSession.again} were re-tested until memorized.`:'All remembered!'}`:'Nice work. Your cards are safely memorized and scheduled for future review.'}</p><button class="btn btn-primary" data-action="practice-all">Practice all cards ${icon('arrow')}</button> <button class="btn btn-white" data-view="home">Back home</button></div></div>`;
+  const header=`<div class="review-top"><div><div class="eyebrow">PICTURE → FRENCH</div><h2>Visual flashcards</h2></div><select class="select select-sm" id="review-filter" aria-label="Choose review topic">${['Due now','⚡ Tricky words','All cards',...Object.keys(topicEmoji)].map(t=>`<option ${t===reviewFilter?'selected':''}>${esc(t)}</option>`).join('')}</select></div>`;
+  if(!c||reviewSession.index>=all){
+    const canUnlockMore = newCards().length > 0 && remainingDailyNewAllowance() === 0;
+    return `<div class="review-layout">${header}<div class="empty"><div class="empty-emoji">✨</div><h2>${all?'Session complete!':'Daily queue complete!'}</h2><p class="subline">${all?`You reviewed ${reviewSession.done} cards (${newCardsIntroducedToday()}/${dailyNewCap()} daily new cards introduced today). ${reviewSession.again?`${reviewSession.again} were re-tested until memorized.`:'All remembered!'}`:`All due reviews and today’s ${dailyNewCap()} daily new cards are complete.`}</p><div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">${canUnlockMore?`<button class="btn btn-primary" data-action="unlock-more-new">🌱 Learn +5 New Cards Today</button>`:''}<button class="btn ${canUnlockMore?'btn-secondary':'btn-primary'}" data-action="practice-all">Practice all cards ${icon('arrow')}</button><button class="btn btn-white" data-view="home">Back home</button></div></div></div>`;
+  }
   const picture=activeProfile().prefs.frontMode==='english'?`<div class="english-front">${esc(c.englishPrompt)}</div>`:visual(c);
   const phon=cardPhonetic(c);
   const mem=cardMemoryStatus(c);
@@ -919,7 +1148,9 @@ function getVocabPool(){
   let pool=state.cards.filter(c=>c.kind!=='speaking');
   if(vocabLessonFilter!=='All')pool=pool.filter(c=>c.lesson===vocabLessonFilter);
   if(vocabTopicFilter!=='All')pool=pool.filter(c=>c.topic===vocabTopicFilter);
-  if(vocabGenderFilter==='m'||vocabGenderFilter==='f'){
+  if(vocabGenderFilter==='tricky'){
+    pool=pool.filter(c=>isTrickyCard(c));
+  } else if(vocabGenderFilter==='m'||vocabGenderFilter==='f'){
     pool=pool.filter(c=>{
       const g=window.ParlezGender?window.ParlezGender.getCardGender(c):null;
       return g&&(g.gender===vocabGenderFilter||g.gender==='mf');
@@ -931,9 +1162,10 @@ function getVocabPool(){
   }
   return pool;
 }
-function initVocabSession(ids, mode = 'srs'){
+function initVocabSession(ids, mode = 'srs', ignoreDailyCap = false){
   const pool = getVocabPool();
-  const queue = ids && ids.length ? ids : buildSrsSessionQueue(pool, { mode });
+  const isSpecificFilter = ignoreDailyCap || vocabLessonFilter !== 'All' || vocabTopicFilter !== 'All' || vocabGenderFilter === 'tricky' || !!vocabSearch;
+  const queue = ids && ids.length ? ids : buildSrsSessionQueue(pool, { mode, ignoreDailyCap: isSpecificFilter });
   promptPeeked = false;
   vocabSession={ids:queue,index:0,done:0,again:0,revealed:false,mode:mode};
 }
@@ -1132,6 +1364,7 @@ function vocabCatalogView(){
       <button type="button" class="gender-filter-btn ${vocabGenderFilter==='All'?'active':''}" data-gender-filter="All">All Words</button>
       <button type="button" class="gender-filter-btn gf-btn-m ${vocabGenderFilter==='m'?'active':''}" data-gender-filter="m">♂ Masculin (un / le)</button>
       <button type="button" class="gender-filter-btn gf-btn-f ${vocabGenderFilter==='f'?'active':''}" data-gender-filter="f">♀ Féminin (une / la)</button>
+      <button type="button" class="gender-filter-btn ${vocabGenderFilter==='tricky'?'active':''}" data-gender-filter="tricky">⚡ Tricky Words (${trickyCards().length})</button>
       <button type="button" class="gender-filter-btn gf-btn-reflex ${vocabGenderFilter==='reflex'?'active':''}" data-gender-filter="reflex">🎨 Gender Reflex Quiz (un/le vs une/la)</button>
     </div>
     ${vocabGenderFilter==='reflex'&&window.ParlezGender?window.ParlezGender.renderReflexView():(vocabLessonFilter==='All'&&vocabTopicFilter==='All'&&vocabGenderFilter==='All'&&!vocabSearch)?`
@@ -1520,7 +1753,7 @@ const speakExercises=[
 function speakPage(){const g=speakExercises[speakAt % speakExercises.length];return `<div class="speaking-box"><div class="eyebrow">PRACTICE YOUR VOICE</div><h1>Real-life moments.</h1><p class="header-desc">Imagine yourself in the scene. Say a response out loud, then optionally type it. You're not being automatically graded.</p><div class="review-top"><span class="small muted">Scene ${speakAt+1} / ${speakExercises.length}</span><span class="mini-step">SPEAK FIRST</span></div><div class="review-card"><div class="review-scene prompt-scene">${sceneSVG(g.scene)}<span class="corner">${esc(g.title)}</span></div><div class="field"><label for="speaking-answer">Draft your answer (optional)</label><textarea id="speaking-answer" class="textarea" rows="3" placeholder="Try saying it aloud first...">${esc(speakResponse)}</textarea></div><p class="small muted">${esc(g.optional)}</p>${!speakShown?`<div class="tabline"><button class="btn btn-primary" data-action="speak-reveal">Show example answer ${icon('eye')}</button></div>`:`<div class="answer"><div class="eyebrow">ONE NATURAL RESPONSE</div><h2 style="font-size:22px">${esc(g.suggested)}</h2><p class="mini">${esc(g.tip)}</p><button class="btn btn-secondary" data-action="speech-example">${icon('sound')} Listen to example</button></div><div class="rating-row" style="grid-template-columns:1fr 1fr"><button class="btn btn-white" data-action="speak-retry">Practice again</button><button class="btn btn-primary" data-action="speak-done">I said it ${icon('check')}</button></div>`}</div><div class="notice">${icon('info')} This mode offers model answers for self-practice. It does not pretend to recognize or assess your pronunciation. You can request more complex speaking feedback later.</div></div>`;}
 function libCards(){return state.cards.filter(c=>(libTopic==='All'||c.topic===libTopic)&&(libType==='All'||c.kind===libType)&&[c.frenchAnswer,c.englishPrompt,c.topic,c.frenchExample].some(v=>textNormalized(v).includes(textNormalized(libSearch))));}
 function libraryPage(){const cs=libCards();return `<div><div class="eyebrow">YOUR LEARNING LIBRARY</div><h1>Every idea has a picture.</h1><p class="header-desc">Browse your visual cards, change the illustrations, and add your own daily-life scenes. All edits are saved locally.</p><div class="library-toolbar"><div class="search-box">${icon('search')}<input class="input" placeholder="Find a concept or French expression..." id="lib-search" value="${esc(libSearch)}"/></div><select id="lib-topic" class="select" aria-label="Filter by topic"><option>All</option>${[...new Set(state.cards.map(c=>c.topic))].map(t=>`<option ${libTopic===t?'selected':''}>${esc(t)}</option>`).join('')}</select><select id="lib-type" class="select" aria-label="Filter by card type">${['All','vocab','action','sentence','grammar','speaking'].map(t=>`<option ${libType===t?'selected':''}>${esc(t)}</option>`).join('')}</select><button class="btn btn-primary" data-action="add-card">${icon('plus')} Add card</button></div><p class="small muted">${cs.length} cards · Pictures are the default prompt</p><div class="library-grid">${cs.map(c=>{const p=cardPhonetic(c);const gInfo=window.ParlezGender?window.ParlezGender.getCardGender(c):null;return `<div class="lib-card hover-card"><div class="lib-scene">${visual(c)}</div><div class="lib-content"><div style="display:flex;justify-content:space-between;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:4px"><span class="meta" style="margin:0">${esc(c.topic)}</span>${gInfo?`<span class="gender-pill ${gInfo.pillClass}">${esc(gInfo.shortPill)}</span>`:''}</div><h3>${window.ParlezGender?window.ParlezGender.formatAnswerHTML(c):esc(c.frenchAnswer)}</h3>${p.word?`<p class="word-phonetic" style="margin:2px 0 6px;font-size:12.5px">${esc(p.word)}</p>`:''}<p>${esc(c.englishPrompt)}</p>${c.frenchExample?`<div class="vocab-example"><p lang="fr">${esc(c.frenchExample)}</p>${p.example?`<p class="example-phonetic">${esc(p.example)}</p>`:''}${c.exampleEnglish?`<p class="example-meaning">${esc(c.exampleEnglish)}</p>`:''}</div>`:''}<div class="lib-footer"><button class="btn btn-secondary" data-edit="${esc(c.id)}">${icon('edit')} Edit</button><button class="btn btn-white" data-practice="${esc(c.id)}">Practice ${icon('arrow')}</button></div></div></div>`;}).join('')}</div>${cs.length?'':`<div class="empty"><h3>No matching cards</h3><p>Adjust filters or add a new card.</p></div>`}</div>`;}
-function settingsPage(){return `<div><div class="eyebrow">YOUR APP, YOUR RULES</div><h1>Settings & backups.</h1><p class="header-desc">Visual French practice works offline after installation. Each learner has independent progress saved on this device only; there is no cross-device synchronization.</p><div class="settings-grid"><div class="panel"><h3>Study profiles</h3><p>Each learner has separate reviews, streaks, grammar and speaking history. Everyone shares one vocabulary library.</p><p class="mini-step">Studying as: ${esc(activeProfile().name)}</p><div style="margin-top:17px"><button class="btn btn-primary" data-action="open-profiles">${icon("plus")} Manage profiles</button></div></div><div class="panel"><h3>Flashcard front</h3><p>Choose what appears before you reveal French. Visual is the recommended speaking-focused mode.</p><div class="field"><label for="front-mode">Card prompt mode</label><select id="front-mode" class="select"><option value="visual" ${activeProfile().prefs.frontMode==='visual'?'selected':''}>Picture only (recommended)</option><option value="english" ${activeProfile().prefs.frontMode==='english'?'selected':''}>English prompt</option><option value="mixed" ${activeProfile().prefs.frontMode==='mixed'?'selected':''}>Picture + English</option></select></div></div><div class="panel"><h3>Backup your progress</h3><p>Download a complete backup of your shared cards, uploaded pictures and every learner profile with its own study history. Importing a backup replaces all existing local profiles on that device.</p><button class="btn btn-primary" data-action="export-json">${icon('download')} Export backup</button> <button class="btn btn-white" data-action="import-json">${icon('upload')} Import backup</button><input id="import-input" type="file" accept="application/json,.json" hidden/></div><div class="panel"><h3>Add to your iPhone & Updates</h3><p>Open in Safari → Share → Add to Home Screen. Tap below anytime to pull the latest illustrations and app features while keeping all your study progress safe.</p><button class="btn btn-secondary" type="button" data-action="force-app-update">🔄 Update App (Keep Progress)</button></div><div class="panel"><h3>Data controls</h3><p><b>${state.cards.length}</b> cards · <b>${activeProfile().history.length}</b> reviews · <b>${activeProfile().speakingHistory.length}</b> speaking attempts.</p><button class="btn btn-white" data-action="export-csv">${icon('download')} Export cards CSV</button> <button class="btn btn-danger" style="margin-top:12px" data-action="reset-data">${icon('trash')} Reset entire app</button></div></div><div class="notice">${icon('info')} Important: all profiles are stored only in this browser. Different phones do not synchronize. Clearing Safari data removes all local profiles and your edited cards. Export a full JSON backup regularly.</div></div>`;}
+function settingsPage(){const p=activeProfile();const dn=Number(p.prefs?.dailyNew)||10;const tr=Number(p.prefs?.targetRetention)||0.90;return `<div><div class="eyebrow">YOUR APP, YOUR RULES</div><h1>Settings & backups.</h1><p class="header-desc">Visual French practice works offline after installation. Each learner has independent progress saved on this device only; there is no cross-device synchronization.</p><div class="settings-grid"><div class="panel"><h3>Study profiles</h3><p>Each learner has separate reviews, streaks, grammar and speaking history. Everyone shares one vocabulary library.</p><p class="mini-step">Studying as: ${esc(p.name)}</p><div style="margin-top:17px"><button class="btn btn-primary" data-action="open-profiles">${icon("plus")} Manage profiles</button></div></div><div class="panel"><h3>Flashcard front & FSRS Memory</h3><p>Choose what appears before you reveal French, how many new cards to introduce per day, and your FSRS recall target.</p><div class="field"><label for="front-mode">Card prompt mode</label><select id="front-mode" class="select"><option value="visual" ${p.prefs.frontMode==='visual'?'selected':''}>Picture only (recommended)</option><option value="english" ${p.prefs.frontMode==='english'?'selected':''}>English prompt</option><option value="mixed" ${p.prefs.frontMode==='mixed'?'selected':''}>Picture + English</option></select></div><div class="field" style="margin-top:10px"><label for="daily-new-select">Daily new cards limit (${newCardsIntroducedToday()}/${dailyNewCap()} used today)</label><select id="daily-new-select" class="select">${[5,8,10,15,20,30].map(n=>`<option value="${n}" ${dn===n?'selected':''}>${n} new cards / day${n===10?' (recommended)':''}</option>`).join('')}</select></div><div class="field" style="margin-top:10px"><label for="target-retention-select">FSRS target retention</label><select id="target-retention-select" class="select"><option value="0.85" ${Math.abs(tr-0.85)<0.02?'selected':''}>85% recall · Relaxed (fewer reviews)</option><option value="0.90" ${Math.abs(tr-0.90)<0.02?'selected':''}>90% recall · Optimal (recommended)</option><option value="0.95" ${Math.abs(tr-0.95)<0.02?'selected':''}>95% recall · Intensive (shorter gaps)</option></select></div></div><div class="panel"><h3>Backup your progress</h3><p>Download a complete backup of your shared cards, uploaded pictures and every learner profile with its own study history. Importing a backup replaces all existing local profiles on that device.</p><button class="btn btn-primary" data-action="export-json">${icon('download')} Export backup</button> <button class="btn btn-white" data-action="import-json">${icon('upload')} Import backup</button><input id="import-input" type="file" accept="application/json,.json" hidden/></div><div class="panel"><h3>Add to your iPhone & Updates</h3><p>Open in Safari → Share → Add to Home Screen. Tap below anytime to pull the latest illustrations and app features while keeping all your study progress safe.</p><button class="btn btn-secondary" type="button" data-action="force-app-update">🔄 Update App (Keep Progress)</button></div><div class="panel"><h3>Data controls</h3><p><b>${state.cards.length}</b> cards · <b>${p.history.length}</b> reviews · <b>${p.speakingHistory.length}</b> speaking attempts.</p><button class="btn btn-white" data-action="export-csv">${icon('download')} Export cards CSV</button> <button class="btn btn-danger" style="margin-top:12px" data-action="reset-data">${icon('trash')} Reset entire app</button></div></div><div class="notice">${icon('info')} Important: all profiles are stored only in this browser. Different phones do not synchronize. Clearing Safari data removes all local profiles and your edited cards. Export a full JSON backup regularly.</div></div>`;}
 function cardModal(c){modalOpen=true;editId=c?.id||null;editScene=c?.scene||'wake';editImage=c?.customImage||null;const sceneKeys=['wake','rise','brush','shower','dress','hair','walk','bedtime','sleep','breakfast','makebed','dishes','plants','work','coffee','bike','hat','scarf','dressobj','shoes','shirt','pants','skirt','socks','gloves','red-dress','rain','snow','sun','wind','clouds','cold','hot','write','eat-before','eat-now','eat-after','clock-215','clock-230','clock-245','sport','cinema','mexican-film'];const fields=[['frenchAnswer','French word or expression','e.g. une écharpe'],['englishPrompt','English meaning','e.g. a scarf'],['frenchExample','Simple example in French','e.g. Je porte une écharpe.'],['exampleEnglish','Example in English','e.g. I wear a scarf.']];const f=(key,title,placeholder)=>`<div class="field"><label for="ed-${key}">${title}</label><input class="input" id="ed-${key}" value="${esc(c?.[key]||'')}" placeholder="${esc(placeholder)}" ${key==='frenchAnswer'?'required':''}/></div>`;const html=`<div class="modal-backdrop" id="modal-backdrop"><div class="modal" role="dialog" aria-modal="true" aria-label="${c?'Edit':'Add'} card"><div class="modal-header"><h2>${c?'Edit your card':'Create a new card'}</h2><button class="round-btn" data-action="close-modal" aria-label="Close dialog">${icon('close')}</button></div><div class="field-row"><div class="field"><label for="ed-topic">Topic</label><input class="input" id="ed-topic" value="${esc(c?.topic||'My own cards')}"/></div><div class="field"><label for="ed-kind">Card type</label><select class="select" id="ed-kind">${['vocab','action','sentence','grammar','speaking'].map(t=>`<option ${c?.kind===t?'selected':''}>${t}</option>`).join('')}</select></div></div><div class="field"><label>Choose a picture for the FRONT</label><div class="image-chooser">${sceneKeys.map(key=>`<button class="${editScene===key?'selected':''}" data-choose-scene="${key}" title="${key}">${sceneSVG(key)}<span>${key.replace(/-/g,' ')}</span></button>`).join('')}</div><small style="margin-top:5px">Pick an illustration or upload a photo below.</small></div><div class="field"><label for="own-image">Upload your own image (optional)</label><input id="own-image" type="file" accept="image/*" class="input"/><small>Images are compressed on your device to fit local storage. A custom image replaces the illustration.</small></div><div id="uploaded-preview">${editImage?`<img alt="User image" src="${esc(editImage)}" style="max-height:110px;max-width:160px;border-radius:10px"/> <button class="btn btn-white" data-action="clear-upload">Remove image</button>`:''}</div>${fields.map(x=>f(...x)).join('')}<div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:18px">${c?`<button class="btn btn-danger" data-action="delete-card" data-card-id="${esc(c.id)}">${icon('trash')} Delete</button>`:'<span></span>'}<div style="display:flex;gap:9px"><button class="btn btn-white" data-action="close-modal">Cancel</button><button class="btn btn-primary" data-action="save-card">${icon('check')} Save card</button></div></div></div></div>`;document.body.insertAdjacentHTML('beforeend',html);}
 function modalClose(){document.querySelector('#modal-backdrop')?.remove();modalOpen=false;}
 function cardDetailsModal(c){
@@ -1558,15 +1791,18 @@ function cardDetailsModal(c){
 
       <div class="card-details-content">
         <div class="card-details-box" style="background:#f8f7fd;border:1px solid #e7e2f5">
-          <div style="display:flex;justify-content:space-between;align-items:center">
-            <span class="small muted" style="font-weight:700;color:var(--purple,#5d4ea8)">Scientific Spaced Repetition (SM-2)</span>
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;flex-wrap:wrap">
+            <span class="small muted" style="font-weight:700;color:var(--purple,#5d4ea8)">FSRS Memory Model · Scientific Spaced Repetition (SM-2)</span>
             <span class="mem-badge ${mem.badgeClass}">${mem.label}</span>
           </div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;font-size:12.5px">
             <div><span class="muted">Interval:</span> <b>${p.interval ? (p.interval === 1 ? '1 day' : p.interval + ' days') : (p.reviews ? '< 10 min' : '0 days (New)')}</b></div>
+            <div><span class="muted">Stability (S):</span> <b>${p.stability ? p.stability + ' days' : (p.interval ? p.interval + ' days' : '—')}</b></div>
+            <div><span class="muted">Retrievability (R):</span> <b>${cardRetrievabilityPct(c)!==null ? cardRetrievabilityPct(c)+'%' : '—'}</b></div>
+            <div><span class="muted">Difficulty (D):</span> <b>${p.difficulty ? Number(p.difficulty).toFixed(1)+' / 10' : '4.9 / 10'}</b></div>
             <div><span class="muted">Ease Factor:</span> <b>${Math.round((p.ease||2.5)*100)}%</b></div>
-            <div><span class="muted">Reviews:</span> <b>${p.reviews||0} times</b></div>
-            <div><span class="muted">Next Review:</span> <b>${dueText}</b></div>
+            <div><span class="muted">Reviews / Lapses:</span> <b>${p.reviews||0} · ${p.lapses||0} lapses</b></div>
+            <div style="grid-column:1 / -1"><span class="muted">Next Review:</span> <b>${dueText}</b></div>
           </div>
         </div>
 
@@ -1677,16 +1913,16 @@ document.addEventListener('click',e=>{const el=e.target.closest('button');if(!el
     const p = progressFor(c);
     return (!p.lastReviewed || p.reviews === 0) || (p.dueAt <= now) || (p.reviews > 0 && p.interval === 0);
   });
-  initVocabSession(null, hasDueOrNew ? "srs" : "all");
+  initVocabSession(null, hasDueOrNew ? "srs" : "all", true);
   render();
   return;
-}if(el.dataset.filterDeck){vocabLessonFilter=el.dataset.filterDeck;render();return;}if(el.dataset.sayCard){say(el.dataset.sayCard);return;}if(el.dataset.edit){cardModal(state.cards.find(c=>c.id===el.dataset.edit));return;}if(el.dataset.practice){startPracticeCard(el.dataset.practice);return;}if(el.dataset.chooseScene){editScene=el.dataset.chooseScene;editImage=null;$('#uploaded-preview').innerHTML='';document.querySelectorAll('[data-choose-scene]').forEach(b=>b.classList.toggle('selected',b.dataset.chooseScene===editScene));return;}if(el.dataset.gramtab){gramTab=el.dataset.gramtab;render();return;}if(el.dataset.checkGrammar!==undefined){let i=Number(el.dataset.checkGrammar),g=grammarExercises[i],v=$('#gr-'+i)?.value||'',correct=textNormalized(v)===textNormalized(g.answer);activeProfile().grammarHistory.push({time:Date.now(),item:i,correct});persist();$('#res-'+i).innerHTML=`<div class="result ${correct?'correct':'incorrect'}">${correct?'Correct!':'Answer: '+esc(g.answer)}<br/>${esc(g.explain)}</div>`;return;}let action=el.dataset.action;if(!action)return;switch(action){case 'drill-reveal':drillRevealed=true;render();break;case 'drill-retry':drillRevealed=false;render();break;case 'drill-random-verb':{const avail=getDrillVerbs();if(avail.length){const other=avail.filter(v=>v.id!==drillVerbId);drillVerbId=(other.length?other[Math.floor(Math.random()*other.length)]:avail[0]).id;drillRevealed=false;render();}break;}case 'drill-next-verb':{const avail=getDrillVerbs();if(avail.length){const idx=avail.findIndex(v=>v.id===drillVerbId);drillVerbId=avail[(idx+1)%avail.length].id;drillRevealed=false;render();}break;}case 'drill-next-pronoun':{const pKeys=['je','tu','il','nous','vous','ils'];const cur=drillPronounKey==='random'?'je':drillPronounKey;const idx=pKeys.indexOf(cur);drillPronounKey=pKeys[(idx+1)%pKeys.length];drillRevealed=false;render();break;}case 'drill-listen-sentence':{const v=getCurrentDrillVerb();const p=getActiveDrillPronounKey(v);const s=v?.sentences?.[p]||v?.sentences?.je;if(s)say(s.sentence);break;}case 'drill-listen-verb':{const v=getCurrentDrillVerb();const p=getActiveDrillPronounKey(v);if(v&&v.conjugation?.[p]){const lead=(p==='je'&&(v.infinitive.match(/^[aeiouh]/i)?'j’':'je'))||(p==='il'?'il':p==='ils'?'ils':p);say(lead+' '+v.conjugation[p]);}break;}case 'peek-prompt':promptPeeked=true;render();break;case 'grammar-reveal':if(grammarSession){grammarSession.revealed=true;promptPeeked=false;render();}break;case 'exit-grammar-session':grammarSession=null;render();break;case 'restart-grammar-session':initGrammarSession(null, 'srs');render();break;case 'restart-grammar-session-all':initGrammarSession(null, 'all');render();break;case 'study-grammar-pool':initGrammarSession();render();break;case 'say-grammar-answer':{let c=currentGrammarCard();if(c)say(c.frenchExample||c.frenchAnswer);break;}case 'open-profiles':profileModal();break;case 'create-profile':{const name=$('#new-profile-name')?.value.trim().replace(/\s+/g,' ');if(!profileNameAvailable(name)){toast('Enter a unique name, up to 30 characters.');return;}const p=makeProfile(name);p.color=PROFILE_COLORS[state.profiles.length%PROFILE_COLORS.length];state.profiles.push(p);state.activeProfileId=p.id;if(!persist())return;modalClose();reviewSession=null;navigate('home');toast('Created '+name+'. Ready to study!');break;}case 'rename-profile':{const id=el.dataset.profileId,p=state.profiles.find(x=>x.id===id);const name=document.getElementById('profile-name-'+id)?.value.trim().replace(/\s+/g,' ');if(!p)return;if(!profileNameAvailable(name,id)){toast('Enter a unique name, up to 30 characters.');return;}p.name=name;if(persist()){render();profileModal();toast('Profile name updated.');}break;}case 'switch-profile':switchProfile(el.dataset.profileId);break;case 'delete-profile':{if(state.profiles.length<2){toast('Keep at least one learner profile.');return;}const p=state.profiles.find(x=>x.id===el.dataset.profileId);if(!p)return;if(!confirm('Delete '+p.name+' and their study progress on this device? Shared cards will remain. This cannot be undone.'))return;state.profiles=state.profiles.filter(x=>x.id!==p.id);if(state.activeProfileId===p.id)state.activeProfileId=state.profiles[0].id;if(!persist())return;reviewSession=null;modalClose();navigate('home');profileModal();toast('Profile deleted.');break;}case 'start-review':reviewFilter='Due now';view='review';initReview();window.location.hash='review';render();break;case 'practice-all':reviewFilter='All cards';initReview();render();break;case 'reveal':revealed=true;promptPeeked=false;render();break;case 'vocab-reveal':if(vocabSession){vocabSession.revealed=true;promptPeeked=false;render();}break;case 'exit-vocab-session':vocabSession=null;vocabLessonFilter='All';vocabTopicFilter='All';vocabGenderFilter='All';vocabSearch='';render();break;case 'restart-vocab-session':initVocabSession(null, 'srs');render();break;case 'restart-vocab-session-all':initVocabSession(null, 'all');render();break;case 'study-all-vocab':vocabLessonFilter='All';vocabTopicFilter='All';vocabSearch='';initVocabSession();render();break;case 'study-filtered-vocab':initVocabSession();render();break;case 'reset-vocab-filter':vocabLessonFilter='All';vocabTopicFilter='All';vocabGenderFilter='All';vocabSearch='';render();break;case 'say-vocab-answer':{let c=currentVocabCard();if(c)say(c.frenchAnswer);break;}case 'speak-french':{let c=currentReviewCard();if(c)say(c.frenchAnswer);break;}case 'speech-example':say(speakExercises[speakAt].suggested);break;case 'speak-reveal':speakResponse=$('#speaking-answer')?.value||'';speakShown=true;render();break;case 'speak-retry':speakShown=false;render();break;case 'speak-done':activeProfile().speakingHistory.push({time:Date.now(),item:speakAt,spoken:true});persist();speakAt=(speakAt+1)%speakExercises.length;speakShown=false;speakHint=false;speakResponse='';render();break;case 'add-card':cardModal(null);break;case 'card-details':{const id=el.dataset.cardId;const c=(id&&state.cards.find(x=>x.id===id))||currentReviewCard()||currentVocabCard()||currentGrammarCard();if(c)cardDetailsModal(c);break;}case 'say-card-details':{const t=el.dataset.say;if(t)say(t);break;}case 'say-example':{const t=el.dataset.say;if(t)say(t);break;}case 'close-modal':modalClose();break;case 'clear-upload':editImage=null;$('#uploaded-preview').innerHTML='';break;case 'save-card':saveCard();break;case 'delete-card':if(confirm('Delete this card and its history? This cannot be undone.')){const id=el.dataset.cardId;state.cards=state.cards.filter(c=>c.id!==id);for(const p of state.profiles){p.history=p.history.filter(h=>h.id!==id);delete p.progress[id];}persist();modalClose();render();toast('Card deleted.');}break;case 'export-json':exportData('json');break;case 'export-csv':exportData('csv');break;case 'import-json':$('#import-input')?.click();break;case 'force-app-update':{toast('Updating app files (your study progress is safe)...');Promise.all([(('caches' in window)?caches.keys().then(ks=>Promise.all(ks.map(k=>caches.delete(k)))):Promise.resolve()),(('serviceWorker' in navigator)?navigator.serviceWorker.getRegistrations().then(rs=>Promise.all(rs.map(r=>r.unregister()))):Promise.resolve())]).finally(()=>{location.replace(location.pathname+'?updated='+Date.now()+location.hash);});break;}case 'reset-data':if(confirm('Reset ALL profiles, shared cards, and review history on this device? Export a backup first.'))if(confirm('Second confirmation: erase every learner\'s local progress?')){state=initial();persist();reviewSession=null;vocabSession=null;render();toast('Data reset.');}break;}});
-document.addEventListener('change',e=>{const el=e.target;if(el.id==='drill-verb-select'){drillVerbId=el.value;drillRevealed=false;render();}if(el.id==='drill-pronoun-select'){drillPronounKey=el.value;drillRevealed=false;render();}if(el.id==='vocab-lesson-select'){vocabLessonFilter=el.value;render();}if(el.id==='vocab-topic-select'){vocabTopicFilter=el.value;render();}if(el.id==='review-filter'){reviewFilter=el.value;initReview();render();}if(el.id==='lib-topic'){libTopic=el.value;render();}if(el.id==='lib-type'){libType=el.value;render();}if(el.id==='front-mode'){activeProfile().prefs.frontMode=el.value;promptPeeked=false;persist();render();toast('Flashcard prompt mode updated.');}if(el.id==='own-image')uploadImage(el.files[0]);if(el.id==='import-input')importData(el.files[0]);});
+}if(el.dataset.filterDeck){vocabLessonFilter=el.dataset.filterDeck;render();return;}if(el.dataset.sayCard){say(el.dataset.sayCard);return;}if(el.dataset.edit){cardModal(state.cards.find(c=>c.id===el.dataset.edit));return;}if(el.dataset.practice){startPracticeCard(el.dataset.practice);return;}if(el.dataset.chooseScene){editScene=el.dataset.chooseScene;editImage=null;$('#uploaded-preview').innerHTML='';document.querySelectorAll('[data-choose-scene]').forEach(b=>b.classList.toggle('selected',b.dataset.chooseScene===editScene));return;}if(el.dataset.gramtab){gramTab=el.dataset.gramtab;render();return;}if(el.dataset.checkGrammar!==undefined){let i=Number(el.dataset.checkGrammar),g=grammarExercises[i],v=$('#gr-'+i)?.value||'',correct=textNormalized(v)===textNormalized(g.answer);activeProfile().grammarHistory.push({time:Date.now(),item:i,correct});persist();$('#res-'+i).innerHTML=`<div class="result ${correct?'correct':'incorrect'}">${correct?'Correct!':'Answer: '+esc(g.answer)}<br/>${esc(g.explain)}</div>`;return;}let action=el.dataset.action;if(!action)return;switch(action){case 'drill-reveal':drillRevealed=true;render();break;case 'drill-retry':drillRevealed=false;render();break;case 'drill-random-verb':{const avail=getDrillVerbs();if(avail.length){const other=avail.filter(v=>v.id!==drillVerbId);drillVerbId=(other.length?other[Math.floor(Math.random()*other.length)]:avail[0]).id;drillRevealed=false;render();}break;}case 'drill-next-verb':{const avail=getDrillVerbs();if(avail.length){const idx=avail.findIndex(v=>v.id===drillVerbId);drillVerbId=avail[(idx+1)%avail.length].id;drillRevealed=false;render();}break;}case 'drill-next-pronoun':{const pKeys=['je','tu','il','nous','vous','ils'];const cur=drillPronounKey==='random'?'je':drillPronounKey;const idx=pKeys.indexOf(cur);drillPronounKey=pKeys[(idx+1)%pKeys.length];drillRevealed=false;render();break;}case 'drill-listen-sentence':{const v=getCurrentDrillVerb();const p=getActiveDrillPronounKey(v);const s=v?.sentences?.[p]||v?.sentences?.je;if(s)say(s.sentence);break;}case 'drill-listen-verb':{const v=getCurrentDrillVerb();const p=getActiveDrillPronounKey(v);if(v&&v.conjugation?.[p]){const lead=(p==='je'&&(v.infinitive.match(/^[aeiouh]/i)?'j’':'je'))||(p==='il'?'il':p==='ils'?'ils':p);say(lead+' '+v.conjugation[p]);}break;}case 'peek-prompt':promptPeeked=true;render();break;case 'grammar-reveal':if(grammarSession){grammarSession.revealed=true;promptPeeked=false;render();}break;case 'exit-grammar-session':grammarSession=null;render();break;case 'restart-grammar-session':initGrammarSession(null, 'srs');render();break;case 'restart-grammar-session-all':initGrammarSession(null, 'all');render();break;case 'study-grammar-pool':initGrammarSession();render();break;case 'say-grammar-answer':{let c=currentGrammarCard();if(c)say(c.frenchExample||c.frenchAnswer);break;}case 'open-profiles':profileModal();break;case 'create-profile':{const name=$('#new-profile-name')?.value.trim().replace(/\s+/g,' ');if(!profileNameAvailable(name)){toast('Enter a unique name, up to 30 characters.');return;}const p=makeProfile(name);p.color=PROFILE_COLORS[state.profiles.length%PROFILE_COLORS.length];state.profiles.push(p);state.activeProfileId=p.id;if(!persist())return;modalClose();reviewSession=null;navigate('home');toast('Created '+name+'. Ready to study!');break;}case 'rename-profile':{const id=el.dataset.profileId,p=state.profiles.find(x=>x.id===id);const name=document.getElementById('profile-name-'+id)?.value.trim().replace(/\s+/g,' ');if(!p)return;if(!profileNameAvailable(name,id)){toast('Enter a unique name, up to 30 characters.');return;}p.name=name;if(persist()){render();profileModal();toast('Profile name updated.');}break;}case 'switch-profile':switchProfile(el.dataset.profileId);break;case 'delete-profile':{if(state.profiles.length<2){toast('Keep at least one learner profile.');return;}const p=state.profiles.find(x=>x.id===el.dataset.profileId);if(!p)return;if(!confirm('Delete '+p.name+' and their study progress on this device? Shared cards will remain. This cannot be undone.'))return;state.profiles=state.profiles.filter(x=>x.id!==p.id);if(state.activeProfileId===p.id)state.activeProfileId=state.profiles[0].id;if(!persist())return;reviewSession=null;modalClose();navigate('home');profileModal();toast('Profile deleted.');break;}case 'start-review':reviewFilter='Due now';view='review';initReview();window.location.hash='review';render();break;case 'unlock-more-new':{const p=activeProfile();if(!p.extraNewToday)p.extraNewToday={};const tk=todayKey();p.extraNewToday[tk]=(Number(p.extraNewToday[tk])||0)+5;persist();initReview('srs');render();toast('Unlocked +5 new cards for today!');break;}case 'practice-all':reviewFilter='All cards';initReview();render();break;case 'reveal':revealed=true;promptPeeked=false;render();break;case 'vocab-reveal':if(vocabSession){vocabSession.revealed=true;promptPeeked=false;render();}break;case 'exit-vocab-session':vocabSession=null;vocabLessonFilter='All';vocabTopicFilter='All';vocabGenderFilter='All';vocabSearch='';render();break;case 'restart-vocab-session':initVocabSession(null, 'srs');render();break;case 'restart-vocab-session-all':initVocabSession(null, 'all');render();break;case 'study-all-vocab':vocabLessonFilter='All';vocabTopicFilter='All';vocabSearch='';initVocabSession();render();break;case 'study-filtered-vocab':initVocabSession();render();break;case 'reset-vocab-filter':vocabLessonFilter='All';vocabTopicFilter='All';vocabGenderFilter='All';vocabSearch='';render();break;case 'say-vocab-answer':{let c=currentVocabCard();if(c)say(c.frenchAnswer);break;}case 'speak-french':{let c=currentReviewCard();if(c)say(c.frenchAnswer);break;}case 'speech-example':say(speakExercises[speakAt].suggested);break;case 'speak-reveal':speakResponse=$('#speaking-answer')?.value||'';speakShown=true;render();break;case 'speak-retry':speakShown=false;render();break;case 'speak-done':activeProfile().speakingHistory.push({time:Date.now(),item:speakAt,spoken:true});persist();speakAt=(speakAt+1)%speakExercises.length;speakShown=false;speakHint=false;speakResponse='';render();break;case 'add-card':cardModal(null);break;case 'card-details':{const id=el.dataset.cardId;const c=(id&&state.cards.find(x=>x.id===id))||currentReviewCard()||currentVocabCard()||currentGrammarCard();if(c)cardDetailsModal(c);break;}case 'say-card-details':{const t=el.dataset.say;if(t)say(t);break;}case 'say-example':{const t=el.dataset.say;if(t)say(t);break;}case 'close-modal':modalClose();break;case 'clear-upload':editImage=null;$('#uploaded-preview').innerHTML='';break;case 'save-card':saveCard();break;case 'delete-card':if(confirm('Delete this card and its history? This cannot be undone.')){const id=el.dataset.cardId;state.cards=state.cards.filter(c=>c.id!==id);for(const p of state.profiles){p.history=p.history.filter(h=>h.id!==id);delete p.progress[id];}persist();modalClose();render();toast('Card deleted.');}break;case 'export-json':exportData('json');break;case 'export-csv':exportData('csv');break;case 'import-json':$('#import-input')?.click();break;case 'force-app-update':{toast('Updating app files (your study progress is safe)...');Promise.all([(('caches' in window)?caches.keys().then(ks=>Promise.all(ks.map(k=>caches.delete(k)))):Promise.resolve()),(('serviceWorker' in navigator)?navigator.serviceWorker.getRegistrations().then(rs=>Promise.all(rs.map(r=>r.unregister()))):Promise.resolve())]).finally(()=>{location.replace(location.pathname+'?updated='+Date.now()+location.hash);});break;}case 'reset-data':if(confirm('Reset ALL profiles, shared cards, and review history on this device? Export a backup first.'))if(confirm('Second confirmation: erase every learner\'s local progress?')){state=initial();persist();reviewSession=null;vocabSession=null;render();toast('Data reset.');}break;}});
+document.addEventListener('change',e=>{const el=e.target;if(el.id==='drill-verb-select'){drillVerbId=el.value;drillRevealed=false;render();}if(el.id==='drill-pronoun-select'){drillPronounKey=el.value;drillRevealed=false;render();}if(el.id==='vocab-lesson-select'){vocabLessonFilter=el.value;render();}if(el.id==='vocab-topic-select'){vocabTopicFilter=el.value;render();}if(el.id==='review-filter'){reviewFilter=el.value;initReview();render();}if(el.id==='lib-topic'){libTopic=el.value;render();}if(el.id==='lib-type'){libType=el.value;render();}if(el.id==='front-mode'){activeProfile().prefs.frontMode=el.value;promptPeeked=false;persist();render();toast('Flashcard prompt mode updated.');}if(el.id==='daily-new-select'){activeProfile().prefs.dailyNew=Number(el.value)||10;reviewSession=null;persist();render();toast('Daily new cards limit updated.');}if(el.id==='target-retention-select'){activeProfile().prefs.targetRetention=Number(el.value)||0.90;persist();render();toast('FSRS target retention updated.');}if(el.id==='own-image')uploadImage(el.files[0]);if(el.id==='import-input')importData(el.files[0]);});
 document.addEventListener('input',e=>{if(e.target.id==='vocab-search-input'){vocabSearch=e.target.value;render();}if(e.target.id==='lib-search'){const el=e.target;let pos=el.selectionStart;libSearch=el.value;const grid=$('.library-grid'),cards=libCards();if(grid){grid.outerHTML=`<div class="library-grid">${cards.map(c=>`<div class="lib-card hover-card"><div class="lib-scene">${visual(c)}</div><div class="lib-content"><span class="meta">${esc(c.topic)}</span><h3>${esc(c.frenchAnswer)}</h3><p>${esc(c.englishPrompt)}</p>${c.frenchExample?`<div class="vocab-example"><p lang="fr">${esc(c.frenchExample)}</p>${c.exampleEnglish?`<p class="example-meaning">${esc(c.exampleEnglish)}</p>`:''}</div>`:''}<div class="lib-footer"><button class="btn btn-secondary" data-edit="${esc(c.id)}">${icon('edit')} Edit</button><button class="btn btn-white" data-practice="${esc(c.id)}">Practice ${icon('arrow')}</button></div></div></div>`).join('')}</div>`;}}});
 window.addEventListener('hashchange',()=>{const hash=location.hash.slice(1);if(['home','vocab','review','grammar','sounds','speak','library','settings'].includes(hash)&&view!==hash){view=hash;reviewSession=null;render();}});
 const initialHash=location.hash.slice(1);if(['home','vocab','review','grammar','sounds','speak','library','settings'].includes(initialHash))view=initialHash;render();
 if('serviceWorker' in navigator && location.protocol.startsWith('http')){
   let refreshing=false;
   navigator.serviceWorker.addEventListener('controllerchange',()=>{if(!refreshing){refreshing=true;location.reload();}});
-  navigator.serviceWorker.register('./sw.js?v=24').then(reg=>reg.update()).catch(()=>{});
+  navigator.serviceWorker.register('./sw.js?v=25').then(reg=>reg.update()).catch(()=>{});
 }

@@ -11,7 +11,10 @@ window.ParlezGrammarGame=(()=>{
   const verbs=[
     {id:'eat',inf:'manger',present:'mange',participle:'mangé',scene:'eat-now',english:{present:'I eat every day.',continuous:'I am eating right now.',recent:'I have just eaten.',perfect:'I have eaten.',future:'I am going to eat.'}},
     {id:'work',inf:'travailler',present:'travaille',participle:'travaillé',scene:'work',english:{present:'I work every day.',continuous:'I am working right now.',recent:'I have just worked.',perfect:'I have worked.',future:'I am going to work.'}},
-    {id:'watch',inf:'regarder',present:'regarde',participle:'regardé',object:'un film',scene:'cinema',english:{present:'I watch a film every day.',continuous:'I am watching a film right now.',recent:'I have just watched a film.',perfect:'I have watched a film.',future:'I am going to watch a film.'}}
+    {id:'watch',inf:'regarder',present:'regarde',participle:'regardé',object:'un film',scene:'cinema',english:{present:'I watch a film every day.',continuous:'I am watching a film right now.',recent:'I have just watched a film.',perfect:'I have watched a film.',future:'I am going to watch a film.'}},
+    {id:'finish',inf:'finir',present:'finis',participle:'fini',object:'le travail',scene:'finish-flag',english:{present:'I finish the work every day.',continuous:'I am finishing the work right now.',recent:'I have just finished the work.',perfect:'I have finished the work.',future:'I am going to finish the work.'}},
+    {id:'choose',inf:'choisir',present:'choisis',participle:'choisi',object:'un livre',scene:'choose-path',english:{present:'I choose a book every day.',continuous:'I am choosing a book right now.',recent:'I have just chosen a book.',perfect:'I have chosen a book.',future:'I am going to choose a book.'}},
+    {id:'take',inf:'prendre',present:'prends',participle:'pris',object:'le bus',scene:'transit-bus',english:{present:'I take the bus every day.',continuous:'I am taking the bus right now.',recent:'I have just taken the bus.',perfect:'I have taken the bus.',future:'I am going to take the bus.'}}
   ];
   let mode='game';
   const shuffle=items=>{const a=[...items];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
@@ -41,9 +44,27 @@ window.ParlezGrammarGame=(()=>{
       Array.isArray(s.selected)&&s.selected.every(i=>Number.isInteger(i)&&i>=0&&i<(s.questions[s.index]?.tiles.length||0));
   }
   function session(){const s=activeProfile().grammarGame;return validSession(s)?s:null;}
+  function pairWeakScore(formId, verbId){
+    const hist = (typeof activeProfile==='function' && activeProfile()?.grammarHistory) || [];
+    let misses=0, hits=0;
+    for(const h of hist){
+      if(h && h.kind==='verb-game' && h.form===formId){
+        if(h.verb===verbId){
+          if(h.correct) hits++; else misses+=2;
+        } else if(!h.correct){
+          misses+=0.5;
+        }
+      }
+    }
+    return misses * 3 - hits * 0.5 + Math.random() * 0.8;
+  }
   function start(){
     const choose=[],build=[];
-    for(const f of forms){const pair=shuffle(verbs).slice(0,2);choose.push(makeQuestion(f.id,'choose',pair[0].id));build.push(makeQuestion(f.id,'build',pair[1].id));}
+    for(const f of forms){
+      const ranked=[...verbs].sort((a,b)=>pairWeakScore(f.id,b.id)-pairWeakScore(f.id,a.id));
+      choose.push(makeQuestion(f.id,'choose',ranked[0].id));
+      build.push(makeQuestion(f.id,'build',ranked[1].id));
+    }
     activeProfile().grammarGame={version:1,id:'verbs-'+Date.now()+'-'+Math.random().toString(36).slice(2,6),questions:[...shuffle(choose),...shuffle(build)],index:0,score:0,selected:[],feedback:null};
     persist();render();
   }

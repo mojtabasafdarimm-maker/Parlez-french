@@ -135,7 +135,7 @@ server.listen(0, '127.0.0.1', async () => {
     await page.waitForTimeout(200);
 
     const filterBtns = await page.locator('.gender-filter-bar .gender-filter-btn').count();
-    assert.strictEqual(filterBtns, 4, 'Must have 4 gender filter buttons in Vocab tab');
+    assert.strictEqual(filterBtns, 5, 'Must have 5 filter buttons in Vocab tab (All, Masculin, Féminin, Expressions, Tricky Words)');
 
     // Filter by Feminine (une / la)
     await page.locator('[data-gender-filter="f"]').click();

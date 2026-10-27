@@ -262,9 +262,35 @@ window.ParlezGender = (() => {
     return a;
   }
 
+  function itemWeakScore(item) {
+    let score = Math.random() * 0.5;
+    if (typeof window.activeProfile === 'function') {
+      const p = window.activeProfile();
+      if (p) {
+        const gh = Array.isArray(p.genderHistory) ? p.genderHistory : [];
+        for (const h of gh) {
+          if (h && (h.cardId === item.cardId || h.bare === item.bare)) {
+            score += h.correct ? -0.6 : 4.0;
+          }
+        }
+        const cp = p.progress && p.progress[item.cardId];
+        if (cp) {
+          if (cp.lapses > 0) score += cp.lapses * 2.5;
+          if (cp.genderMisses > 0) score += cp.genderMisses * 3.0;
+          if ((cp.difficulty || 0) >= 6.5) score += 2.0;
+        }
+      }
+    }
+    return score;
+  }
+
   function startReflex() {
+    const ranked = [...REFLEX_ITEMS].sort((a, b) => itemWeakScore(b) - itemWeakScore(a));
+    const weakPool = ranked.filter(it => itemWeakScore(it) >= 1.5);
+    const restPool = ranked.filter(it => !weakPool.includes(it));
+    const chosen = [...shuffle(weakPool), ...shuffle(restPool)].slice(0, 10);
     reflexSession = {
-      items: shuffle(REFLEX_ITEMS).slice(0, 10),
+      items: chosen,
       index: 0,
       score: 0,
       feedback: null
@@ -277,6 +303,33 @@ window.ParlezGender = (() => {
     const correct = chosenGender === item.gender;
     if (correct) reflexSession.score++;
     reflexSession.feedback = { correct, chosen: chosenGender };
+
+    if (typeof window.activeProfile === 'function') {
+      const p = window.activeProfile();
+      if (p) {
+        if (!Array.isArray(p.genderHistory)) p.genderHistory = [];
+        p.genderHistory.push({
+          time: Date.now(),
+          cardId: item.cardId,
+          bare: item.bare,
+          gender: item.gender,
+          chosen: chosenGender,
+          correct
+        });
+        if (p.progress && item.cardId) {
+          if (!p.progress[item.cardId]) p.progress[item.cardId] = {};
+          const cp = p.progress[item.cardId];
+          if (!correct) {
+            cp.genderMisses = (cp.genderMisses || 0) + 1;
+            cp.difficulty = Math.min(10.0, +((cp.difficulty || 4.9) + 0.6).toFixed(2));
+          } else if (cp.genderMisses > 0) {
+            cp.genderMisses = Math.max(0, cp.genderMisses - 1);
+          }
+        }
+        if (typeof window.persist === 'function') window.persist();
+      }
+    }
+
     if (typeof window.say === 'function') window.say(item.full);
     if (typeof window.render === 'function') window.render();
   }
