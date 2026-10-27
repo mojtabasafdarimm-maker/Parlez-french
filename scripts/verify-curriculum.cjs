@@ -16,7 +16,8 @@ const mimeTypes = {
   '.json': 'application/json',
   '.webmanifest': 'application/manifest+json',
   '.svg': 'image/svg+xml',
-  '.png': 'image/png'
+  '.png': 'image/png',
+  '.webp': 'image/webp'
 };
 
 function startServer() {

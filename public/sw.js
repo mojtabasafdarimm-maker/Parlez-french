@@ -1,5 +1,5 @@
-const CACHE = 'parlez-v22-noun-gender';
-const ASSETS = ['./', './index.html', './styles.css', './app.js', './noun-gender.js', './pronunciation-trainer.js', './phonetics-dict.js', './cards-curriculum.js', './grammar-game.js', './verb-conjugations.js', './illustrations.js', './manifest.webmanifest', './assets/icon.svg', './assets/icon-192.png', './assets/icon-512.png', './assets/icon-apple.png'];
+const CACHE = 'parlez-v23-clear-visuals';
+const ASSETS = ['./', './index.html', './styles.css', './app.js', './noun-gender.js', './pronunciation-trainer.js', './phonetics-dict.js', './cards-curriculum.js', './grammar-game.js', './verb-conjugations.js', './illustrations.js', './manifest.webmanifest', './assets/icon.svg', './assets/icon-192.png', './assets/icon-512.png', './assets/icon-apple.png', './assets/scenes/blush-face.webp', './assets/scenes/chat-friends.webp', './assets/scenes/chore-cooking.webp', './assets/scenes/chore-groceries.webp', './assets/scenes/chore-vacuum.webp', './assets/scenes/feel-tired.webp', './assets/scenes/market-all.webp', './assets/scenes/market-scale.webp', './assets/scenes/polite.webp', './assets/scenes/reflect-think.webp', './assets/scenes/thanks.webp', './assets/scenes/wake.webp'];
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(ASSETS)).then(() => self.skipWaiting()));
 });
