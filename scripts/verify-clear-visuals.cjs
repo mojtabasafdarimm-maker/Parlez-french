@@ -124,6 +124,11 @@ function startServer() {
     await page.waitForTimeout(250);
     await page.screenshot({ path: path.join(artifactDir, 'visual-upgrade-number-80-390.png') });
 
+    // 5b. Screenshot Phone Number diagram (c1_telephone - "le numéro de téléphone")
+    await page.evaluate(() => { startPracticeCard('c1_telephone'); });
+    await page.waitForTimeout(250);
+    await page.screenshot({ path: path.join(artifactDir, 'visual-upgrade-phone-number-390.png') });
+
     // 6. Screenshot Distinct Grammar Negation diagram (gr_negation_jamais - "ne... jamais") in Grammar session
     await page.evaluate(() => {
       navigate('grammar');

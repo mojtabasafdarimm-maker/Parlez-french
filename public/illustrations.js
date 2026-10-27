@@ -541,12 +541,33 @@
 
     // 7. Contact & Habiter vs Vivre
     if (name === 'phone-call') {
+      // le numéro de téléphone -> Highlighted French 5-pair phone number banner (06 12 34 56 78) + numbered smartphone keypad
+      const digits = ['1', '2', '3', '4', '5', '6', '7', '8', '9'];
+      const pairs = ['06', '12', '34', '56', '78'];
       return cardBg('#eff6ff') +
-        `<rect x="180" y="48" width="160" height="244" rx="26" fill="#1e293b" stroke="#0f172a" stroke-width="5"/>` +
-        `<rect x="194" y="72" width="132" height="186" rx="12" fill="#ffffff"/>` +
-        txt(260, 108, '06 · · · ·', 22, '#2563eb', 800) +
-        `<g transform="translate(212,134)">${Array.from({ length: 9 }, (_, i) => `<circle cx="${(i % 3) * 48}" cy="${Math.floor(i / 3) * 32}" r="11" fill="#dbeafe"/>`).join('')}</g>` +
-        `<circle cx="260" cy="236" r="14" fill="#10b981"/>`;
+        // Pointer arrow in center top gap (between left/right badges)
+        `<path d="M260 44v22" stroke="#d97706" stroke-width="5" stroke-linecap="round"/>` +
+        `<polygon points="260,74 249,60 271,60" fill="#d97706"/>` +
+        // Prominent highlighted Phone Number display banner in safe zone (y=78..144)
+        `<rect x="48" y="78" width="424" height="66" rx="18" fill="#fef3c7" stroke="#f59e0b" stroke-width="4.5"/>` +
+        `<circle cx="86" cy="111" r="21" fill="#2563eb"/>` +
+        txt(86, 111, '📞', 20, '#ffffff', 800) +
+        pairs.map((p, i) => {
+          const bx = 120 + i * 67;
+          return `<rect x="${bx}" y="90" width="57" height="42" rx="10" fill="#ffffff" stroke="#2563eb" stroke-width="3"/>` +
+            txt(bx + 28.5, 111, p, 23, '#1d4ed8', 900);
+        }).join('') +
+        // Smartphone body with numbered keypad below (shifted slightly right so bottom-left gender badge never overlaps)
+        `<rect x="200" y="154" width="184" height="168" rx="22" fill="#1e293b" stroke="#0f172a" stroke-width="4.5"/>` +
+        `<rect x="214" y="166" width="156" height="144" rx="12" fill="#ffffff"/>` +
+        `<g>${digits.map((d, i) => {
+          const cx = 244 + (i % 3) * 48;
+          const cy = 190 + Math.floor(i / 3) * 31;
+          return `<circle cx="${cx}" cy="${cy}" r="12" fill="#dbeafe" stroke="#93c5fd" stroke-width="1.8"/>` +
+            txt(cx, cy, d, 14, '#1e3a8a', 800);
+        }).join('')}</g>` +
+        `<rect x="262" y="274" width="60" height="24" rx="12" fill="#10b981"/>` +
+        txt(292, 286, '📞', 14, '#ffffff', 800);
     }
 
     if (name === 'house-home') {
