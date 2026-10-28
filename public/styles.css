@@ -196,6 +196,41 @@
   backdrop-filter: blur(4px);
   box-shadow: 0 2px 8px rgba(0,0,0,0.08);
 }
+.quiet-delete-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid var(--line, #e7e7eb);
+  background: rgba(255, 255, 255, 0.88);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #9ca3af;
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.15s ease;
+}
+.quiet-delete-btn svg {
+  width: 13px;
+  height: 13px;
+}
+.quiet-delete-btn:hover {
+  background: #fef2f2;
+  color: #dc2626;
+  border-color: #fecaca;
+}
+.card-corner-delete {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  z-index: 5;
+  opacity: 0.78;
+  backdrop-filter: blur(4px);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+.card-corner-delete:hover {
+  opacity: 1;
+}
 .quiet-answer-section {
   text-align: center;
   margin: 10px 0 16px;

@@ -225,6 +225,43 @@ function startServer() {
     await page.waitForTimeout(150);
     await page.screenshot({ path: path.join(artifactDir, 'fsrs-settings-390.png') });
 
+    // 5. Verify Tiny Remove Card Button (Permanent across reload + Restore in Settings)
+    await page.evaluate(() => {
+      initVocabSession(['c1_bonjour', 'c1_bonsoir'], 'all', true);
+      navigate('vocab');
+      initVocabSession(['c1_bonjour', 'c1_bonsoir'], 'all', true);
+      render();
+    });
+    await page.waitForTimeout(150);
+
+    page.once('dialog', dialog => dialog.accept());
+    await page.click('.card-corner-delete[data-card-id="c1_bonjour"]');
+    await page.waitForTimeout(150);
+
+    const afterRemove = await page.evaluate(() => ({
+      hasBonjour: state.cards.some(c => c.id === 'c1_bonjour'),
+      deletedCardIds: state.deletedCardIds,
+      currentSessionCardId: currentVocabCard()?.id
+    }));
+    console.log('After clicking tiny remove button on c1_bonjour:', afterRemove);
+    assert.equal(afterRemove.hasBonjour, false, 'Removed card must be deleted from state.cards');
+    assert.ok(afterRemove.deletedCardIds.includes('c1_bonjour'), 'Removed card ID must be persisted in state.deletedCardIds');
+    assert.equal(afterRemove.currentSessionCardId, 'c1_bonsoir', 'Active deck session must immediately advance to next card');
+
+    // Reload page and verify c1_bonjour stays removed!
+    await page.reload({ waitUntil: 'networkidle' });
+    await page.waitForTimeout(200);
+    const afterReloadHasBonjour = await page.evaluate(() => state.cards.some(c => c.id === 'c1_bonjour'));
+    assert.equal(afterReloadHasBonjour, false, 'Removed curriculum card must stay removed after page reload');
+
+    // Restore from Settings
+    await page.evaluate(() => navigate('settings'));
+    await page.waitForTimeout(150);
+    await page.click('button[data-action="restore-deleted-cards"]');
+    await page.waitForTimeout(150);
+    const afterRestoreHasBonjour = await page.evaluate(() => state.cards.some(c => c.id === 'c1_bonjour'));
+    assert.equal(afterRestoreHasBonjour, true, 'Restore button in Settings must restore removed cards');
+
     console.log('==================================================');
     console.log('ALL FSRS, 2-STEP LEARNING, DAILY CAP & ADAPTIVE GAME TESTS PASSED 100%!');
     console.log('==================================================');
