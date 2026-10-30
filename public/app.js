@@ -1038,7 +1038,7 @@ function navbar(){
 function shell(content){const sideTabs=['home','vocab','grammar','sounds','review','library'];let sideNames=['Home','Vocab','Grammar','Sounds','Review','Library'];const bottomTabs=['home','vocab','grammar','sounds','review'];let bottomNames=['Home','Vocab','Grammar','Sounds','Review'];return `<div class="app-shell"><aside class="side"><div class="logo"><span class="logo-mark">P</span> Parlez</div><nav class="side-nav">${sideTabs.map((t,i)=>navItem(t,sideNames[i])).join('')}</nav><div class="side-bottom"><span class="eyebrow">Your learning method</span><p style="font-size:15px;font-weight:700;line-height:1.5;margin:10px 0 5px">See it. Think it.<br/>Say it in French.</p><p class="small muted" style="margin:0">Direct visual recall without translation.</p></div></aside><main class="main">${navbar()}${content}</main></div><nav class="bottom-nav">${bottomTabs.map((t,i)=>`<button data-view="${t}" class="${view===t?'active':''}" aria-label="${bottomNames[i]}">${icon(t)}${bottomNames[i]}</button>`).join('')}</nav>`;}
 function heroArt(){return `<svg viewBox="0 0 320 255" xmlns="http://www.w3.org/2000/svg"><g transform="translate(4 5) rotate(-10 120 115)"><rect x="36" y="35" width="192" height="202" rx="24" fill="#fff"/><rect x="52" y="52" width="160" height="123" rx="16" fill="#e8e5fb"/>${sun(132,107,32).replace('cx="132"','cx="132"')}<path d="M70 203h127" stroke="#e2dfec" stroke-width="11" stroke-linecap="round"/></g><g transform="translate(96 12) rotate(12 120 110)"><rect x="45" y="30" width="186" height="203" rx="24" fill="#fff" stroke="#e3dff2" stroke-width="3"/><rect x="61" y="46" width="154" height="120" rx="15" fill="#f5eff8"/><path d="M101 135q32-45 70 0" stroke="#b7a1d4" stroke-width="24" fill="none"/><circle cx="137" cy="87" r="28" fill="#f1bda8"/><path d="M110 85q-3-34 29-30 22 0 24 28" fill="#51455a"/><path d="M92 193h94" stroke="#d8d3e7" stroke-width="9" stroke-linecap="round"/><path d="M92 212h57" stroke="#e9e6f1" stroke-width="8" stroke-linecap="round"/></g><circle cx="289" cy="29" r="14" fill="#ffd78a"/><circle cx="29" cy="207" r="9" fill="#aac5bd"/></svg>`;}
 function stat(num,label,ic){return `<div class="stat"><div class="stat-icon">${icon(ic)}</div><div><div class="big-count">${num}</div><div class="stat-label">${label}</div></div></div>`;}
-const topicEmoji={'Greetings':'👋','Identity':'🪪','Hobbies':'🎨','Daily life':'☕','Daily routine':'☀️','Clothing':'🧣','Weather':'🌦️','Objects':'✍️','Animals':'🐾','Family':'👨‍👩‍👧','Professions':'💼','Numbers':'🔢','Questions':'❓','City':'🏛️','Food & Dining':'🍽️','Grammar':'📖','Time':'🕒','Speaking':'💬'};
+const topicEmoji={'Greetings':'👋','Identity':'🪪','Hobbies':'🎨','Daily life':'☕','Daily routine':'☀️','Clothing':'🧣','Weather':'🌦️','Objects':'✍️','Animals':'🐾','Family':'👨‍👩‍👧','Professions':'💼','Numbers':'🔢','Questions':'❓','City':'🏛️','Food & Dining':'🍽️','Logement':'🏠','Prépositions':'📍','Passé composé':'⏮️','Grammar':'📖','Time':'🕒','Speaking':'💬'};
 function homePage(){
   const dueReviews = dueReviewCards().length;
   const learnCount = learningCards().length;
@@ -1289,6 +1289,7 @@ function vocabCatalogView(){
     'A1.2 · Séances 3–4',
     'A1.2 · Séances 5–6',
     'A1.2 · Séances 7–8',
+    'A1.2 · Séances 9–10',
     'A1.2 · Marché & Resto'
   ];
   const distinctTopics=['All',...new Set(allCards.map(c=>c.topic).filter(Boolean))];
@@ -1303,6 +1304,7 @@ function vocabCatalogView(){
     'A1.2 · Séances 3–4':{title:'Transports, Déplacements & Itinéraire',desc:'Bus, métro, tramway, vélo, monter, descendre, tourner à gauche/droite, tout droit.',icon:'🚇'},
     'A1.2 · Séances 5–6':{title:'Vêtements, Style & Les Trois Temps',desc:'Chemise, pantalon, robe, manteau, moufles, en train de, venir de, aller + inf.',icon:'🧣'},
     'A1.2 · Séances 7–8':{title:'Vie quotidienne, Corvées & Invitations',desc:'Se réveiller, se lever, faire les courses, la vaisselle, la lessive, ça te dit de... ?',icon:'☕'},
+    'A1.2 · Séances 9–10':{title:'Logement, Vide-grenier, Prépositions & Passé Composé',desc:'Déménager, emménager, louer un T2, meubles, électroménager, sur/sous/devant/derrière & passé composé (avoir).',icon:'🏠'},
     'A1.2 · Marché & Resto':{title:'Au Marché & Au Restaurant',desc:'Qu’est-ce qu’il vous faudra, tomates, laitue, oignons, l’addition s’il vous plaît.',icon:'🥖'}
   };
   const now = Date.now();
@@ -1950,5 +1952,5 @@ const initialHash=location.hash.slice(1);if(['home','vocab','review','grammar','
 if('serviceWorker' in navigator && location.protocol.startsWith('http')){
   let refreshing=false;
   navigator.serviceWorker.addEventListener('controllerchange',()=>{if(!refreshing){refreshing=true;location.reload();}});
-  navigator.serviceWorker.register('./sw.js?v=26').then(reg=>reg.update()).catch(()=>{});
+  navigator.serviceWorker.register('./sw.js?v=27').then(reg=>reg.update()).catch(()=>{});
 }

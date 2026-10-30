@@ -76,7 +76,7 @@ function startServer() {
 
     const deckCards = await page.locator('.vocab-deck-card').count();
     console.log('Classroom deck cards visible in Vocab tab:', deckCards);
-    assert.equal(deckCards, 10, 'Expected exactly 10 curriculum decks, got ' + deckCards);
+    assert.equal(deckCards, 11, 'Expected 11 curriculum decks, got ' + deckCards);
 
     await page.screenshot({ path: path.join(out, 'vocab-catalog-390.png'), fullPage: false });
 

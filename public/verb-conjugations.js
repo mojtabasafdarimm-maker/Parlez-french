@@ -1401,6 +1401,76 @@
         "phonetic": "[eel-z ohn boh-koo dah-mee ahn frahns]"
       }
     }
+  },
+  {
+    "id": "s_asseoir",
+    "infinitive": "s’asseoir",
+    "group": "3e groupe (pronominal irrégulier)",
+    "groupCode": "3",
+    "english": "to sit down",
+    "scene": "furniture-desk-armchair",
+    "stem": "assoi / assoy",
+    "endings": {
+      "je": "s",
+      "tu": "s",
+      "il": "t",
+      "nous": "ons",
+      "vous": "ez",
+      "ils": "ent"
+    },
+    "conjugation": {
+      "je": "m’assois",
+      "tu": "t’assois",
+      "il": "s’assoit",
+      "nous": "nous assoyons",
+      "vous": "vous assoyez",
+      "ils": "s’assoient"
+    },
+    "rule": "Verbe pronominal irrégulier (Séance 9-10) : je m’assois, tu t’assois, il s’assoit, nous nous assoyons, vous vous assoyez, ils s’assoient.",
+    "sentences": {
+      "je": {
+        "pronoun": "Je",
+        "sentence": "Je m’assois dans le fauteuil confortable.",
+        "blank": "Je _____ dans le fauteuil confortable.",
+        "english": "I sit down in the comfortable armchair.",
+        "phonetic": "[zhuh mah-swah dahn luh foh-tuhy kohn-for-tahbl]"
+      },
+      "tu": {
+        "pronoun": "Tu",
+        "sentence": "Tu t’assois sur le canapé à côté de moi ?",
+        "blank": "Tu _____ sur le canapé à côté de moi ?",
+        "english": "Are you sitting down on the sofa next to me?",
+        "phonetic": "[tew tah-swah sewr luh kah-nah-pay ah koh-tay duh mwah]"
+      },
+      "il": {
+        "pronoun": "Il",
+        "sentence": "Il s’assoit devant son bureau pour étudier.",
+        "blank": "Il _____ devant son bureau pour étudier.",
+        "english": "He sits down in front of his desk to study.",
+        "phonetic": "[eel sah-swah duh-vahn sohn bew-roh poor ay-tew-dyay]"
+      },
+      "nous": {
+        "pronoun": "Nous",
+        "sentence": "Nous nous assoyons autour de la table ronde.",
+        "blank": "Nous _____ autour de la table ronde.",
+        "english": "We sit down around the round table.",
+        "phonetic": "[noo noo zah-swah-yohn oh-toor duh lah tahbl rohnd]"
+      },
+      "vous": {
+        "pronoun": "Vous",
+        "sentence": "Vous vous assoyez sur la terrasse au soleil.",
+        "blank": "Vous _____ sur la terrasse au soleil.",
+        "english": "You sit down on the terrace in the sun.",
+        "phonetic": "[voo voo zah-swah-yay sewr lah teh-rahs oh soh-ley]"
+      },
+      "ils": {
+        "pronoun": "Ils",
+        "sentence": "Ils s’assoient dans le salon pour regarder un film.",
+        "blank": "Ils _____ dans le salon pour regarder un film.",
+        "english": "They sit down in the living room to watch a movie.",
+        "phonetic": "[eel sah-swah dahn luh sah-lohn poor ruh-gar-day uhn feelm]"
+      }
+    }
   }
 ];
   const pronouns = [

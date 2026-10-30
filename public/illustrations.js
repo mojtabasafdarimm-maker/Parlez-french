@@ -31,6 +31,13 @@
   const torso = (x, y, color = purple) =>
     `<path d="M${x - 54} ${y + 132}l7-72q8-26 47-26t47 26l7 72Z" fill="${color}" stroke="${ink}" stroke-width="2.5"/>`;
 
+  const timeline = (stage = 'past') => {
+    const i = { before: 0, past: 0, now: 1, after: 2, future: 2 }[stage] ?? 0;
+    return `<g transform="translate(168 292)"><path d="M0 0h184" stroke="#cbd5e1" stroke-width="6" stroke-linecap="round"/>` +
+      [0, 92, 184].map((x, j) => `<circle cx="${x}" cy="0" r="${i === j ? 13 : 8}" fill="${i === j ? '#6864b4' : '#cbd5e1'}" stroke="#fff" stroke-width="3"/>`).join('') +
+      `<path d="m189-7 11 7-11 7" fill="none" stroke="#cbd5e1" stroke-width="4" stroke-linejoin="round"/></g>`;
+  };
+
   // Directional speech bubble showing WHO is speaking
   function speechBubble(bx, by, bw, bh, tailToX, tailToY, innerSVG, borderColor = ink, bg = '#ffffff') {
     const cx = bx + bw / 2;
@@ -1142,6 +1149,400 @@
         `<g transform="translate(95,52)"><rect width="330" height="66" rx="18" fill="#dbeafe" stroke="#2563eb" stroke-width="4"/>${txt(260, 33, '1  · · · ?', 30, '#1e40af', 900)}<circle cx="52" cy="33" r="18" fill="#2563eb"/>${txt(52, 33, '1', 20, '#fff', 900)}</g>` +
         `<g transform="translate(95,137)"><rect width="330" height="66" rx="18" fill="#ede9fe" stroke="#7c3aed" stroke-width="4"/>${txt(260, 33, '2  [ · · ] ?', 28, '#5b21b6', 900)}<circle cx="52" cy="33" r="18" fill="#7c3aed"/>${txt(52, 33, '2', 20, '#fff', 900)}</g>` +
         `<g transform="translate(95,222)"><rect width="330" height="66" rx="18" fill="#fef3c7" stroke="#d97706" stroke-width="4"/>${txt(260, 33, '3  ⇄ ?', 30, '#92400e', 900)}<circle cx="52" cy="33" r="18" fill="#d97706"/>${txt(52, 33, '3', 20, '#fff', 900)}</g>`;
+    }
+
+    // --- A1.2 Séances 9 & 10: Housing, Moving, Vide-grenier, Prepositions & Passé Composé ---
+    if (name === 'home-building') {
+      return cardBg('#eff6ff') +
+        `<rect x="145" y="42" width="230" height="258" rx="10" fill="#fde68a" stroke="${ink}" stroke-width="4.5"/>` +
+        `<polygon points="132,46 260,12 388,46" fill="#e11d48" stroke="${ink}" stroke-width="4"/>` +
+        Array.from({ length: 3 }, (_, r) => Array.from({ length: 3 }, (_, c) =>
+          `<rect x="${172 + c * 64}" y="${68 + r * 62}" width="46" height="44" rx="5" fill="${(r + c) % 2 === 0 ? '#bae6fd' : '#fef3c7'}" stroke="${ink}" stroke-width="3"/>` +
+          `<path d="M${168 + c * 64} ${112 + r * 62}h54" stroke="#78350f" stroke-width="5" stroke-linecap="round"/>`
+        ).join('')).join('') +
+        `<rect x="234" y="248" width="52" height="52" rx="6" fill="#78350f" stroke="${ink}" stroke-width="3.5"/>`;
+    }
+
+    if (name === 'baby-cry') {
+      return cardBg('#fff1f2') +
+        torso(215, 165, '#3b82f6') + face(215, 132, false, true) +
+        `<g transform="translate(275,185)"><rect x="-38" y="-22" width="84" height="48" rx="24" fill="#fbcfe8" stroke="${ink}" stroke-width="3.5"/><circle cx="-18" cy="-4" r="22" fill="${skin}" stroke="${ink}" stroke-width="3"/>` +
+        path('M-26 -8l8 5m8-5l-8 5', ink, 2.5) + `<ellipse cx="-18" cy="6" rx="8" ry="6" fill="#be123c"/>` +
+        path('M-46 -12q-14-6-18 6m72-6q14-6 18 6', '#38bdf8', 4) + `</g>`;
+    }
+
+    if (name === 'dog-bark') {
+      return cardBg('#fef3c7') +
+        `<rect x="90" y="220" width="340" height="70" rx="8" fill="#e2e8f0" stroke="${ink}" stroke-width="3.5"/>` +
+        `<path d="M190 220q-10-65 35-72l35-5q18-32 45-24l24 12-16 22q12 22 4 67Z" fill="#d97706" stroke="${ink}" stroke-width="4"/>` +
+        `<circle cx="282" cy="132" r="4" fill="${ink}"/><path d="M210 158q-28-18-18-42" fill="none" stroke="#d97706" stroke-width="10" stroke-linecap="round"/>` +
+        path('M338 118l38-18m-34 34l44-4m-40 22l38 14', '#ef4444', 5);
+    }
+
+    if (name === 'home-renovation') {
+      return cardBg('#fffbeb') +
+        torso(225, 165, '#f59e0b') + face(225, 135) +
+        `<path d="M176 112q49-46 98 0Z" fill="#eab308" stroke="${ink}" stroke-width="4"/>` +
+        `<rect x="275" y="168" width="66" height="34" rx="8" fill="#0284c7" stroke="${ink}" stroke-width="3.5"/>` +
+        `<path d="M341 185h42" stroke="#475569" stroke-width="8" stroke-linecap="round"/>` +
+        path('M392 162l22-16m-18 39l26 0m-22 22l22 16', '#ef4444', 4.5);
+    }
+
+    if (name === 'headphones-music') {
+      return cardBg('#f5f3ff') +
+        torso(260, 168, '#7c3aed') + face(260, 138, true, true) +
+        `<path d="M206 135a54 54 0 0 1 108 0" fill="none" stroke="#1e293b" stroke-width="11" stroke-linecap="round"/>` +
+        `<rect x="192" y="120" width="22" height="38" rx="10" fill="#2563eb" stroke="${ink}" stroke-width="3"/>` +
+        `<rect x="306" y="120" width="22" height="38" rx="10" fill="#2563eb" stroke="${ink}" stroke-width="3"/>` +
+        txt(135, 95, '♪', 44, '#7c3aed', 900) + txt(385, 88, '♫', 44, '#2563eb', 900);
+    }
+
+    if (name === 'move-out') {
+      return cardBg('#fff7ed') +
+        `<polygon points="62,135 145,72 228,135" fill="#94a3b8" stroke="${ink}" stroke-width="4"/>` +
+        `<rect x="82" y="135" width="126" height="125" fill="#f1f5f9" stroke="${ink}" stroke-width="4"/>` +
+        path('M235 185h88m-24-22l24 22-24 22', '#ea580c', 9) +
+        `<rect x="342" y="142" width="112" height="86" rx="10" fill="#d97706" stroke="${ink}" stroke-width="4"/>` +
+        `<rect x="358" y="96" width="80" height="48" rx="8" fill="#f59e0b" stroke="${ink}" stroke-width="3.5"/>`;
+    }
+
+    if (name === 'move-in') {
+      return cardBg('#ecfdf5') +
+        `<rect x="64" y="152" width="102" height="82" rx="10" fill="#d97706" stroke="${ink}" stroke-width="4"/>` +
+        path('M184 190h84m-24-22l24 22-24 22', '#16a34a', 9) +
+        `<polygon points="282,132 375,62 468,132" fill="#e11d48" stroke="${ink}" stroke-width="4"/>` +
+        `<rect x="302" y="132" width="146" height="132" fill="#fef3c7" stroke="${ink}" stroke-width="4"/>` +
+        `<rect x="356" y="184" width="38" height="80" rx="5" fill="#16a34a" stroke="${ink}" stroke-width="3.5"/>` +
+        txt(375, 102, '★', 28, '#f59e0b', 900);
+    }
+
+    if (name === 'arrange-room') {
+      return cardBg('#f5f3ff') +
+        `<rect x="70" y="56" width="380" height="228" rx="14" fill="#ffffff" stroke="${ink}" stroke-width="4"/>` +
+        `<rect x="102" y="168" width="138" height="72" rx="14" fill="#8b5cf6" stroke="${ink}" stroke-width="3.5"/>` +
+        `<rect x="292" y="154" width="118" height="86" rx="8" fill="#fcd34d" stroke="${ink}" stroke-width="3.5"/>` +
+        `<circle cx="350" cy="112" r="24" fill="#fef08a" stroke="#d97706" stroke-width="3.5"/>` +
+        path('M248 125h34m-17-17v34', '#10b981', 6);
+    }
+
+    if (name === 'excited-wait') {
+      return cardBg('#fff1f2') +
+        torso(225, 168, '#e11d48') + face(225, 136, false, true) +
+        `<rect x="328" y="76" width="124" height="118" rx="16" fill="#ffffff" stroke="${ink}" stroke-width="4"/>` +
+        `<rect x="328" y="76" width="124" height="36" rx="12" fill="#e11d48"/>` +
+        txt(390, 146, '♥', 48, '#e11d48', 900) +
+        txt(122, 96, '✨', 38, '#f59e0b', 900);
+    }
+
+    if (name === 'apt-for-rent') {
+      return cardBg('#eff6ff') +
+        `<rect x="92" y="54" width="190" height="236" rx="10" fill="#dbeafe" stroke="${ink}" stroke-width="4"/>` +
+        Array.from({ length: 6 }, (_, i) => `<rect x="${118 + (i % 2) * 76}" y="${82 + Math.floor(i / 2) * 64}" width="54" height="44" rx="6" fill="#fff" stroke="${ink}" stroke-width="3"/>`).join('') +
+        `<path d="M378 135v155" stroke="#78350f" stroke-width="12" stroke-linecap="round"/>` +
+        `<rect x="308" y="78" width="140" height="78" rx="12" fill="#ea580c" stroke="${ink}" stroke-width="4"/>` +
+        `<circle cx="352" cy="117" r="16" fill="none" stroke="#fff" stroke-width="5"/><path d="M368 117h42m-12 0v14m-14-14v10" stroke="#fff" stroke-width="5" stroke-linecap="round"/>`;
+    }
+
+    if (name === 'rent-bills') {
+      return cardBg('#ecfdf5') +
+        `<rect x="88" y="72" width="168" height="196" rx="14" fill="#ffffff" stroke="${ink}" stroke-width="4"/>` +
+        txt(172, 138, '€', 62, '#16a34a', 900) +
+        path('M122 196h100m-100 28h68', '#94a3b8', 6) +
+        txt(288, 170, '+', 44, '#475569', 900) +
+        `<circle cx="388" cy="126" r="38" fill="#fef3c7" stroke="#d97706" stroke-width="3.5"/>` + txt(388, 126, '⚡', 36) +
+        `<circle cx="388" cy="216" r="38" fill="#dbeafe" stroke="#2563eb" stroke-width="3.5"/>` + txt(388, 216, '💧', 34);
+    }
+
+    if (name === 'well-located') {
+      return cardBg('#f0fdf4') +
+        `<rect x="65" y="55" width="390" height="230" rx="18" fill="#dcfce7" stroke="#86efac" stroke-width="3.5"/>` +
+        path('M65 170h390M260 55v230', '#ffffff', 22) +
+        `<path d="M260 198q-46-58-46-90a46 46 0 1 1 92 0q0 32-46 90Z" fill="#e11d48" stroke="${ink}" stroke-width="4"/>` +
+        `<circle cx="260" cy="108" r="18" fill="#ffffff"/>` +
+        `<circle cx="138" cy="118" r="28" fill="#dbeafe" stroke="#2563eb" stroke-width="3"/>` + txt(138, 118, '🚇', 26) +
+        `<circle cx="382" cy="222" r="28" fill="#fef3c7" stroke="#d97706" stroke-width="3"/>` + txt(382, 222, '🥖', 26);
+    }
+
+    if (name === 'elevator-floor') {
+      return cardBg('#f5f3ff') +
+        `<rect x="135" y="48" width="250" height="246" rx="14" fill="#e2e8f0" stroke="${ink}" stroke-width="4.5"/>` +
+        `<rect x="165" y="92" width="92" height="182" fill="#cbd5e1" stroke="${ink}" stroke-width="3.5"/>` +
+        `<rect x="263" y="92" width="92" height="182" fill="#cbd5e1" stroke="${ink}" stroke-width="3.5"/>` +
+        `<rect x="218" y="58" width="84" height="26" rx="6" fill="#1e293b"/>` +
+        txt(260, 71, '6 ▲', 18, '#fbbf24', 900);
+    }
+
+    if (name === 'surface-m2') {
+      return cardBg('#eff6ff') +
+        `<rect x="96" y="64" width="328" height="212" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="5" stroke-dasharray="12 8"/>` +
+        path('M116 250h288M116 88v162', '#1d4ed8', 5) +
+        txt(260, 165, '100 m²', 54, '#1e3a8a', 900);
+    }
+
+    if (name === 'home-rooms') {
+      return cardBg('#faf7f2') +
+        `<rect x="68" y="52" width="384" height="236" rx="12" fill="#ffffff" stroke="${ink}" stroke-width="4.5"/>` +
+        path('M260 52v236M68 170h384', ink, 4.5) +
+        `<rect x="98" y="96" width="120" height="48" rx="10" fill="#8b5cf6" stroke="${ink}" stroke-width="3"/>` +
+        `<rect x="298" y="88" width="120" height="56" rx="8" fill="#f43f5e" stroke="${ink}" stroke-width="3"/>` +
+        `<rect x="108" y="198" width="102" height="62" rx="8" fill="#38bdf8" stroke="${ink}" stroke-width="3"/>` +
+        `<rect x="302" y="198" width="112" height="62" rx="8" fill="#fbbf24" stroke="${ink}" stroke-width="3"/>`;
+    }
+
+    if (name === 'kitchen-bath') {
+      return cardBg('#ecfdf5') +
+        `<rect x="64" y="64" width="182" height="212" rx="14" fill="#fef3c7" stroke="${ink}" stroke-width="4"/>` +
+        `<rect x="92" y="148" width="126" height="96" rx="8" fill="#ffffff" stroke="${ink}" stroke-width="3.5"/>` +
+        `<circle cx="126" cy="168" r="10" fill="#ef4444"/><circle cx="184" cy="168" r="10" fill="#ef4444"/>` +
+        `<rect x="274" y="64" width="182" height="212" rx="14" fill="#e0f2fe" stroke="${ink}" stroke-width="4"/>` +
+        `<path d="M298 188h134q0 56-67 56t-67-56Z" fill="#ffffff" stroke="${ink}" stroke-width="3.5"/>` +
+        path('M332 104q0-20 22-20v16', '#0284c7', 5) + path('M346 112v28m12-28v28', '#38bdf8', 3.5);
+    }
+
+    if (name === 'hall-stairs') {
+      return cardBg('#faf7f2') +
+        `<rect x="76" y="58" width="145" height="224" rx="8" fill="#fde68a" stroke="${ink}" stroke-width="4"/>` +
+        `<circle cx="198" cy="172" r="8" fill="${ink}"/>` +
+        `<path d="M258 282h45v-44h45v-44h45v-44h45v-44" fill="none" stroke="${ink}" stroke-width="8" stroke-linejoin="round"/>`;
+    }
+
+    if (name === 'garden-balcony') {
+      return cardBg('#ecfdf5') +
+        `<rect x="64" y="218" width="392" height="74" rx="12" fill="#4ade80" stroke="#16a34a" stroke-width="3.5"/>` +
+        `<circle cx="135" cy="148" r="46" fill="#22c55e" stroke="${ink}" stroke-width="3.5"/>` +
+        `<rect x="125" y="188" width="20" height="52" fill="#78350f"/>` +
+        `<circle cx="395" cy="84" r="34" fill="#fbbf24"/>` +
+        `<rect x="242" y="138" width="142" height="82" rx="6" fill="#ffffff" stroke="${ink}" stroke-width="3.5"/>` +
+        Array.from({ length: 6 }, (_, i) => path(`M${258 + i * 22} 138v82`, ink, 3.5)).join('');
+    }
+
+    if (name === 'flea-market') {
+      return cardBg('#fffbeb') +
+        `<polygon points="72,115 115,62 405,62 448,115" fill="#e11d48" stroke="${ink}" stroke-width="4"/>` +
+        `<rect x="92" y="188" width="336" height="22" rx="6" fill="#d97706" stroke="${ink}" stroke-width="3.5"/>` +
+        `<path d="M122 210v72M398 210v72" stroke="#78350f" stroke-width="10" stroke-linecap="round"/>` +
+        `<circle cx="175" cy="152" r="32" fill="#fde047" stroke="${ink}" stroke-width="3.5"/>` +
+        `<rect x="238" y="134" width="64" height="52" rx="6" fill="#38bdf8" stroke="${ink}" stroke-width="3.5"/>` +
+        `<ellipse cx="352" cy="158" rx="28" ry="26" fill="#a855f7" stroke="${ink}" stroke-width="3.5"/>`;
+    }
+
+    if (name === 'thrift-shop') {
+      return cardBg('#fdf4ff') +
+        `<path d="M92 105h336" stroke="#475569" stroke-width="8" stroke-linecap="round"/>` +
+        [155, 260, 365].map((x, i) =>
+          `<path d="M${x} 105v18m-38 22l38-22 38 22" fill="none" stroke="${ink}" stroke-width="3.5"/>` +
+          `<path d="M${x - 42} 145h84l10 98h-104Z" fill="${['#f43f5e', '#3b82f6', '#10b981'][i]}" stroke="${ink}" stroke-width="3.5"/>`
+        ).join('') +
+        `<circle cx="425" cy="82" r="28" fill="#fef08a" stroke="#ca8a04" stroke-width="3.5"/>` + txt(425, 82, '♻', 28, '#15803d', 900);
+    }
+
+    if (name === 'goal-target') {
+      return cardBg('#eff6ff') +
+        `<circle cx="260" cy="170" r="96" fill="#fee2e2" stroke="#ef4444" stroke-width="6"/>` +
+        `<circle cx="260" cy="170" r="64" fill="#ffffff" stroke="#ef4444" stroke-width="6"/>` +
+        `<circle cx="260" cy="170" r="28" fill="#ef4444"/>` +
+        path('M112 92l132 70', '#1e293b', 7) + `<polygon points="260,170 232,148 224,168" fill="#1e293b"/>`;
+    }
+
+    if (name === 'furniture-bed-wardrobe') {
+      return cardBg('#f5f3ff') +
+        `<rect x="68" y="64" width="132" height="212" rx="8" fill="#d97706" stroke="${ink}" stroke-width="4"/>` +
+        path('M134 64v212M118 168v18m32-18v18', ink, 4) +
+        `<rect x="234" y="176" width="222" height="78" rx="10" fill="#8b5cf6" stroke="${ink}" stroke-width="4"/>` +
+        `<rect x="246" y="148" width="66" height="32" rx="10" fill="#ffffff" stroke="${ink}" stroke-width="3.5"/>` +
+        `<path d="M234 142v134M456 176v100" stroke="${ink}" stroke-width="8" stroke-linecap="round"/>`;
+    }
+
+    if (name === 'furniture-desk-armchair') {
+      return cardBg('#eff6ff') +
+        `<rect x="68" y="158" width="196" height="20" rx="5" fill="#b45309" stroke="${ink}" stroke-width="3.5"/>` +
+        path('M88 178v96M244 178v96', ink, 7) +
+        `<rect x="122" y="104" width="76" height="52" rx="6" fill="#38bdf8" stroke="${ink}" stroke-width="3.5"/>` +
+        `<rect x="308" y="118" width="126" height="112" rx="26" fill="#e11d48" stroke="${ink}" stroke-width="4"/>` +
+        `<rect x="292" y="168" width="158" height="58" rx="18" fill="#f43f5e" stroke="${ink}" stroke-width="4"/>` +
+        path('M318 226v46M424 226v46', ink, 7);
+    }
+
+    if (name === 'furniture-sofa-table') {
+      return cardBg('#faf7f2') +
+        `<ellipse cx="260" cy="264" rx="186" ry="34" fill="#fde68a" stroke="#d97706" stroke-width="3.5"/>` +
+        `<rect x="108" y="92" width="304" height="104" rx="24" fill="#6366f1" stroke="${ink}" stroke-width="4"/>` +
+        `<rect x="92" y="136" width="336" height="62" rx="16" fill="#818cf8" stroke="${ink}" stroke-width="4"/>` +
+        `<rect x="172" y="212" width="176" height="22" rx="6" fill="#92400e" stroke="${ink}" stroke-width="3.5"/>` +
+        path('M196 234v34M324 234v34', ink, 6);
+    }
+
+    if (name === 'bedding-pillow-blanket') {
+      return cardBg('#fff1f2') +
+        `<rect x="86" y="142" width="348" height="132" rx="18" fill="#fb7185" stroke="${ink}" stroke-width="4"/>` +
+        `<rect x="112" y="92" width="126" height="64" rx="22" fill="#ffffff" stroke="${ink}" stroke-width="4"/>` +
+        `<rect x="268" y="102" width="84" height="56" rx="16" fill="#fde047" stroke="${ink}" stroke-width="3.5"/>`;
+    }
+
+    if (name === 'curtains-mirror') {
+      return cardBg('#fce7f3') +
+        `<rect x="82" y="64" width="184" height="208" rx="8" fill="#bae6fd" stroke="${ink}" stroke-width="4"/>` +
+        `<path d="M82 64h64q-8 104-48 208H82ZM266 64h-64q8 104 48 208h16Z" fill="#94a3b8" stroke="${ink}" stroke-width="3.5"/>` +
+        `<ellipse cx="378" cy="168" rx="56" ry="88" fill="#e0f2fe" stroke="#d97706" stroke-width="7"/>` +
+        path('M356 124l36-26m-42 52l48-34', '#ffffff', 5);
+    }
+
+    if (name === 'appliances-four') {
+      return cardBg('#f8fafc') +
+        `<rect x="56" y="62" width="92" height="216" rx="10" fill="#e2e8f0" stroke="${ink}" stroke-width="3.5"/>` +
+        path('M56 142h92', ink, 3.5) +
+        `<rect x="168" y="122" width="102" height="156" rx="10" fill="#ffffff" stroke="${ink}" stroke-width="3.5"/>` +
+        `<circle cx="219" cy="206" r="34" fill="#bae6fd" stroke="${ink}" stroke-width="3.5"/>` +
+        `<rect x="290" y="68" width="172" height="82" rx="8" fill="#1e293b" stroke="${ink}" stroke-width="3.5"/>` +
+        `<rect x="304" y="82" width="112" height="54" rx="4" fill="#fef08a"/>` +
+        `<rect x="290" y="166" width="172" height="112" rx="8" fill="#f1f5f9" stroke="${ink}" stroke-width="3.5"/>` +
+        `<rect x="314" y="192" width="124" height="68" rx="4" fill="#334155"/>`;
+    }
+
+    // Spatial Preposition Diagrams (Crystal-clear red ball + wooden table/box)
+    if (name === 'prep-sur-sous') {
+      return cardBg('#faf7f2') +
+        `<rect x="72" y="168" width="152" height="18" rx="5" fill="#d97706" stroke="${ink}" stroke-width="3.5"/>` +
+        path('M92 186v86M204 186v86', ink, 6) +
+        `<circle cx="148" cy="132" r="32" fill="#e11d48" stroke="${ink}" stroke-width="4"/>` +
+        txt(260, 170, '≠', 42, '#64748b', 900) +
+        `<rect x="296" y="168" width="152" height="18" rx="5" fill="#d97706" stroke="${ink}" stroke-width="3.5"/>` +
+        path('M316 186v86M428 186v86', ink, 6) +
+        `<circle cx="372" cy="238" r="32" fill="#2563eb" stroke="${ink}" stroke-width="4"/>`;
+    }
+
+    if (name === 'prep-devant-derriere') {
+      return cardBg('#faf7f2') +
+        `<rect x="86" y="102" width="124" height="124" rx="14" fill="#cbd5e1" stroke="${ink}" stroke-width="4"/>` +
+        `<circle cx="148" cy="212" r="38" fill="#e11d48" stroke="${ink}" stroke-width="4"/>` +
+        txt(260, 170, '≠', 42, '#64748b', 900) +
+        `<circle cx="372" cy="112" r="38" fill="#2563eb" stroke="${ink}" stroke-width="4"/>` +
+        `<rect x="310" y="122" width="124" height="124" rx="14" fill="#cbd5e1" stroke="${ink}" stroke-width="4"/>`;
+    }
+
+    if (name === 'prep-dans-entre') {
+      return cardBg('#faf7f2') +
+        `<rect x="68" y="112" width="136" height="126" rx="14" fill="#fef3c7" stroke="${ink}" stroke-width="4"/>` +
+        `<circle cx="136" cy="178" r="34" fill="#e11d48" stroke="${ink}" stroke-width="4"/>` +
+        `<rect x="248" y="122" width="68" height="108" rx="10" fill="#cbd5e1" stroke="${ink}" stroke-width="3.5"/>` +
+        `<circle cx="352" cy="176" r="28" fill="#10b981" stroke="${ink}" stroke-width="4"/>` +
+        `<rect x="388" y="122" width="68" height="108" rx="10" fill="#cbd5e1" stroke="${ink}" stroke-width="3.5"/>`;
+    }
+
+    if (name === 'prep-cote-enface') {
+      return cardBg('#faf7f2') +
+        `<rect x="64" y="118" width="96" height="106" rx="12" fill="#cbd5e1" stroke="${ink}" stroke-width="4"/>` +
+        `<circle cx="198" cy="172" r="32" fill="#e11d48" stroke="${ink}" stroke-width="4"/>` +
+        `<rect x="288" y="76" width="156" height="72" rx="12" fill="#dbeafe" stroke="${ink}" stroke-width="3.5"/>` +
+        path('M366 158v36m-14-22l14-14 14 14m-28 8l14 14 14-14', '#7c3aed', 4) +
+        `<rect x="288" y="204" width="156" height="72" rx="12" fill="#ede9fe" stroke="${ink}" stroke-width="3.5"/>`;
+    }
+
+    if (name === 'prep-dessus-dessous') {
+      return cardBg('#faf7f2') +
+        `<rect x="78" y="162" width="144" height="22" rx="6" fill="#64748b" stroke="${ink}" stroke-width="3.5"/>` +
+        `<circle cx="150" cy="96" r="34" fill="#e11d48" stroke="${ink}" stroke-width="4"/>` +
+        txt(260, 173, '≠', 42, '#64748b', 900) +
+        `<rect x="298" y="162" width="144" height="22" rx="6" fill="#64748b" stroke="${ink}" stroke-width="3.5"/>` +
+        `<circle cx="370" cy="248" r="34" fill="#2563eb" stroke="${ink}" stroke-width="4"/>`;
+    }
+
+    // Passé Composé Vocabulary & Grammar Scenes
+    if (name === 'past-letter-gift') {
+      return cardBg('#fffbeb') +
+        `<rect x="76" y="102" width="166" height="116" rx="10" fill="#ffffff" stroke="${ink}" stroke-width="4"/>` +
+        path('M76 102l83 64 83-64', ink, 4) +
+        `<rect x="288" y="106" width="146" height="128" rx="12" fill="#e11d48" stroke="${ink}" stroke-width="4"/>` +
+        `<rect x="348" y="106" width="26" height="128" fill="#fde047"/><rect x="288" y="156" width="146" height="26" fill="#fde047"/>` +
+        timeline('past');
+    }
+
+    if (name === 'past-fries-sandwich') {
+      return cardBg('#fff7ed') +
+        `<path d="M96 138h116l-16 104H112Z" fill="#ef4444" stroke="${ink}" stroke-width="4"/>` +
+        [116, 138, 160, 182].map(x => `<rect x="${x}" y="86" width="16" height="54" rx="4" fill="#facc15" stroke="${ink}" stroke-width="2.5"/>`).join('') +
+        `<ellipse cx="352" cy="176" rx="84" ry="42" fill="#f59e0b" stroke="${ink}" stroke-width="4"/>` +
+        path('M274 176q78 18 156 0', '#22c55e', 10) +
+        timeline('past');
+    }
+
+    if (name === 'past-rain-coat') {
+      return cardBg('#eff6ff') +
+        `<path d="M120 196a88 88 0 0 1 176 0Z" fill="#2563eb" stroke="${ink}" stroke-width="4"/>` +
+        path('M208 196v56q0 18-18 18', ink, 6) +
+        `<path d="M332 108h88l18 128H314Z" fill="#facc15" stroke="${ink}" stroke-width="4"/>` +
+        timeline('past');
+    }
+
+    if (name === 'past-read-write') {
+      return cardBg('#f5f3ff') +
+        `<rect x="78" y="96" width="156" height="128" rx="8" fill="#ffffff" stroke="${ink}" stroke-width="4"/>` +
+        path('M156 96v128M98 132h42m-42 28h42m36-28h42m-42 28h42', '#6366f1', 4) +
+        `<rect x="286" y="96" width="144" height="128" rx="8" fill="#fef3c7" stroke="${ink}" stroke-width="4"/>` +
+        path('M312 138h86m-86 28h64M388 82l44 44-76 76-24 6 6-24Z', '#d97706', 4) +
+        timeline('past');
+    }
+
+    if (name === 'past-lost-keys') {
+      return cardBg('#fff1f2') +
+        `<circle cx="176" cy="158" r="38" fill="#fbbf24" stroke="${ink}" stroke-width="4"/>` +
+        `<path d="M214 158h96v24m-28-24v18" fill="none" stroke="${ink}" stroke-width="8" stroke-linecap="round"/>` +
+        txt(376, 158, '?', 78, '#e11d48', 900) +
+        timeline('past');
+    }
+
+    if (name === 'gram-pc-avoir') {
+      return cardBg('#eff6ff') +
+        `<rect x="64" y="104" width="156" height="112" rx="18" fill="#2563eb" stroke="#1e3a8a" stroke-width="4"/>` +
+        txt(142, 160, '1', 54, '#ffffff', 900) +
+        txt(260, 160, '+', 48, '#1e293b', 900) +
+        `<rect x="300" y="104" width="156" height="112" rx="18" fill="#10b981" stroke="#065f46" stroke-width="4"/>` +
+        txt(378, 160, '✓', 54, '#ffffff', 900) +
+        timeline('past');
+    }
+
+    if (name === 'gram-participes') {
+      return cardBg('#faf7f2') +
+        `<rect x="52" y="72" width="126" height="196" rx="16" fill="#dbeafe" stroke="#2563eb" stroke-width="4"/>` +
+        txt(115, 170, '-é', 48, '#1e40af', 900) +
+        `<rect x="197" y="72" width="126" height="196" rx="16" fill="#dcfce7" stroke="#16a34a" stroke-width="4"/>` +
+        txt(260, 170, '-u', 48, '#15803d', 900) +
+        `<rect x="342" y="72" width="126" height="196" rx="16" fill="#fef3c7" stroke="#d97706" stroke-width="4"/>` +
+        txt(405, 170, '-i / -is', 34, '#92400e', 900);
+    }
+
+    if (name === 'gram-pc-negation') {
+      return cardBg('#fff1f2') +
+        `<rect x="62" y="116" width="84" height="88" rx="14" fill="#ef4444"/>` + txt(104, 160, '✕', 40, '#fff', 900) +
+        `<rect x="158" y="106" width="104" height="108" rx="16" fill="#dbeafe" stroke="#2563eb" stroke-width="4"/>` + txt(210, 160, '1', 44, '#1e40af', 900) +
+        `<rect x="274" y="116" width="84" height="88" rx="14" fill="#ef4444"/>` + txt(316, 160, '✕', 40, '#fff', 900) +
+        `<rect x="372" y="116" width="92" height="88" rx="14" fill="#dcfce7" stroke="#16a34a" stroke-width="3.5"/>` + txt(418, 160, '✓', 40, '#15803d', 900);
+    }
+
+    if (name === 'gram-pc-adverbs') {
+      return cardBg('#f5f3ff') +
+        `<rect x="64" y="112" width="108" height="96" rx="16" fill="#dbeafe" stroke="#2563eb" stroke-width="4"/>` + txt(118, 160, '1', 42, '#1e40af', 900) +
+        `<rect x="196" y="96" width="128" height="128" rx="18" fill="#a855f7" stroke="#581c87" stroke-width="4"/>` + txt(260, 160, '★', 52, '#fff', 900) +
+        `<rect x="348" y="112" width="108" height="96" rx="16" fill="#dcfce7" stroke="#16a34a" stroke-width="4"/>` + txt(402, 160, '✓', 42, '#15803d', 900);
+    }
+
+    if (name === 'gram-demenager-trio') {
+      return cardBg('#faf7f2') +
+        `<rect x="44" y="88" width="126" height="164" rx="14" fill="#fff7ed" stroke="#ea580c" stroke-width="3.5"/>` +
+        txt(107, 132, '1', 28, '#ea580c', 900) + path('M76 196h62m-18-16l18 16-18 16', '#ea580c', 6) +
+        `<rect x="197" y="88" width="126" height="164" rx="14" fill="#ecfdf5" stroke="#16a34a" stroke-width="3.5"/>` +
+        txt(260, 132, '2', 28, '#16a34a', 900) + path('M228 196h62m-18-16l18 16-18 16', '#16a34a', 6) +
+        `<rect x="350" y="88" width="126" height="164" rx="14" fill="#f5f3ff" stroke="#7c3aed" stroke-width="3.5"/>` +
+        txt(413, 132, '3', 28, '#7c3aed', 900) + `<circle cx="413" cy="196" r="22" fill="#ede9fe" stroke="#7c3aed" stroke-width="3.5"/>`;
+    }
+
+    if (name === 'gram-prepositions-grid') {
+      return cardBg('#faf7f2') +
+        `<rect x="172" y="112" width="176" height="116" rx="16" fill="#e2e8f0" stroke="${ink}" stroke-width="4"/>` +
+        `<circle cx="260" cy="64" r="24" fill="#e11d48" stroke="${ink}" stroke-width="3.5"/>` +
+        `<circle cx="260" cy="276" r="24" fill="#2563eb" stroke="${ink}" stroke-width="3.5"/>` +
+        `<circle cx="112" cy="170" r="24" fill="#10b981" stroke="${ink}" stroke-width="3.5"/>` +
+        `<circle cx="408" cy="170" r="24" fill="#f59e0b" stroke="${ink}" stroke-width="3.5"/>`;
     }
 
     return null;

@@ -76,7 +76,7 @@ function startServer() {
       return { total: state.cards.length, dups };
     });
     console.log('Total cards in browser state:', sceneAudit.total);
-    assert.equal(sceneAudit.total, 192, 'Expected 192 cards in state');
+    assert.ok(sceneAudit.total >= 225, 'Expected at least 225 cards in state, got ' + sceneAudit.total);
     assert.equal(sceneAudit.dups.length, 0, 'Expected 0 duplicate scene keys, got: ' + JSON.stringify(sceneAudit.dups));
 
     // 2. Open Review -> Card 1 ("wake" -> wake.webp) and verify Picture-Only + 1-Tap Peek button

@@ -82,7 +82,24 @@ window.ParlezGender = (() => {
     c2_faire_vaisselle: { gender: 'f', isExpr: true, noun: 'la vaisselle', tip: 'Nouns ending in -elle (la vaisselle) are 100% Feminine (♀ une/la).' },
     c2_laitue: { gender: 'f', article: 'une', bare: 'laitue', tip: 'la laitue / une belle laitue is Feminine (♀ une/la).' },
     c2_garniture: { gender: 'f', article: 'la', bare: 'garniture', tip: 'Nouns ending in -ure (la garniture, la facture, la confiture) are Feminine (♀ une/la).' },
-    c2_addition: { gender: 'f', isExpr: true, article: 'L’', targetArticle: 'une / la', bare: 'addition', tip: 'Nouns ending in -tion / -sion (une addition, la station, la réservation) are 100% Feminine (♀ une/la)!' }
+    c2_addition: { gender: 'f', isExpr: true, article: 'L’', targetArticle: 'une / la', bare: 'addition', tip: 'Nouns ending in -tion / -sion (une addition, la station, la réservation) are 100% Feminine (♀ une/la)!' },
+    c2_immeuble: { gender: 'm', article: 'un', bare: 'immeuble', tip: 'un immeuble (apartment building) and un meuble (piece of furniture) are Masculine (♂ un/le)!' },
+    c2_bruit_casque: { gender: 'm', article: 'le', bare: 'bruit / un casque', tip: 'Both le bruit (noise) and un casque (headphones) are Masculine (♂ un/le).' },
+    c2_appart_louer: { gender: 'm', article: 'un', bare: 'appartement à louer (un T2)', tip: 'Nouns ending in -ment (un appartement, un logement, un bâtiment) are 100% Masculine (♂ un/le)!' },
+    c2_loyer_charges: { gender: 'mf', article: 'le / les', bare: 'loyer (♂) et les charges (♀)', tip: 'le loyer (rent) is Masculine (♂), while une charge → les charges is Feminine (♀).' },
+    c2_etage_ascenseur: { gender: 'm', article: 'un', bare: 'étage / un ascenseur', tip: 'Nouns ending in -age (un étage) and -eur for machines (un ascenseur) are Masculine (♂ un/le)!' },
+    c2_pieces_logement: { gender: 'mf', article: 'le / la', bare: 'salon (♂), le séjour (♂), la chambre (♀)', tip: 'le salon and le séjour are Masculine (♂); la chambre and la salle à manger are Feminine (♀).' },
+    c2_cuisine_sdb: { gender: 'f', article: 'une', bare: 'cuisine équipée et une salle de bains', tip: 'une cuisine, une salle de bains, une douche, and une baignoire are all Feminine (♀ une/la)!' },
+    c2_entree_couloir: { gender: 'mf', article: 'une / un', bare: 'entrée (♀), un couloir (♂)', tip: 'une entrée (-ée) is Feminine (♀); un couloir (-oir) and un escalier (-ier) are Masculine (♂).' },
+    c2_jardin_terrasse: { gender: 'mf', article: 'un / une', bare: 'jardin (♂), une terrasse (♀), un balcon (♂)', tip: 'un jardin (-in) and un balcon (-on) are Masculine (♂); une terrasse (-asse) is Feminine (♀).' },
+    c2_vide_grenier: { gender: 'mf', article: 'un / une', bare: 'vide-grenier (♂) / une brocante (♀)', tip: 'un vide-grenier and un marché aux puces are Masculine (♂); une brocante and une braderie are Feminine (♀).' },
+    c2_chiner_friperie: { gender: 'f', isExpr: true, article: 'une', bare: 'friperie', tip: 'Shops ending in -ie (une friperie, la boulangerie) are 100% Feminine (♀ une/la).' },
+    c2_lit_armoire: { gender: 'mf', article: 'un / une', bare: 'lit (♂), une armoire (♀), un placard (♂)', tip: 'un lit and un placard are Masculine (♂); une armoire is Feminine (♀ une armoire).' },
+    c2_bureau_fauteuil: { gender: 'mf', article: 'un / une', bare: 'bureau (♂), un fauteuil (♂), une chaise (♀)', tip: 'un bureau (-eau) and un fauteuil (-euil) are Masculine (♂); une chaise is Feminine (♀).' },
+    c2_canape_table_tapis: { gender: 'mf', article: 'un / une', bare: 'canapé (♂), une table basse (♀), un tapis (♂)', tip: 'un canapé and un tapis are Masculine (♂); une table basse is Feminine (♀).' },
+    c2_oreiller_couverture: { gender: 'mf', article: 'un / une', bare: 'oreiller (♂), un coussin (♂), une couverture (♀)', tip: 'un oreiller (-er) and un coussin (-in) are Masculine (♂); une couverture (-ure) is Feminine (♀).' },
+    c2_murs_rideaux: { gender: 'm', isPlural: true, article: 'les', singular: 'un mur / un rideau', bare: 'murs, les rideaux et un miroir', tip: 'un mur, un rideau (-eau), and un miroir (-oir) are all Masculine (♂ un/le)!' },
+    c2_electromenager: { gender: 'mf', article: 'un / une', bare: 'frigo (♂), un lave-linge (♂), une cuisinière (♀)', tip: 'un frigo, un lave-linge, un four à micro-ondes are Masculine (♂); une cuisinière (-ière) is Feminine (♀).' }
   };
 
   // Fallback detector for user-created custom cards
@@ -248,7 +265,11 @@ window.ParlezGender = (() => {
     { cardId: 'c1_musique', bare: 'musique', english: 'music', scene: 'hobby-music', gender: 'f', full: 'la musique', tip: 'Nouns ending in -ique (la musique, la boutique) are Feminine (♀).' },
     { cardId: 'c1_lecture', bare: 'lecture', english: 'reading', scene: 'hobby-read', gender: 'f', full: 'la lecture', tip: 'Nouns ending in -ure (la lecture, la garniture, la voiture) are Feminine (♀).' },
     { cardId: 'c2_bus', bare: 'bus', english: 'bus', scene: 'trans-bus', gender: 'm', full: 'le bus', tip: 'Transports (le bus, le métro, le train, le vélo, le tramway) are Masculine (♂)!' },
-    { cardId: 'c2_laitue', bare: 'laitue', english: 'lettuce', scene: 'market-lettuce', gender: 'f', full: 'une laitue', tip: 'Nouns ending in -ue (une laitue, la rue) are Feminine (♀).' }
+    { cardId: 'c2_laitue', bare: 'laitue', english: 'lettuce', scene: 'market-lettuce', gender: 'f', full: 'une laitue', tip: 'Nouns ending in -ue (une laitue, la rue) are Feminine (♀).' },
+    { cardId: 'c2_immeuble', bare: 'immeuble', english: 'apartment building', scene: 'home-building', gender: 'm', full: 'un immeuble', tip: 'un immeuble and un meuble are Masculine (♂ un/le)!' },
+    { cardId: 'c2_appart_louer', bare: 'appartement', english: 'apartment', scene: 'apt-for-rent', gender: 'm', full: 'un appartement', tip: 'Nouns ending in -ment (un appartement, un logement) are 100% Masculine (♂)!' },
+    { cardId: 'c2_chiner_friperie', bare: 'friperie', english: 'thrift shop', scene: 'thrift-shop', gender: 'f', full: 'une friperie', tip: 'Shops ending in -ie (une friperie, la boulangerie) are 100% Feminine (♀).' },
+    { cardId: 'c2_lit_armoire', bare: 'armoire', english: 'wardrobe', scene: 'furniture-bed-wardrobe', gender: 'f', full: 'une armoire', tip: 'une armoire is Feminine (♀), while un lit and un placard are Masculine (♂).' }
   ];
 
   let reflexSession = null;
