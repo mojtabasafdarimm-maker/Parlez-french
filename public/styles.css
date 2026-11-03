@@ -1226,3 +1226,14 @@
   .front-english-banner { margin-top: 10px; padding: 9px 12px; font-size: 14px; }
   .simple-review-actions { margin-top: 11px; }
 }
+
+/* Audio playback indicator & haptic pulse */
+.audio-playing {
+  animation: audio-pulse 0.7s ease-in-out infinite alternate !important;
+  box-shadow: 0 0 0 3px rgba(106, 105, 179, 0.35) !important;
+  border-color: var(--purple, #6a69b3) !important;
+}
+@keyframes audio-pulse {
+  from { transform: scale(1); }
+  to { transform: scale(1.04); }
+}

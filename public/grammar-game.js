@@ -103,7 +103,7 @@ window.ParlezGrammarGame=(()=>{
     if(action==='start'){start();return;}
     const s=session();if(!s||s.index>=s.questions.length)return;
     const q=s.questions[s.index];
-    if(action==='listen'&&s.feedback){say(sentence(q.form,q.verb));return;}
+    if(action==='listen'&&s.feedback){if(typeof window.say==='function')window.say(sentence(q.form,q.verb), 0.83, el);return;}
     if(action==='next'&&s.feedback){s.index++;s.feedback=null;s.selected=[];persist();render();document.querySelector('.grammar-game')?.scrollIntoView({block:'start'});return;}
     if(s.feedback)return;
     if(action==='choose'&&q.type==='choose'&&q.options.includes(el.dataset.form)){answer(el.dataset.form===q.form,el.dataset.form);return;}

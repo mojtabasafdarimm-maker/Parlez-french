@@ -976,17 +976,17 @@ window.ParlezSounds = (() => {
     }
     if (action === 'play-target') {
       const text = el.dataset.audio;
-      if (text && typeof window.say === 'function') window.say(text, 0.83);
+      if (text && typeof window.say === 'function') window.say(text, 0.83, el);
       return;
     }
     if (action === 'play-target-slow') {
       const text = el.dataset.audio;
-      if (text && typeof window.say === 'function') window.say(text, 0.60);
+      if (text && typeof window.say === 'function') window.say(text, 0.60, el);
       return;
     }
     if (action === 'play-word') {
       const text = el.dataset.audio;
-      if (text && typeof window.say === 'function') window.say(text, 0.83);
+      if (text && typeof window.say === 'function') window.say(text, 0.83, el);
       return;
     }
     if (action === 'reveal-workout') {
