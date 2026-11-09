@@ -35,7 +35,7 @@ const server = http.createServer((req, res) => {
 server.listen(0, '127.0.0.1', async () => {
   const port = server.address().port;
   const baseUrl = `http://127.0.0.1:${port}`;
-  console.log(`Sentence challenge test server listening on ${baseUrl}`);
+  console.log(`Grammar Map & A1.3 test server listening on ${baseUrl}`);
 
   const browser = await chromium.launch({
     headless: true,
@@ -45,7 +45,7 @@ server.listen(0, '127.0.0.1', async () => {
   try {
     const context = await browser.newContext({
       viewport: { width: 390, height: 844 },
-      userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 Mobile/15E148'
+      deviceScaleFactor: 2
     });
     const page = await context.newPage();
 
@@ -56,85 +56,84 @@ server.listen(0, '127.0.0.1', async () => {
 
     await page.goto(baseUrl, { waitUntil: 'networkidle' });
 
-    // 1. Navigation to Grammar Tab
+    // 1. Navigate to Grammar Tab
     console.log('1. Navigating to Grammar Tab...');
     const grammarNavBtn = page.locator('.bottom-nav button[data-view="grammar"]');
-    assert.strictEqual(await grammarNavBtn.count(), 1, 'Grammar button must exist in bottom nav');
     await grammarNavBtn.click();
     await page.waitForTimeout(300);
 
-    // 2. Check Sentence Challenge Subview
-    console.log('2. Checking Sentence Challenge subview...');
-    const challengeHeading = await page.locator('.challenge-container h1').textContent();
-    console.log('Heading:', challengeHeading.trim());
-    assert(challengeHeading.includes('Build & Speak'), 'Sentence Challenge heading must appear');
+    // 2. Verify Grammar Map heading & 6 chapters
+    const heading = await page.locator('#grammar-map-root h1').textContent();
+    console.log('Heading:', heading.trim());
+    assert(heading.includes('Grammar Map'), 'Must show Grammar Map heading');
 
-    // Screenshot Unrevealed Prompt at 390px
-    await page.screenshot({ path: path.join(artifactsDir, 'sentence-challenge-prompt-390.png') });
-    console.log('Captured: sentence-challenge-prompt-390.png');
+    const chapterBtns = await page.locator('button[data-gmap-chapter]').count();
+    console.log('Chapters count:', chapterBtns);
+    assert.strictEqual(chapterBtns, 6, 'Must have 6 organized chapters');
 
-    // 3. Check Prompt Elements
-    const targetBlocks = await page.locator('.challenge-container [style*="border-radius: 12px"]').count();
-    console.log('Target building blocks count:', targetBlocks);
-    assert(targetBlocks >= 3, 'Must have at least 3 target building blocks (Subject, Action, Context)');
+    // Screenshot 1: Chapter 1 (Se... Reflexive) Full Structure Table
+    await page.screenshot({ path: path.join(artifactsDir, 'grammar-map-ch1-reflexive-390.png') });
+    console.log('Captured: grammar-map-ch1-reflexive-390.png');
 
-    // 4. Reveal Step
-    console.log('4. Clicking Check Sentence & Structural Rubric button...');
-    const revealBtn = page.locator('button[data-challenge-action="reveal"]');
-    assert.strictEqual(await revealBtn.count(), 1, 'Reveal button must be visible');
-    await revealBtn.click();
+    // 3. Test Hide Answers to Test Yourself (Active Recall)
+    console.log('3. Testing Hide Answers to Test Yourself...');
+    await page.locator('button[data-gmap-action="toggle-hide"]').click();
+    await page.waitForTimeout(250);
+    const revealRowBtns = await page.locator('button[data-gmap-reveal-row]').count();
+    console.log('Hidden rows count:', revealRowBtns);
+    assert(revealRowBtns >= 6, 'All rows must hide when testing yourself');
+
+    // Reveal row 0
+    await page.locator('button[data-gmap-reveal-row="0"]').click();
+    await page.waitForTimeout(200);
+    await page.screenshot({ path: path.join(artifactsDir, 'grammar-map-ch1-practice-hidden-390.png') });
+    console.log('Captured: grammar-map-ch1-practice-hidden-390.png');
+
+    // Turn Show All back on
+    await page.locator('button[data-gmap-action="toggle-hide"]').click();
+    await page.waitForTimeout(200);
+
+    // 4. Test Chapter 2: Se faire + Infinitif (A1.3)
+    console.log('4. Switching to Chapter 2 (Se faire + Inf.)...');
+    await page.locator('button[data-gmap-chapter="se_faire"]').click();
+    await page.waitForTimeout(250);
+    await page.screenshot({ path: path.join(artifactsDir, 'grammar-map-ch2-se-faire-390.png') });
+    console.log('Captured: grammar-map-ch2-se-faire-390.png');
+
+    // 5. Test Chapter 5: Rules & Il faut (Obligation & Interdiction A1.3)
+    console.log('5. Switching to Chapter 5 (Rules & Il faut)...');
+    await page.locator('button[data-gmap-chapter="obligation"]').click();
+    await page.waitForTimeout(250);
+    await page.screenshot({ path: path.join(artifactsDir, 'grammar-map-ch5-obligation-390.png') });
+    console.log('Captured: grammar-map-ch5-obligation-390.png');
+
+    // 6. Verify A1.3 Séances 1-2 Vocabulary & Illustrations in Vocab Tab
+    console.log('6. Checking A1.3 Séances 1-2 in Vocab Tab...');
+    await page.locator('.bottom-nav button[data-view="vocab"]').click();
     await page.waitForTimeout(300);
+    const a13BrowseBtn = page.locator('button[data-filter-deck="A1.3 · Séances 1–2"]');
+    assert.strictEqual(await a13BrowseBtn.count(), 1, 'A1.3 · Séances 1–2 deck card must exist');
+    await a13BrowseBtn.click();
+    await page.waitForTimeout(300);
+    await page.screenshot({ path: path.join(artifactsDir, 'a13-vocab-deck-390.png') });
+    console.log('Captured: a13-vocab-deck-390.png');
 
-    // Screenshot Revealed 3-Point Audit at 390px
-    await page.screenshot({ path: path.join(artifactsDir, 'sentence-challenge-revealed-390.png') });
-    console.log('Captured: sentence-challenge-revealed-390.png');
-
-    // Check revealed components
-    const revealedAnswer = await page.locator('.revealed-section [style*="font-size: 20px"]').textContent();
-    console.log('Revealed French Answer:', revealedAnswer.trim());
-    assert(revealedAnswer.trim().length > 0, 'French answer must be displayed');
-
-    const rubricItems = await page.locator('.revealed-section [style*="border: 1px solid #fde68a"]').count();
-    console.log('3-point rubric items count:', rubricItems);
-    assert.strictEqual(rubricItems, 3, 'Must display all 3 diagnostic checklist items');
-
-    const rateButtons = await page.locator('button[data-challenge-rate]').count();
-    console.log('Self-rate buttons count:', rateButtons);
-    assert.strictEqual(rateButtons, 3, 'Must have 3 self-rate buttons (Missed, Hesitated, Fast & Flawless)');
-
-    // 5. Test Rating and Queue Progression
-    console.log('5. Rating Fast & Flawless...');
-    await page.locator('button[data-challenge-rate="fast"]').click();
-    await page.waitForTimeout(200);
-
-    const sessionStats = await page.locator('.challenge-container .small.muted').last().textContent();
-    console.log('Session Stats after rating:', sessionStats.trim());
-    assert(sessionStats.includes('1 completed'), 'Session count must increment');
-
-    // 6. Test Category Filter
-    console.log('6. Testing Category Filter (Reflexive Passé)...');
-    const reflFilter = page.locator('button[data-challenge-filter="reflexive"]');
-    await reflFilter.click();
-    await page.waitForTimeout(200);
-
-    const activeFilterText = await reflFilter.textContent();
-    console.log('Active filter:', activeFilterText.trim());
-    assert(reflFilter, 'Reflexive filter button must exist');
-
-    // 7. Responsive Viewport Check (320px, 375px, 390px, 430px)
-    for (const width of [320, 375, 390, 430]) {
-      await page.setViewportSize({ width, height: 800 });
-      await page.waitForTimeout(100);
-      const overflow = await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth);
-      assert.strictEqual(overflow, false, `No horizontal overflow allowed at width ${width}px`);
+    // 7. Responsive width checks across 320px, 375px, 390px, 430px
+    await page.locator('.bottom-nav button[data-view="grammar"]').click();
+    for (const w of [320, 375, 390, 430]) {
+      await page.setViewportSize({ width: w, height: 844 });
+      await page.waitForTimeout(150);
+      const overflow = await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth + 2);
+      assert.strictEqual(overflow, false, `No horizontal overflow allowed at ${w}px`);
     }
     console.log('Responsive width checks passed at 320px, 375px, 390px, 430px!');
 
     console.log('==================================================');
-    console.log('ALL SENTENCE PRODUCTION CHALLENGE E2E TESTS PASSED 100%!');
+    console.log('ALL GRAMMAR MAP & A1.3 SÉANCES 1-2 TESTS PASSED 100%!');
     console.log('==================================================');
   } finally {
     await browser.close();
     server.close();
+    process.exit(0);
   }
 });

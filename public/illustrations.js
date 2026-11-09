@@ -1544,6 +1544,325 @@
         `<circle cx="112" cy="170" r="24" fill="#10b981" stroke="${ink}" stroke-width="3.5"/>` +
         `<circle cx="408" cy="170" r="24" fill="#f59e0b" stroke="${ink}" stroke-width="3.5"/>`;
     }
+    // --- A1.3 Séances 1–2 Illustrations ---
+    if (name === 'bldg-common-areas') {
+      return cardBg('#f8fafc') +
+        `<rect x="110" y="36" width="300" height="264" rx="10" fill="#e2e8f0" stroke="${ink}" stroke-width="4"/>` +
+        path('M110 124h300M110 212h300M260 36v264', ink, 3.5) +
+        `<rect x="140" y="54" width="84" height="56" rx="6" fill="#bfdbfe" stroke="#2563eb" stroke-width="3"/>` +
+        path('M182 54v56', '#2563eb', 2.5) +
+        path('M286 108h24v-16h24v-16h24v-16h24', '#d97706', 5) +
+        path('M140 168h96', '#64748b', 6) +
+        `<rect x="292" y="228" width="64" height="72" rx="6" fill="#fde68a" stroke="#b45309" stroke-width="3.5"/>`;
+    }
+
+    if (name === 'bldg-elevator') {
+      return cardBg('#eff6ff') +
+        `<rect x="150" y="42" width="220" height="252" rx="12" fill="#cbd5e1" stroke="${ink}" stroke-width="4"/>` +
+        `<rect x="174" y="72" width="172" height="202" rx="6" fill="#eff6ff" stroke="${ink}" stroke-width="3.5"/>` +
+        torso(260, 178, blue) + face(260, 158) +
+        path('M260 72v202', '#475569', 3) +
+        txt(235, 58, '▲', 20, '#16a34a', 900) + txt(285, 58, '▼', 20, '#dc2626', 900);
+    }
+
+    if (name === 'bldg-bike-room') {
+      return cardBg('#f0fdf4') +
+        `<rect x="86" y="48" width="348" height="240" rx="14" fill="#ffffff" stroke="${ink}" stroke-width="4"/>` +
+        `<circle cx="176" cy="212" r="34" fill="none" stroke="${ink}" stroke-width="6"/>` +
+        `<circle cx="272" cy="212" r="34" fill="none" stroke="${ink}" stroke-width="6"/>` +
+        path('M176 212l38-52h46l-36 52h-48M214 160l-12-22h22M260 160l12 52', '#16a34a', 5) +
+        `<rect x="332" y="148" width="56" height="96" rx="8" fill="#dcfce7" stroke="#15803d" stroke-width="3.5"/>` +
+        txt(360, 196, '🚲', 32, '#15803d', 900);
+    }
+
+    if (name === 'bldg-neighbors') {
+      return cardBg('#faf7f2') +
+        `<rect x="82" y="64" width="136" height="220" rx="8" fill="#fed7aa" stroke="${ink}" stroke-width="4"/>` +
+        `<rect x="302" y="64" width="136" height="220" rx="8" fill="#bfdbfe" stroke="${ink}" stroke-width="4"/>` +
+        torso(150, 178, red) + face(150, 158) +
+        torso(370, 178, blue) + face(370, 158) +
+        path('M192 172l32-24M328 172l-32-24', skin, 11) +
+        txt(260, 112, '👋', 38, ink, 900);
+    }
+
+    if (name === 'bldg-balcony-lawn') {
+      return cardBg('#ecfeff') +
+        `<rect x="110" y="48" width="220" height="160" rx="8" fill="#f1f5f9" stroke="${ink}" stroke-width="4"/>` +
+        `<rect x="148" y="132" width="144" height="58" rx="6" fill="#fef3c7" stroke="${ink}" stroke-width="3.5"/>` +
+        path('M168 132v58M194 132v58M220 132v58M246 132v58M272 132v58', ink, 3) +
+        `<rect x="44" y="216" width="432" height="84" rx="14" fill="#4ade80" stroke="#15803d" stroke-width="4"/>`;
+    }
+
+    if (name === 'bldg-lawn-mow') {
+      return cardBg('#f0fdf4') +
+        `<rect x="40" y="220" width="440" height="80" rx="12" fill="#22c55e" stroke="#15803d" stroke-width="4"/>` +
+        torso(150, 138, blue) + face(150, 118) +
+        path('M186 164l68 48', '#475569', 6) +
+        `<rect x="236" y="198" width="76" height="32" rx="10" fill="#ef4444" stroke="${ink}" stroke-width="3.5"/>` +
+        `<circle cx="252" cy="232" r="12" fill="${ink}"/><circle cx="296" cy="232" r="12" fill="${ink}"/>` +
+        path('M356 172q36-24 68 16M372 192q28-18 56 18', '#0ea5e9', 5);
+    }
+
+    if (name === 'bldg-broom-ceiling') {
+      return cardBg('#fff1f2') +
+        path('M48 92h424', ink, 6) +
+        txt(180, 56, '🎵 🔊 💃', 32, '#e11d48', 900) +
+        torso(260, 206, purple) + face(260, 186, { mood: 'sad' }) +
+        path('M312 214l-24-112', '#b45309', 7) +
+        `<rect x="262" y="94" width="52" height="18" rx="4" fill="#fbbf24" stroke="${ink}" stroke-width="3"/>` +
+        txt(348, 132, '💥', 32, '#dc2626', 900);
+    }
+
+    if (name === 'bldg-dog-leash') {
+      return cardBg('#f0fdf4') +
+        torso(148, 136, teal) + face(148, 116) +
+        path('M188 168q64 38 124 22', '#ef4444', 5) +
+        `<ellipse cx="348" cy="216" rx="44" ry="26" fill="#d97706" stroke="${ink}" stroke-width="3.5"/>` +
+        `<circle cx="312" cy="192" r="20" fill="#d97706" stroke="${ink}" stroke-width="3.5"/>` +
+        path('M320 240v32M340 240v32M364 240v32M382 240v32M390 206l22-18', '#d97706', 6);
+    }
+
+    if (name === 'bldg-recycle-bins') {
+      return cardBg('#f0fdf4') +
+        `<rect x="88" y="116" width="96" height="148" rx="10" fill="#fbbf24" stroke="${ink}" stroke-width="4"/>` +
+        `<rect x="212" y="116" width="96" height="148" rx="10" fill="#22c55e" stroke="${ink}" stroke-width="4"/>` +
+        `<rect x="336" y="116" width="96" height="148" rx="10" fill="#3b82f6" stroke="${ink}" stroke-width="4"/>` +
+        txt(136, 190, '♻️', 34, ink, 900) +
+        txt(260, 190, '🍾', 34, '#fff', 900) +
+        txt(384, 190, '📄', 34, '#fff', 900);
+    }
+
+    if (name === 'bldg-housewarming') {
+      return cardBg('#fffbeb') +
+        `<polygon points="260,44 106,144 414,144" fill="#f97316" stroke="${ink}" stroke-width="4"/>` +
+        `<rect x="134" y="144" width="252" height="148" rx="8" fill="#ffffff" stroke="${ink}" stroke-width="4"/>` +
+        `<rect x="156" y="204" width="68" height="64" rx="6" fill="#d97706" stroke="${ink}" stroke-width="3"/>` +
+        txt(296, 212, '🎉🥂', 44, ink, 900);
+    }
+
+    if (name === 'bldg-sorry-note') {
+      return cardBg('#faf7f2') +
+        `<rect x="148" y="48" width="224" height="244" rx="12" fill="#fef3c7" stroke="${ink}" stroke-width="4"/>` +
+        txt(260, 114, '🎵 🎂', 38, '#d97706', 900) +
+        path('M184 166h152M184 196h124', '#92400e', 5) +
+        txt(260, 244, '🙏 ❤️', 38, '#e11d48', 900);
+    }
+
+    if (name === 'bldg-escape-game') {
+      return cardBg('#f5f3ff') +
+        `<circle cx="176" cy="156" r="54" fill="#ede9fe" stroke="#6d28d9" stroke-width="6"/>` +
+        path('M216 196l44 44', '#6d28d9', 10) +
+        txt(176, 156, '?', 52, '#6d28d9', 900) +
+        `<rect x="292" y="104" width="136" height="96" rx="14" fill="#1e1b4b" stroke="${ink}" stroke-width="4"/>` +
+        txt(360, 152, '60:00', 32, '#4ade80', 900);
+    }
+
+    if (name === 'sign-swim-fish-no') {
+      return cardBg('#eff6ff') +
+        path('M64 224q48-24 96 0t96 0 96 0 96 0', '#0284c7', 7) +
+        `<circle cx="176" cy="136" r="64" fill="#ffffff" stroke="#dc2626" stroke-width="10"/>` +
+        txt(176, 136, '🏊', 48, ink, 900) + path('M132 92l88 88', '#dc2626', 9) +
+        `<circle cx="344" cy="136" r="64" fill="#ffffff" stroke="#dc2626" stroke-width="10"/>` +
+        txt(344, 136, '🎣', 48, ink, 900) + path('M300 92l88 88', '#dc2626', 9);
+    }
+
+    if (name === 'sign-no-feed-ducks') {
+      return cardBg('#fff1f2') +
+        `<circle cx="260" cy="164" r="88" fill="#ffffff" stroke="#dc2626" stroke-width="12"/>` +
+        txt(260, 164, '🦆🍞', 54, ink, 900) +
+        path('M198 102l124 124', '#dc2626', 12);
+    }
+
+    if (name === 'home-water-leak') {
+      return cardBg('#eff6ff') +
+        `<rect x="156" y="72" width="208" height="44" rx="10" fill="#cbd5e1" stroke="${ink}" stroke-width="4"/>` +
+        path('M260 116v84', '#64748b', 16) +
+        path('M260 156l-56-24M260 156l56-24M260 156l-64 12M260 156l64 12', '#0284c7', 6) +
+        `<ellipse cx="260" cy="256" rx="164" ry="32" fill="#38bdf8" stroke="#0284c7" stroke-width="4"/>`;
+    }
+
+    if (name === 'home-clogged-sink') {
+      return cardBg('#fff7ed') +
+        `<path d="M124 136h272l-28 96H152Z" fill="#e2e8f0" stroke="${ink}" stroke-width="4"/>` +
+        `<ellipse cx="260" cy="144" rx="116" ry="18" fill="#60a5fa"/>` +
+        path('M332 64v82', '#b45309', 10) +
+        `<path d="M296 146q36-34 72 0Z" fill="#dc2626" stroke="${ink}" stroke-width="3.5"/>` +
+        txt(210, 186, '✕💧', 34, '#dc2626', 900);
+    }
+
+    if (name === 'home-radiator-cold') {
+      return cardBg('#eff6ff') +
+        `<rect x="116" y="108" width="288" height="148" rx="14" fill="#dbeafe" stroke="#2563eb" stroke-width="4"/>` +
+        [156, 196, 236, 276, 316, 356].map(x => `<rect x="${x}" y="122" width="22" height="120" rx="8" fill="#ffffff" stroke="#2563eb" stroke-width="3"/>`).join('') +
+        txt(190, 68, '❄️ 🥶', 38, '#0284c7', 900) +
+        txt(330, 68, '🔥✕', 34, '#dc2626', 900);
+    }
+
+    if (name === 'pro-plumber') {
+      return cardBg('#eff6ff') +
+        torso(210, 152, '#2563eb') + face(210, 132) +
+        path('M316 112v144M284 184h64', '#64748b', 18) +
+        txt(275, 136, '🔧💧', 42, '#0284c7', 900);
+    }
+
+    if (name === 'pro-electrician') {
+      return cardBg('#fefce8') +
+        torso(210, 152, '#eab308') + face(210, 132) +
+        `<circle cx="348" cy="156" r="46" fill="#fef08a" stroke="#ca8a04" stroke-width="4"/>` +
+        txt(348, 156, '⚡💡', 42, '#ca8a04', 900);
+    }
+
+    if (name === 'pro-locksmith') {
+      return cardBg('#fff7ed') +
+        torso(196, 152, '#475569') + face(196, 132) +
+        `<rect x="304" y="76" width="128" height="196" rx="8" fill="#fed7aa" stroke="${ink}" stroke-width="4"/>` +
+        txt(368, 174, '🔑🔒', 44, '#d97706', 900);
+    }
+
+    if (name === 'pro-it-tech') {
+      return cardBg('#f5f3ff') +
+        torso(186, 152, '#6d28d9') + face(186, 132) +
+        `<rect x="276" y="132" width="144" height="96" rx="10" fill="#1e293b" stroke="${ink}" stroke-width="4"/>` +
+        path('M256 228h184', ink, 8) +
+        txt(348, 180, '💻🛠️', 38, '#fff', 900);
+    }
+
+    if (name === 'pro-painter') {
+      return cardBg('#fdf2f8') +
+        torso(190, 152, '#f8fafc') + face(190, 132) +
+        `<rect x="292" y="72" width="136" height="196" rx="8" fill="#fbcfe8" stroke="#db2777" stroke-width="4"/>` +
+        txt(360, 170, '🎨🖌️', 46, '#db2777', 900);
+    }
+
+    if (name === 'pro-repair-work') {
+      return cardBg('#faf7f2') +
+        `<rect x="64" y="88" width="164" height="156" rx="16" fill="#fee2e2" stroke="#dc2626" stroke-width="4"/>` +
+        txt(146, 166, '⚙️✕', 48, '#dc2626', 900) +
+        txt(260, 166, '🛠️➜', 36, ink, 900) +
+        `<rect x="292" y="88" width="164" height="156" rx="16" fill="#dcfce7" stroke="#16a34a" stroke-width="4"/>` +
+        txt(374, 166, '⚙️✓', 48, '#16a34a', 900);
+    }
+
+    if (name === 'uni-degrees') {
+      return cardBg('#eff6ff') +
+        `<rect x="76" y="112" width="156" height="128" rx="16" fill="#dbeafe" stroke="#2563eb" stroke-width="4"/>` +
+        txt(154, 176, '🎓 1', 44, '#1e40af', 900) +
+        path('M238 176h44m-14-14l14 14-14 14', '#2563eb', 6) +
+        `<rect x="288" y="112" width="156" height="128" rx="16" fill="#ede9fe" stroke="#6d28d9" stroke-width="4"/>` +
+        txt(366, 176, '🎓 2', 44, '#5b21b6', 900) +
+        timeline('past');
+    }
+
+    if (name === 'past-remember-person') {
+      return cardBg('#fdf4ff') +
+        torso(166, 156, purple) + face(166, 136) +
+        `<circle cx="348" cy="118" r="56" fill="#ffffff" stroke="#9333ea" stroke-width="4"/>` +
+        txt(348, 118, '💭❤️', 42, '#9333ea', 900) +
+        timeline('past');
+    }
+
+    if (name === 'past-fun-vs-bored') {
+      return cardBg('#faf7f2') +
+        `<rect x="68" y="72" width="168" height="156" rx="16" fill="#dcfce7" stroke="#16a34a" stroke-width="4"/>` +
+        txt(152, 150, '🥳🎉', 48, '#16a34a', 900) +
+        `<rect x="284" y="72" width="168" height="156" rx="16" fill="#f1f5f9" stroke="#64748b" stroke-width="4"/>` +
+        txt(368, 150, '🥱⏳', 48, '#64748b', 900) +
+        timeline('past');
+    }
+
+    if (name === 'past-mistake-realize') {
+      return cardBg('#faf7f2') +
+        `<rect x="68" y="72" width="168" height="156" rx="16" fill="#fee2e2" stroke="#dc2626" stroke-width="4"/>` +
+        txt(152, 150, '📱✕', 48, '#dc2626', 900) +
+        `<rect x="284" y="72" width="168" height="156" rx="16" fill="#fef9c3" stroke="#ca8a04" stroke-width="4"/>` +
+        txt(368, 150, '💡!', 48, '#ca8a04', 900) +
+        timeline('past');
+    }
+
+    if (name === 'se-faire-hair-nails') {
+      return cardBg('#fdf2f8') +
+        torso(196, 162, '#ec4899') + face(196, 142) +
+        txt(196, 76, '💇‍♀️✂️', 44, '#be185d', 900) +
+        `<rect x="304" y="96" width="140" height="132" rx="16" fill="#fce7f3" stroke="#db2777" stroke-width="4"/>` +
+        txt(374, 162, '💅✨', 46, '#be185d', 900) +
+        timeline('past');
+    }
+
+    if (name === 'se-faire-stolen') {
+      return cardBg('#fff1f2') +
+        torso(166, 158, blue) + face(166, 138, { mood: 'sad' }) +
+        `<rect x="292" y="88" width="152" height="140" rx="16" fill="#fee2e2" stroke="#e11d48" stroke-width="4"/>` +
+        txt(368, 158, '👛🏃💨', 42, '#e11d48', 900) +
+        timeline('past');
+    }
+
+    if (name === 'se-faire-doctor-tooth') {
+      return cardBg('#ecfeff') +
+        `<rect x="68" y="76" width="168" height="152" rx="16" fill="#cffafe" stroke="#0891b2" stroke-width="4"/>` +
+        txt(152, 152, '🏥🦷', 46, '#0891b2', 900) +
+        `<rect x="284" y="76" width="168" height="152" rx="16" fill="#dcfce7" stroke="#16a34a" stroke-width="4"/>` +
+        txt(368, 152, '💶↩️', 46, '#16a34a', 900) +
+        timeline('past');
+    }
+
+    if (name === 'se-faire-fired-dumped') {
+      return cardBg('#fff1f2') +
+        `<rect x="68" y="76" width="168" height="152" rx="16" fill="#fef3c7" stroke="#d97706" stroke-width="4"/>` +
+        txt(152, 152, '📦🚪', 46, '#d97706', 900) +
+        `<rect x="284" y="76" width="168" height="152" rx="16" fill="#ffe4e6" stroke="#e11d48" stroke-width="4"/>` +
+        txt(368, 152, '💔😢', 46, '#e11d48', 900) +
+        timeline('past');
+    }
+
+    if (name === 'past-sleep-in-11') {
+      return cardBg('#eff6ff') +
+        `<rect x="84" y="148" width="224" height="92" rx="12" fill="#bfdbfe" stroke="${ink}" stroke-width="4"/>` +
+        face(144, 134, { eyes: 'closed' }) +
+        `<circle cx="384" cy="132" r="54" fill="#ffffff" stroke="${ink}" stroke-width="4"/>` +
+        txt(384, 132, '11:00', 26, '#1d4ed8', 900) +
+        timeline('past');
+    }
+
+    if (name === 'gram-obligation-interdit') {
+      return cardBg('#faf7f2') +
+        `<rect x="48" y="84" width="128" height="168" rx="16" fill="#dcfce7" stroke="#16a34a" stroke-width="4"/>` +
+        txt(112, 168, '✓ !', 48, '#15803d', 900) +
+        `<rect x="196" y="84" width="128" height="168" rx="16" fill="#dbeafe" stroke="#2563eb" stroke-width="4"/>` +
+        txt(260, 168, '🙏', 48, '#1d4ed8', 900) +
+        `<rect x="344" y="84" width="128" height="168" rx="16" fill="#fee2e2" stroke="#dc2626" stroke-width="4"/>` +
+        txt(408, 168, '🚫', 48, '#dc2626', 900);
+    }
+
+    if (name === 'gram-maison-etre') {
+      return cardBg('#eff6ff') +
+        `<polygon points="260,42 116,132 404,132" fill="#3b82f6" stroke="${ink}" stroke-width="4"/>` +
+        `<rect x="142" y="132" width="236" height="120" rx="8" fill="#ffffff" stroke="${ink}" stroke-width="4"/>` +
+        txt(260, 192, '+e / +s', 38, '#1d4ed8', 900) +
+        timeline('past');
+    }
+
+    if (name === 'gram-pronominaux-pc') {
+      return cardBg('#f5f3ff') +
+        `<rect x="86" y="78" width="348" height="156" rx="18" fill="#ede9fe" stroke="#6d28d9" stroke-width="4"/>` +
+        txt(260, 156, '🔄 +e / +s', 44, '#5b21b6', 900) +
+        timeline('past');
+    }
+
+    if (name === 'gram-se-faire-passive') {
+      return cardBg('#fffbeb') +
+        `<rect x="86" y="78" width="348" height="156" rx="18" fill="#fef3c7" stroke="#d97706" stroke-width="4"/>` +
+        txt(260, 156, '🔒 FAIT + INF', 36, '#92400e', 900) +
+        timeline('past');
+    }
+
+    if (name === 'gram-ne-que-avant') {
+      return cardBg('#ecfdf5') +
+        `<rect x="64" y="88" width="176" height="152" rx="16" fill="#dcfce7" stroke="#16a34a" stroke-width="4"/>` +
+        txt(152, 164, 'ONLY 3h', 30, '#15803d', 900) +
+        `<rect x="280" y="88" width="176" height="152" rx="16" fill="#dbeafe" stroke="#2563eb" stroke-width="4"/>` +
+        txt(368, 164, '1 ➜ 2', 36, '#1e40af', 900);
+    }
+
 
     return null;
   }

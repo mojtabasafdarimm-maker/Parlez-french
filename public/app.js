@@ -1290,7 +1290,8 @@ function vocabCatalogView(){
     'A1.2 · Séances 5–6',
     'A1.2 · Séances 7–8',
     'A1.2 · Séances 9–10',
-    'A1.2 · Marché & Resto'
+    'A1.2 · Marché & Resto',
+    'A1.3 · Séances 1–2'
   ];
   const distinctTopics=['All',...new Set(allCards.map(c=>c.topic).filter(Boolean))];
   const pool=getVocabPool();
@@ -1305,7 +1306,8 @@ function vocabCatalogView(){
     'A1.2 · Séances 5–6':{title:'Vêtements, Style & Les Trois Temps',desc:'Chemise, pantalon, robe, manteau, moufles, en train de, venir de, aller + inf.',icon:'🧣'},
     'A1.2 · Séances 7–8':{title:'Vie quotidienne, Corvées & Invitations',desc:'Se réveiller, se lever, faire les courses, la vaisselle, la lessive, ça te dit de... ?',icon:'☕'},
     'A1.2 · Séances 9–10':{title:'Logement, Vide-grenier, Prépositions & Passé Composé',desc:'Déménager, emménager, louer un T2, meubles, électroménager, sur/sous/devant/derrière & passé composé (avoir).',icon:'🏠'},
-    'A1.2 · Marché & Resto':{title:'Au Marché & Au Restaurant',desc:'Qu’est-ce qu’il vous faudra, tomates, laitue, oignons, l’addition s’il vous plaît.',icon:'🥖'}
+    'A1.2 · Marché & Resto':{title:'Au Marché & Au Restaurant',desc:'Qu’est-ce qu’il vous faudra, tomates, laitue, oignons, l’addition s’il vous plaît.',icon:'🥖'},
+    'A1.3 · Séances 1–2':{title:'Voisinage, Règlements, Pannes, Maison d’Être & Se faire',desc:'Parties communes, ascenseur, plombier, serrurier, obligation/interdiction, Maison d’Être, pronominaux (se...) & se faire + infinitif.',icon:'🏢'}
   };
   const now = Date.now();
   const deckCardsHtml=distinctLessons.map(lessonKey=>{
@@ -1757,7 +1759,7 @@ function conjugationDrillPage(){
 function grammarPage(){
   return `<div>
     ${grammarSession?'':`<div class="tabline" style="margin-bottom:12px;flex-wrap:wrap;gap:6px">
-      <button class="chip ${grammarSubView==='challenge'?'active':''}" data-grammar-subview="challenge">🎯 Sentence Challenge</button>
+      <button class="chip ${grammarSubView==='challenge'?'active':''}" data-grammar-subview="challenge">🗺️ Grammar Map</button>
       <button class="chip ${grammarSubView==='drills'?'active':''}" data-grammar-subview="drills">🧩 Verb Drills</button>
       <button class="chip ${grammarSubView==='game'?'active':''}" data-grammar-subview="game">🎮 Verb Game</button>
       <button class="chip ${grammarSubView==='cards'?'active':''}" data-grammar-subview="cards">🗂️ Rules</button>
@@ -2142,5 +2144,5 @@ const initialHash=location.hash.slice(1);if(['home','vocab','review','grammar','
 if('serviceWorker' in navigator && location.protocol.startsWith('http')){
   let refreshing=false;
   navigator.serviceWorker.addEventListener('controllerchange',()=>{if(!refreshing){refreshing=true;location.reload();}});
-  navigator.serviceWorker.register('./sw.js?v=29').then(reg=>reg.update()).catch(()=>{});
+  navigator.serviceWorker.register('./sw.js?v=30').then(reg=>reg.update()).catch(()=>{});
 }
