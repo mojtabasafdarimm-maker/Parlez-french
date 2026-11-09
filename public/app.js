@@ -1759,10 +1759,10 @@ function conjugationDrillPage(){
 function grammarPage(){
   return `<div>
     ${grammarSession?'':`<div class="tabline" style="margin-bottom:12px;flex-wrap:wrap;gap:6px">
-      <button class="chip ${grammarSubView==='challenge'?'active':''}" data-grammar-subview="challenge">🗺️ Grammar Map</button>
+      <button class="chip ${grammarSubView==='challenge'?'active':''}" data-grammar-subview="challenge">🗂️ Grammar Flashcards</button>
       <button class="chip ${grammarSubView==='drills'?'active':''}" data-grammar-subview="drills">🧩 Verb Drills</button>
       <button class="chip ${grammarSubView==='game'?'active':''}" data-grammar-subview="game">🎮 Verb Game</button>
-      <button class="chip ${grammarSubView==='cards'?'active':''}" data-grammar-subview="cards">🗂️ Rules</button>
+      <button class="chip ${grammarSubView==='cards'?'active':''}" data-grammar-subview="cards">📖 Rule Handbook</button>
     </div>`}
     ${grammarSubView==='challenge'&&window.ParlezChallenge?window.ParlezChallenge.page():(grammarSubView==='game'?window.ParlezGrammarGame.page():(grammarSubView==='drills'?conjugationDrillPage():(grammarSession?grammarCardSessionView():grammarFlashcardsView())))}
   </div>`;
@@ -2117,7 +2117,7 @@ function say(text, rate = 0.83, triggerEl = null) {
   ParlezAudio.speak(text, rate, triggerEl);
 }
 window.say = say;
-window.ParlezAudio = ParlezAudio;
+window.ParlezAudio = ParlezAudio; window.sceneSVG = sceneSVG;
 function page(){switch(view){case 'vocab':return vocabPage();case 'review':return reviewPage();case 'grammar':return grammarPage();case 'sounds':return window.ParlezSounds?window.ParlezSounds.page():'<div>Loading Sounds Lab...</div>';case 'speak':return speakPage();case 'library':return libraryPage();case 'settings':return settingsPage();default:return homePage();}}
 function render(){document.querySelector('#modal-backdrop')?.remove();modalOpen=false;$('#app').innerHTML=shell(page());if(view==='library'&&libSearch){const i=$('#lib-search');if(i)i.setSelectionRange(i.value.length,i.value.length);}}
 function navigate(to){view=to;window.location.hash=to;reviewSession=null;vocabSession=null;promptPeeked=false;speakShown=false;speakHint=false;speakResponse='';render();scrollTo({top:0,behavior:'instant'});}
@@ -2144,5 +2144,5 @@ const initialHash=location.hash.slice(1);if(['home','vocab','review','grammar','
 if('serviceWorker' in navigator && location.protocol.startsWith('http')){
   let refreshing=false;
   navigator.serviceWorker.addEventListener('controllerchange',()=>{if(!refreshing){refreshing=true;location.reload();}});
-  navigator.serviceWorker.register('./sw.js?v=30').then(reg=>reg.update()).catch(()=>{});
+  navigator.serviceWorker.register('./sw.js?v=31').then(reg=>reg.update()).catch(()=>{});
 }

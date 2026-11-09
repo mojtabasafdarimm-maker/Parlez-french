@@ -1,293 +1,490 @@
-// Parlez Organized Grammar Map & Full-Structure Active Table (v30)
-// Shows the ENTIRE grammar structure in one organized place with memory hooks,
-// 6-subject tables, Affirmative/Negative flip, and Hide-to-Speak active recall.
+// Parlez Grammar Flashcard Sentence Builder with Tricky Distractors & Targeted Remediation (v31)
+// Combines authentic visual flashcards (illustration + English meaning below photo)
+// with scrambled word selection, mistake traps (auxiliary, agreement, prepositions),
+// and end-of-session targeted practice for rules missed during the session.
 (function () {
-  const CHAPTERS = [
+  const CHALLENGES = [
+    // 1. Reflexive Verbs in Passé Composé
     {
-      id: 'reflexive',
-      number: '1',
-      shortTitle: 'Se... (Reflexive)',
-      subtitle: 'me/te/se + être',
-      title: '1. Reflexive Verbs (Se...) in Passé Composé',
-      formulaPos: 'SUJET + ME / TE / SE / NOUS / VOUS / SE + ÊTRE + PARTICIPE (+E / +S)',
-      formulaNeg: 'SUJET + NE + ME/TE/SE + ÊTRE + PAS + PARTICIPE (+E / +S)',
-      memoryHook: 'Mirror Rule: 100% of "se..." verbs use ÊTRE in the past. Because être is a mirror, add +e for a female subject and +s for plural! (Exception: "se rendre compte" → rendu stays invariable).',
-      groups: [
-        {
-          id: 'se_lever',
-          label: 'se lever (get up)',
-          note: 'Standard -er reflexive verb (levé)',
-          rows: [
-            { subj: 'Je (masc. / fem.)', pos: 'Je me suis levé(e) à 7h.', neg: 'Je ne me suis pas levé(e) tôt.', rule: 'me suis + levé (+e if fem.)', audioPos: 'Je me suis levé à sept heures.', audioNeg: 'Je ne me suis pas levé tôt.' },
-            { subj: 'Tu (masc. / fem.)', pos: 'Tu t’es levé(e) tôt.', neg: 'Tu ne t’es pas levé(e) tôt.', rule: 'te + es → t’es', audioPos: 'Tu t’es levé tôt.', audioNeg: 'Tu ne t’es pas levé tôt.' },
-            { subj: 'Il / On', pos: 'Il s’est levé à huit heures.', neg: 'Il ne s’est pas levé tard.', rule: 'se + est → s’est (no +e)', audioPos: 'Il s’est levé à huit heures.', audioNeg: 'Il ne s’est pas levé tard.' },
-            { subj: 'Elle (fem. sing.)', pos: 'Elle s’est levée à 7 heures.', neg: 'Elle ne s’est pas levée.', rule: 's’est + levée (+e feminine)', audioPos: 'Elle s’est levée à sept heures.', audioNeg: 'Elle ne s’est pas levée.' },
-            { subj: 'Nous (plur.)', pos: 'Nous nous sommes levé(e)s.', neg: 'Nous ne nous sommes pas levé(e)s.', rule: 'double nous + sommes + +s', audioPos: 'Nous nous sommes levés.', audioNeg: 'Nous ne nous sommes pas levés.' },
-            { subj: 'Vous (form. / plur.)', pos: 'Vous vous êtes levé(e)(s).', neg: 'Vous ne vous êtes pas levé(e)(s).', rule: 'double vous + êtes', audioPos: 'Vous vous êtes levés.', audioNeg: 'Vous ne vous êtes pas levés.' },
-            { subj: 'Ils (masc. plur.)', pos: 'Ils se sont levés à huit heures.', neg: 'Ils ne se sont pas levés.', rule: 'se sont + levés (+s)', audioPos: 'Ils se sont levés à huit heures.', audioNeg: 'Ils ne se sont pas levés.' },
-            { subj: 'Elles (fem. plur.)', pos: 'Elles se sont levées tôt.', neg: 'Elles ne se sont pas levées.', rule: 'se sont + levées (+es)', audioPos: 'Elles se sont levées tôt.', audioNeg: 'Elles ne se sont pas levées.' }
-          ]
-        },
-        {
-          id: 'se_doucher',
-          label: 'se doucher (shower)',
-          note: 'Daily routine reflexive (douché)',
-          rows: [
-            { subj: 'Je (masc. / fem.)', pos: 'Je me suis douché(e) ce matin.', neg: 'Je ne me suis pas douché(e).', rule: 'me suis douché(e)', audioPos: 'Je me suis douché ce matin.', audioNeg: 'Je ne me suis pas douché.' },
-            { subj: 'Tu (masc. / fem.)', pos: 'Tu t’es douché(e) hier soir ?', neg: 'Tu ne t’es pas douché(e) ?', rule: 't’es douché(e)', audioPos: 'Tu t’es douchée hier soir ?', audioNeg: 'Tu ne t’es pas douchée ?' },
-            { subj: 'Il / Elle', pos: 'Il s’est douché / Elle s’est douchée.', neg: 'Elle ne s’est pas douchée.', rule: '+e for Elle', audioPos: 'Elle s’est douchée.', audioNeg: 'Elle ne s’est pas douchée.' },
-            { subj: 'Nous', pos: 'Nous nous sommes douché(e)s.', neg: 'Nous ne nous sommes pas douché(e)s.', rule: 'nous sommes + +s', audioPos: 'Nous nous sommes douchés.', audioNeg: 'Nous ne nous sommes pas douchés.' },
-            { subj: 'Vous', pos: 'Vous vous êtes douché(e)(s).', neg: 'Vous ne vous êtes pas douché(e)(s).', rule: 'vous êtes', audioPos: 'Vous vous êtes douchés.', audioNeg: 'Vous ne vous êtes pas douchés.' },
-            { subj: 'Ils / Elles', pos: 'Ils se sont douchés / Elles se sont douchées.', neg: 'Ils ne se sont pas douchés.', rule: '+s (masc) / +es (fem)', audioPos: 'Elles se sont douchées.', audioNeg: 'Ils ne se sont pas douchés.' }
-          ]
-        },
-        {
-          id: 'se_souvenir',
-          label: 'se souvenir (remember)',
-          note: 'Irregular -ir like venir → souvenu(e)',
-          rows: [
-            { subj: 'Je (masc. / fem.)', pos: 'Je me suis souvenu(e) de toi.', neg: 'Je ne me suis pas souvenu(e) de son nom.', rule: 'souvenir → souvenu(e) de', audioPos: 'Je me suis souvenue de toi.', audioNeg: 'Je ne me suis pas souvenu de son nom.' },
-            { subj: 'Tu (masc. / fem.)', pos: 'Tu t’es souvenu(e) de mon adresse ?', neg: 'Tu ne t’es pas souvenu(e) de moi ?', rule: 't’es souvenu(e) de', audioPos: 'Tu t’es souvenu de mon adresse ?', audioNeg: 'Tu ne t’es pas souvenu de moi ?' },
-            { subj: 'Il / Elle', pos: 'Il s’est souvenu / Elle s’est souvenue.', neg: 'Elle ne s’est pas souvenue de lui.', rule: '+e for Elle', audioPos: 'Elle s’est souvenue de moi.', audioNeg: 'Elle ne s’est pas souvenue de lui.' },
-            { subj: 'Nous', pos: 'Nous nous sommes souvenu(e)s de lui.', neg: 'Nous ne nous sommes pas souvenu(e)s.', rule: '+s plural', audioPos: 'Nous nous sommes souvenus de lui.', audioNeg: 'Nous ne nous sommes pas souvenus.' },
-            { subj: 'Vous', pos: 'Vous vous êtes souvenu(e)(s) de moi.', neg: 'Vous ne vous êtes pas souvenu(e)(s).', rule: 'vous êtes souvenu(e)(s)', audioPos: 'Vous vous êtes souvenus de moi.', audioNeg: 'Vous ne vous êtes pas souvenus.' },
-            { subj: 'Ils / Elles', pos: 'Ils se sont souvenus / Elles se sont souvenues.', neg: 'Ils ne se sont pas souvenus.', rule: '+s / +es', audioPos: 'Elles se sont souvenues de toi.', audioNeg: 'Ils ne se sont pas souvenus.' }
-          ]
-        },
-        {
-          id: 'a13_reflexives',
-          label: 'A1.3 Key Verbs (s’amuser, se tromper...)',
-          note: 'High-frequency A1.3 reflexive expressions',
-          rows: [
-            { subj: 's’amuser (have fun)', pos: 'Je me suis bien amusé(e) hier soir.', neg: 'Je ne me suis pas amusé(e).', rule: 'bien goes between suis & amusé', audioPos: 'Je me suis bien amusée hier soir.', audioNeg: 'Je ne me suis pas amusée.' },
-            { subj: 's’ennuyer (get bored)', pos: 'On s’est ennuyés ici.', neg: 'Les spectateurs ne se sont pas ennuyés.', rule: 'ne se sont pas + ennuyés', audioPos: 'On s’est ennuyés ici.', audioNeg: 'Les spectateurs ne se sont pas ennuyés.' },
-            { subj: 'se tromper (mistake)', pos: 'Je me suis trompé(e) de numéro.', neg: 'Je ne me suis pas trompé(e).', rule: 'se tromper de + noun', audioPos: 'Je me suis trompé de numéro.', audioNeg: 'Je ne me suis pas trompé.' },
-            { subj: 'se déguiser / déshabiller', pos: 'Je me suis déguisé(e) / déshabillé(e).', neg: 'Elle ne s’est pas déguisée.', rule: '+e for feminine', audioPos: 'Je me suis déshabillée avant d’aller au lit.', audioNeg: 'Elle ne s’est pas déguisée.' },
-            { subj: 'se couper les cheveux', pos: 'Vous vous êtes coupé les cheveux ?', neg: 'Elle ne s’est pas coupé les cheveux.', rule: 'No +e/+s when body part follows!', audioPos: 'Est-ce que vous vous êtes coupé les cheveux ?', audioNeg: 'Elle ne s’est pas coupé les cheveux.' },
-            { subj: 'se rendre compte (realize)', pos: 'Elle s’est rendu compte de son erreur.', neg: 'Je ne me suis pas rendu compte.', rule: '⚠️ rendu stays INVARIABLE here!', audioPos: 'Elle s’est rendu compte de son erreur.', audioNeg: 'Je ne me suis pas rendu compte.' }
-          ]
-        }
-      ]
+      id: 'refl_lever_fem',
+      topic: 'reflexive',
+      topicLabel: 'Passé Composé · Verbe Réflexif',
+      scene: 'rise',
+      english: 'She got up early this morning.',
+      targetWords: ['Elle', 's’est', 'levée', 'tôt', 'ce', 'matin'],
+      fullSentence: 'Elle s’est levée tôt ce matin.',
+      distractors: [
+        { word: 'a', trap: 'auxiliary', tip: 'Auxiliary Error: Reflexive verbs always take ÊTRE (est), never AVOIR (a)!' },
+        { word: 'levé', trap: 'agreement', tip: 'Agreement Error: "Elle" is feminine singular, so ÊTRE reflects +e (levée)!' },
+        { word: 'se', trap: 'elision', tip: 'Elision Error: "se" becomes "s’" before a vowel (s’est)!' }
+      ],
+      rule: 'All reflexive verbs use ÊTRE in the passé composé and agree with the subject in gender (+e) and number (+s).'
     },
     {
-      id: 'se_faire',
-      number: '2',
-      shortTitle: 'Se faire + Inf.',
-      subtitle: 'Passive / Invariable fait',
-      title: '2. Se faire + Infinitif (Passive & Services — A1.3)',
-      formulaPos: 'PASSÉ : SUJET + ME/TE/SE + ÊTRE + FAIT (INVARIABLE) + INFINITIF',
-      formulaNeg: 'PRÉSENT : SUJET + ME/TE/SE + FAIS/FAIT/FAISONS/FAITES/FONT + INFINITIF',
-      memoryHook: 'Golden Trap Rule: In "se faire + infinitive", FAIT NEVER CHANGES! Never write "elle s’est faite voler" — always "elle s’est FAIT voler / ils se sont FAIT cambrioler".',
-      groups: [
-        {
-          id: 'se_faire_conjugation',
-          label: 'Full Conjugation (se faire aider)',
-          note: 'Toggle ➕/🚫 to compare Passé Composé vs Présent',
-          rows: [
-            { subj: 'Je (I)', pos: 'Je me suis fait aider.', neg: 'Présent : Je me fais aider.', rule: 'fait stays invariable', audioPos: 'Je me suis fait aider.', audioNeg: 'Je me fais aider.' },
-            { subj: 'Tu (You)', pos: 'Tu t’es fait aider.', neg: 'Présent : Tu te fais aider.', rule: 't’es fait + inf.', audioPos: 'Tu t’es fait aider.', audioNeg: 'Tu te fais aider.' },
-            { subj: 'Il / Elle / On', pos: 'Elle s’est fait aider (NO +e!).', neg: 'Présent : Elle se fait aider.', rule: '⚠️ NEVER "faite" before infinitive!', audioPos: 'Elle s’est fait aider.', audioNeg: 'Elle se fait aider.' },
-            { subj: 'Nous (We)', pos: 'Nous nous sommes fait aider (NO +s!).', neg: 'Présent : Nous nous faisons aider.', rule: '⚠️ NEVER "faits" before infinitive!', audioPos: 'Nous nous sommes fait aider.', audioNeg: 'Nous nous faisons aider.' },
-            { subj: 'Vous (You)', pos: 'Vous vous êtes fait aider.', neg: 'Présent : Vous vous faites aider.', rule: 'vous êtes fait + inf.', audioPos: 'Vous vous êtes fait aider.', audioNeg: 'Vous vous faites aider.' },
-            { subj: 'Ils / Elles (They)', pos: 'Ils se sont fait aider (NO +s!).', neg: 'Présent : Ils se font aider.', rule: 'se sont fait + inf.', audioPos: 'Ils se sont fait aider.', audioNeg: 'Ils se font aider.' }
-          ]
-        },
-        {
-          id: 'se_faire_services',
-          label: 'Everyday Services & Medical',
-          note: 'Having someone do something for you',
-          rows: [
-            { subj: 'Haircut (couper)', pos: 'Je me suis fait couper les cheveux.', neg: 'Je suis là pour me faire couper les cheveux.', rule: 'se faire couper les cheveux', audioPos: 'Je me suis fait couper les cheveux.', audioNeg: 'Je suis là pour me faire couper les cheveux.' },
-            { subj: 'Nails (les ongles)', pos: 'Je me suis fait faire les ongles.', neg: 'Je suis là pour me faire faire les ongles.', rule: 'se faire faire les ongles', audioPos: 'Je me suis fait faire les ongles.', audioNeg: 'Je suis là pour me faire faire les ongles.' },
-            { subj: 'Refund (rembourser)', pos: 'Je me suis fait rembourser.', neg: 'Elle ne s’est pas fait rembourser.', rule: 'se faire rembourser', audioPos: 'Je me suis fait rembourser.', audioNeg: 'Elle ne s’est pas fait rembourser.' },
-            { subj: 'Surgery (opérer)', pos: 'Il s’est fait opérer les genoux.', neg: 'Il va se faire opérer.', rule: 'se faire opérer', audioPos: 'Il s’est fait opérer les genoux il y a trois ans.', audioNeg: 'Il va se faire opérer.' },
-            { subj: 'Tooth (arracher)', pos: 'Elle s’est fait arracher la dent de sagesse.', neg: 'Elle doit se faire arracher une dent.', rule: 'fait stays invariable even with Elle!', audioPos: 'Elle s’est fait arracher la dent de sagesse.', audioNeg: 'Elle doit se faire arracher une dent.' }
-          ]
-        },
-        {
-          id: 'se_faire_incidents',
-          label: 'Incidents & Passive Events',
-          note: 'When something happens to the subject (On a volé Léa → Léa s’est fait voler)',
-          rows: [
-            { subj: 'Stolen (voler)', pos: 'Léa s’est fait voler son portefeuille.', neg: 'Xavier s’est fait voler son portable.', rule: '= On a volé le portefeuille de Léa', audioPos: 'Léa s’est fait voler son portefeuille.', audioNeg: 'Xavier s’est fait voler son téléphone mobile.' },
-            { subj: 'Burgled (cambrioler)', pos: 'Tania s’est fait cambrioler.', neg: 'Henri s’est fait cambrioler.', rule: '= On a cambriolé Tania / Henri', audioPos: 'Tania s’est fait cambrioler.', audioNeg: 'Henri s’est fait cambrioler.' },
-            { subj: 'Attacked (attaquer)', pos: 'Deux touristes se sont fait attaquer.', neg: 'Le vieux monsieur s’est fait agresser.', rule: 'fait stays invariable in plural!', audioPos: 'Deux touristes se sont fait attaquer.', audioNeg: 'Le vieux monsieur s’est fait agresser dans la rue.' },
-            { subj: 'Fired (licencier / virer)', pos: 'Le directeur s’est fait licencier (virer).', neg: 'Il ne s’est pas fait virer.', rule: 'virer = informal for licencier', audioPos: 'Le directeur s’est fait virer de l’entreprise.', audioNeg: 'Il ne s’est pas fait virer.' },
-            { subj: 'Dumped (larguer)', pos: 'Il s’est fait larguer par Marie.', neg: 'Elle s’est fait larguer.', rule: 'se faire larguer (informal)', audioPos: 'Il s’est fait larguer par Marie.', audioNeg: 'Elle s’est fait larguer.' }
-          ]
-        }
-      ]
+      id: 'refl_doucher_tu',
+      topic: 'reflexive',
+      topicLabel: 'Passé Composé · Verbe Réflexif',
+      scene: 'shower',
+      english: 'Did you shower yesterday evening? (to a female friend)',
+      targetWords: ['Tu', 't’es', 'douchée', 'hier', 'soir', '?'],
+      fullSentence: 'Tu t’es douchée hier soir ?',
+      distractors: [
+        { word: 'as', trap: 'auxiliary', tip: 'Auxiliary Error: Reflexive verbs use ÊTRE (t’es), not AVOIR (tu as)!' },
+        { word: 'douché', trap: 'agreement', tip: 'Agreement Error: When speaking to a female, ÊTRE reflects feminine +e (douchée)!' }
+      ],
+      rule: 'In questions with reflexive verbs, te + es becomes t’es, and the participle agrees with the listener (+e for female).'
     },
     {
-      id: 'maison',
-      number: '3',
-      shortTitle: 'Maison d’Être',
-      subtitle: '15 Movement Pairs',
-      title: '3. La Maison d’Être (15 Movement & State Verbs)',
-      formulaPos: 'SUJET + ÊTRE (suis / es / est / sommes / êtes / sont) + PARTICIPE (+E / +S)',
-      formulaNeg: 'SUJET + NE/N’ + ÊTRE + PAS + PARTICIPE (+E / +S)',
-      memoryHook: 'Opposite Pairs Technique: Don’t memorize a random list! Memorize 6 opposite doorway pairs: aller ↔ venir, arriver ↔ partir, entrer ↔ sortir, monter ↔ descendre, naître ↔ mourir, rester ↔ tomber.',
-      groups: [
-        {
-          id: 'pair_conjugation',
-          label: 'Full 6-Subject Agreement Table (partir)',
-          note: 'Always agrees with subject gender (+e) and number (+s)',
-          rows: [
-            { subj: 'Je (masc. / fem.)', pos: 'Je suis parti(e) en vacances.', neg: 'Je ne suis pas parti(e) tard.', rule: '+e if speaker is female', audioPos: 'Je suis parti en vacances.', audioNeg: 'Je ne suis pas parti tard.' },
-            { subj: 'Tu (masc. / fem.)', pos: 'Tu es arrivé(e) tôt.', neg: 'Tu n’es pas arrivé(e) en retard.', rule: '+e if listener is female', audioPos: 'Tu es arrivée tôt.', audioNeg: 'Tu n’es pas arrivé en retard.' },
-            { subj: 'Il (masc. sing.)', pos: 'Il est sorti avec son parapluie.', neg: 'Il n’est pas sorti ce soir.', rule: 'base participle (no +e)', audioPos: 'Il est sorti avec son parapluie.', audioNeg: 'Il n’est pas sorti ce soir.' },
-            { subj: 'Elle (fem. sing.)', pos: 'Marie est partie. / Elle est allée à Paris.', neg: 'Elle n’est pas sortie.', rule: 'Always add +e', audioPos: 'Marie est partie.', audioNeg: 'Elle n’est pas sortie.' },
-            { subj: 'Nous (plur.)', pos: 'Nous sommes monté(e)s / entré(e)s.', neg: 'Nous ne sommes pas parti(e)s.', rule: 'Always add +s (+es if all fem.)', audioPos: 'Nous sommes entrés par la porte principale.', audioNeg: 'Nous ne sommes pas partis.' },
-            { subj: 'Vous (plur. fem.)', pos: 'Vous êtes restées chez vous hier soir ?', neg: 'Vous n’êtes pas resté(e)(s).', rule: '+es for feminine plural', audioPos: 'Vous êtes restées chez vous hier soir ?', audioNeg: 'Vous n’êtes pas restés.' },
-            { subj: 'Ils (masc. plur.)', pos: 'Les enfants sont déjà partis en vacances.', neg: 'Ils ne sont pas descendus.', rule: 'Add +s', audioPos: 'Les enfants sont déjà partis en vacances.', audioNeg: 'Ils ne sont pas descendus.' },
-            { subj: 'Elles (fem. plur.)', pos: 'Elles sont parties / Elles sont montées.', neg: 'Elles ne sont pas venues.', rule: 'Add +es (feminine + plural)', audioPos: 'Elles sont parties.', audioNeg: 'Elles ne sont pas venues.' }
-          ]
-        },
-        {
-          id: 'opposite_pairs',
-          label: 'The 6 Opposite Pairs (All 15 Verbs)',
-          note: 'Every verb in the House of Être paired with its opposite',
-          rows: [
-            { subj: '1. aller ↔ venir / revenir', pos: 'Elle est allée à Paris. / Ils sont venus.', neg: 'Elle n’est pas revenue.', rule: 'allé(e) ↔ venu(e) / revenu(e)', audioPos: 'Elle est allée à Paris et ils sont venus nous voir.', audioNeg: 'Elle n’est pas revenue.' },
-            { subj: '2. arriver ↔ partir', pos: 'La fille est arrivée à 10h. / Il est parti.', neg: 'Il n’est pas encore arrivé.', rule: 'arrivé(e) ↔ parti(e)', audioPos: 'La fille est arrivée à dix heures.', audioNeg: 'Il n’est pas encore arrivé.' },
-            { subj: '3. entrer / rentrer ↔ sortir', pos: 'Sarah est rentrée tard. / Il est sorti.', neg: 'Elle n’est pas sortie.', rule: 'entré(e) / rentré(e) ↔ sorti(e)', audioPos: 'Hier soir, Sarah est rentrée tard.', audioNeg: 'Elle n’est pas sortie.' },
-            { subj: '4. monter ↔ descendre', pos: 'Elles sont montées. / Ils sont descendus.', neg: 'Il n’est pas descendu.', rule: 'monté(e) ↔ descendu(e)', audioPos: 'Elles sont montées et ils sont descendus.', audioNeg: 'Il n’est pas descendu.' },
-            { subj: '5. naître ↔ mourir (Irreg!)', pos: 'Je suis née à Rasht. / Il est mort.', neg: 'Il est né à Téhéran. / Elle est morte.', rule: '⚠️ naître → né(e) · mourir → mort(e)', audioPos: 'Je suis née à Rasht et il est né à Téhéran.', audioNeg: 'Il est mort. Elle est morte.' },
-            { subj: '6. rester ↔ tomber (+ passer)', pos: 'Je suis tombé(e) amoureux/amoureuse.', neg: 'Je suis passé(e) à la banque.', rule: 'resté(e) · tombé(e) · passé(e) · retourné(e)', audioPos: 'Je suis tombée amoureuse.', audioNeg: 'Je suis passé à la banque.' }
-          ]
-        }
-      ]
+      id: 'refl_negation_reveiller',
+      topic: 'reflexive',
+      topicLabel: 'Négation & Verbe Réflexif',
+      scene: 'wake',
+      english: 'I did not wake up on time.',
+      targetWords: ['Je', 'ne', 'me', 'suis', 'pas', 'réveillé', 'à', 'l’heure'],
+      fullSentence: 'Je ne me suis pas réveillé à l’heure.',
+      distractors: [
+        { word: 'ai', trap: 'auxiliary', tip: 'Auxiliary Error: "se réveiller" uses ÊTRE (suis), never AVOIR (ai)!' },
+        { word: 'me ne', trap: 'word_order', tip: 'Word Order Error: "ne" must be placed BEFORE the reflexive pronoun ("ne me suis pas")!' }
+      ],
+      rule: 'Reflexive negation formula: Sujet + ne + me/te/se + être + pas + participe.'
     },
     {
-      id: 'avoir',
-      number: '4',
-      shortTitle: 'Avoir Rhymes',
-      subtitle: '-é, -i, -u, -is, -it',
-      title: '4. Passé Composé with Avoir (Sound Rhyme Families)',
-      formulaPos: 'SUJET + AVOIR (ai / as / a / avons / avez / ont) + PARTICIPE (NEVER AGREES WITH SUBJECT)',
-      formulaNeg: 'SUJET + NE/N’ + AVOIR + PAS + PARTICIPE',
-      memoryHook: 'Rhyme Grouping Technique: With AVOIR, the participle is a rock—it never changes for Elle or Ils! Memorize irregulars by their ending sound: -IS (pris, mis), -U (bu, vu, lu, obtenu, pu, voulu), -IT (fait, dit, écrit).',
-      groups: [
-        {
-          id: 'avoir_is_it',
-          label: 'Family -IS & -IT (pris, mis, fait, dit)',
-          note: 'Short consonant-ending participles',
-          rows: [
-            { subj: 'prendre → pris', pos: 'Il a pris son parapluie / un café.', neg: 'Je n’ai pas pris de douche.', rule: 'Ends in -is (no +e for Elle a pris)', audioPos: 'Il a pris son parapluie.', audioNeg: 'Je n’ai pas pris de douche.' },
-            { subj: 'apprendre / comprendre', pos: 'J’ai appris / Tu as compris.', neg: 'Je n’ai pas compris.', rule: 'Same family as prendre (-is)', audioPos: 'Tu as bien compris la leçon.', audioNeg: 'Je n’ai pas compris.' },
-            { subj: 'mettre → mis', pos: 'J’ai mis mon manteau.', neg: 'Elle n’a pas mis sa veste.', rule: 'mettre → mis', audioPos: 'J’ai mis mon manteau.', audioNeg: 'Elle n’a pas mis sa veste.' },
-            { subj: 'faire → fait', pos: 'J’ai fait la grasse matinée / deux masters.', neg: 'Je n’ai rien fait de spécial.', rule: 'faire → fait (ne...rien fait)', audioPos: 'Dimanche dernier, j’ai fait la grasse matinée.', audioNeg: 'Je n’ai rien fait de spécial.' },
-            { subj: 'dire → dit / écrire → écrit', pos: 'Elle a dit la vérité. / J’ai écrit un mot.', neg: 'Elle n’a pas dit la vérité.', rule: 'Ends in -it', audioPos: 'Elle a dit la vérité.', audioNeg: 'Elle n’a pas dit la vérité.' },
-            { subj: 'ouvrir → ouvert / offrir', pos: 'Il a ouvert la porte.', neg: 'Il n’a pas ouvert la fenêtre.', rule: 'Ends in -ert (ouvert, offert)', audioPos: 'Il a ouvert la porte.', audioNeg: 'Il n’a pas ouvert la fenêtre.' }
-          ]
-        },
-        {
-          id: 'avoir_u',
-          label: 'Family -U (bu, vu, lu, obtenu, voulu, pu)',
-          note: 'Pure French [y] sound endings',
-          rows: [
-            { subj: 'boire → bu', pos: 'Ils ont bu un peu de vin rouge.', neg: 'Je n’ai pas bu de café.', rule: 'boire → bu', audioPos: 'Ils ont bu un peu de vin rouge.', audioNeg: 'Je n’ai pas bu de café.' },
-            { subj: 'voir → vu', pos: 'J’ai vu Céline / un vieux film.', neg: 'Je n’ai pas vu mes voisins.', rule: 'voir → vu', audioPos: 'Ils ont vu un vieux film américain.', audioNeg: 'Je n’ai pas vu mes voisins.' },
-            { subj: 'lire → lu', pos: 'Après la douche, j’ai lu un peu.', neg: 'Il n’a pas lu le règlement.', rule: 'lire → lu', audioPos: 'Après la douche, j’ai lu un peu.', audioNeg: 'Il n’a pas lu le règlement.' },
-            { subj: 'obtenir → obtenu (A1.3)', pos: 'J’ai obtenu une licence en génie mécanique.', neg: 'Vous avez obtenu quelle licence ?', rule: 'obtenir → obtenu (like venir → venu)', audioPos: 'J’ai obtenu une licence en génie mécanique.', audioNeg: 'Vous avez obtenu quelle licence ?' },
-            { subj: 'vouloir → voulu / pouvoir → pu', pos: 'Tu as voulu me voir. / J’ai pu venir.', neg: 'Je n’ai même pas pu la regarder.', rule: 'voulu / pu / dû / su', audioPos: 'Tu as voulu me voir.', audioNeg: 'Je n’ai même pas pu la regarder.' },
-            { subj: 'perdre → perdu / attendre', pos: 'J’ai perdu la tête / mes clés.', neg: 'Nous n’avons pas attendu.', rule: 'Regular -re → -u', audioPos: 'J’ai perdu mes clés.', audioNeg: 'Nous n’avons pas attendu.' }
-          ]
-        },
-        {
-          id: 'avoir_er_ir',
-          label: 'Regular -É & -I (oublier, suivre, choisir)',
-          note: '1st group (-er → -é), 2nd group (-ir → -i) + être/avoir',
-          rows: [
-            { subj: 'oublier → oublié (A1.3)', pos: 'J’ai oublié mes clés !', neg: 'Je n’ai pas oublié ton anniversaire.', rule: '-er → -é (pronounced [ay])', audioPos: 'J’ai oublié mes clés !', audioNeg: 'Je n’ai pas oublié ton anniversaire.' },
-            { subj: 'manger / changer / discuter', pos: 'Léa a mangé une glace. / On a discuté.', neg: 'Je n’ai pas regardé la télé.', rule: '-er → -é', audioPos: 'Léa a mangé une glace en dessert.', audioNeg: 'Je n’ai pas regardé la télé.' },
-            { subj: 'choisir → choisi / finir', pos: 'Elle a choisi un carpaccio.', neg: 'Il n’a pas fini ses devoirs.', rule: '-ir → -i', audioPos: 'Elle a choisi un carpaccio.', audioNeg: 'Il n’a pas fini ses devoirs.' },
-            { subj: 'suivre → suivi (A1.3)', pos: 'Avez-vous suivi un master ?', neg: 'Je n’ai pas suivi ce cours.', rule: 'suivre un master → suivi', audioPos: 'Avez-vous suivi un master ?', audioNeg: 'Je n’ai pas suivi ce cours.' },
-            { subj: 'être → été / avoir → eu', pos: 'La maison a été cambriolée. / J’ai eu peur.', neg: 'Il n’a pas eu le temps.', rule: 'être → été · avoir → eu [y]', audioPos: 'La maison a été cambriolée.', audioNeg: 'Il n’a pas eu le temps.' }
-          ]
-        }
-      ]
+      id: 'refl_souvenir_vous',
+      topic: 'reflexive',
+      topicLabel: 'Passé Composé · Se souvenir de',
+      scene: 'past-remember-person',
+      english: 'Did you remember me?',
+      targetWords: ['Vous', 'vous', 'êtes', 'souvenu', 'de', 'moi', '?'],
+      fullSentence: 'Vous vous êtes souvenu de moi ?',
+      distractors: [
+        { word: 'avez', trap: 'auxiliary', tip: 'Auxiliary Error: "se souvenir" is reflexive, so it uses ÊTRE (êtes), not AVOIR (avez)!' },
+        { word: 'à', trap: 'preposition', tip: 'Preposition Error: We say "se souvenir DE quelqu’un", never "à quelqu’un"!' }
+      ],
+      rule: 'Se souvenir conjugates like venir (souvenu) and always takes the preposition "de" (souvenu de moi).'
     },
     {
-      id: 'obligation',
-      number: '5',
-      shortTitle: 'Rules & Il faut',
-      subtitle: 'Obligation / Interdit',
-      title: '5. Obligation, Interdiction & Polite Rules (A1.3)',
-      formulaPos: 'OBLIGATION / DEMANDE : IL FAUT / ON DOIT / MERCI DE / PRIÈRE DE + INFINITIF',
-      formulaNeg: 'INTERDICTION : IL EST INTERDIT DE / DÉFENSE DE / IL NE FAUT PAS / NE PAS + INFINITIF',
-      memoryHook: 'Infinitive Shortcut: Almost every building rule or public sign uses a starter block + INFINITIVE verb! Only Imperative ("Respectez vos voisins !") is conjugated.',
-      groups: [
-        {
-          id: 'interdiction_blocks',
-          label: '6 Ways to Forbid (Interdiction)',
-          note: 'All 6 expressions from A1.3 Séance 1–2 (followed by infinitive)',
-          rows: [
-            { subj: '1. Il est interdit de + inf.', pos: 'Il est interdit de faire des barbecues.', neg: 'Il est interdit de faire du bruit.', rule: 'de + vowel → d’ (d’utiliser)', audioPos: 'Il est interdit de faire des barbecues sur les balcons.', audioNeg: 'Il est interdit de faire du bruit.' },
-            { subj: '2. Il ne faut pas + inf.', pos: 'Il ne faut pas jeter ses papiers dans la rue.', neg: 'Il ne faut pas faire de feu dans la forêt.', rule: 'Impersonal prohibition', audioPos: 'Il ne faut pas jeter ses papiers dans la rue.', audioNeg: 'Il ne faut pas faire de feu dans la forêt.' },
-            { subj: '3. Interdiction de + inf.', pos: 'Interdiction de fumer ou de vapoter.', neg: 'Interdiction de stationner sur les trottoirs.', rule: 'Used on official signs (noun + de)', audioPos: 'Interdiction de fumer ou de vapoter dans l’ascenseur.', audioNeg: 'Interdiction de stationner sur les trottoirs.' },
-            { subj: '4. Défense de + inf.', pos: 'Défense de marcher sur la pelouse.', neg: 'Défense de jeter des ordures.', rule: 'Classic French sign formula', audioPos: 'Défense de marcher sur la pelouse.', audioNeg: 'Défense de jeter des ordures.' },
-            { subj: '5. Il est défendu de + inf.', pos: 'Il est défendu de fumer ici.', neg: 'Il est défendu de faire du feu.', rule: '= Il est interdit de', audioPos: 'Il est défendu de fumer ici.', audioNeg: 'Il est défendu de faire du feu.' },
-            { subj: '6. Ne pas + inf. (Sign)', pos: 'Ne pas laisser votre vélo dans les couloirs.', neg: 'Ne pas utiliser son portable.', rule: 'Ne pas sits together BEFORE infinitive!', audioPos: 'Ne pas laisser votre vélo dans les couloirs.', audioNeg: 'Ne pas utiliser son portable.' }
-          ]
-        },
-        {
-          id: 'obligation_demande',
-          label: 'Obligation & Polite Requests (Demande)',
-          note: 'How to express rules, duties, and polite neighbor requests',
-          rows: [
-            { subj: '1. Il faut + inf. (Must)', pos: 'Il faut éteindre la lumière quand on quitte une pièce.', neg: 'Il faut mettre les bouteilles dans des poubelles spéciales.', rule: 'Il faut + infinitive', audioPos: 'Il faut éteindre la lumière quand on quitte une pièce.', audioNeg: 'Il faut mettre les bouteilles en plastique dans des poubelles spéciales.' },
-            { subj: '2. On doit / Vous devez + inf.', pos: 'On doit tenir son chien en laisse en ville.', neg: 'Vous devez saluer le directeur.', rule: 'devoir (doit / devez) + infinitive', audioPos: 'On doit tenir son chien en laisse quand on est en ville.', audioNeg: 'Vous devez saluer le directeur.' },
-            { subj: '3. Merci de + inf. (Polite)', pos: 'Merci de fermer la porte d’entrée.', neg: 'Merci de votre compréhension.', rule: 'Polite request on building notices', audioPos: 'Merci de fermer la porte d’entrée.', audioNeg: 'Merci de votre compréhension.' },
-            { subj: '4. Prière de + inf. (Formal)', pos: 'Prière de trier vos déchets.', neg: 'Prière de ne pas photographier.', rule: 'Formal written request ("Please...")', audioPos: 'Prière de trier vos déchets.', audioNeg: 'Prière de ne pas photographier.' },
-            { subj: '5. Infinitif / Impératif', pos: 'Tenir les chiens en laisse. / Frapper avant d’entrer.', neg: 'Respectez vos voisins !', rule: 'Direct instruction on signs', audioPos: 'Tenir les chiens en laisse. Respectez vos voisins !', audioNeg: 'Frapper avant d’entrer.' }
-          ]
-        }
-      ]
+      id: 'refl_invariable_cheveux',
+      topic: 'reflexive',
+      topicLabel: 'Accord Réflexif (Piège Objet)',
+      scene: 'se-faire-hair-nails',
+      english: 'She cut her hair herself.',
+      targetWords: ['Elle', 's’est', 'coupé', 'les', 'cheveux'],
+      fullSentence: 'Elle s’est coupé les cheveux.',
+      distractors: [
+        { word: 'coupée', trap: 'agreement', tip: 'Trap Alert! When the body part / direct object ("les cheveux") follows the verb, the participle does NOT agree (+e is wrong here)!' },
+        { word: 'a', trap: 'auxiliary', tip: 'Auxiliary Error: "se couper" is reflexive, so it uses ÊTRE (est)!' }
+      ],
+      rule: 'If a direct object (les cheveux, les mains) is placed AFTER a reflexive verb, the participle remains invariable (coupé, not coupée).'
     },
     {
-      id: 'tenses',
-      number: '6',
-      shortTitle: '5 Tenses & Ne...que',
-      subtitle: 'Timeline & Connectors',
-      title: '6. All 5 Tenses Side-by-Side & A1.3 Connectors',
-      formulaPos: 'TIMELINE : PASSÉ COMPOSÉ → PASSÉ RÉCENT → PRÉSENT → PRÉSENT CONTINU → FUTUR PROCHE',
-      formulaNeg: 'SPECIAL NEGATIONS : NE...PAS (not) · NE...PLUS (no longer) · NE...QUE (only/just)',
-      memoryHook: 'Timeline & Connectors: See how the exact same verb moves across time, and how "ne...plus" (no longer), "ne...que" (only), and "avant de + inf." (before doing) work in real sentences.',
-      groups: [
-        {
-          id: 'five_tenses_map',
-          label: '1 Verb Across All 5 Tenses',
-          note: 'Compare how structure changes from Past to Near Future',
-          rows: [
-            { subj: '1. Passé Composé (Did)', pos: 'J’ai mangé / Je me suis levé(e) / Je suis parti(e).', neg: 'Je n’ai pas mangé / Je ne suis pas parti(e).', rule: 'avoir/être + past participle', audioPos: 'Hier, je me suis levée à sept heures.', audioNeg: 'Je ne suis pas partie.' },
-            { subj: '2. Passé Récent (Just did)', pos: 'Je viens de manger / Elle vient de partir.', neg: 'Je ne viens pas de manger.', rule: 'venir de + infinitive (< 5 mins ago)', audioPos: 'Je viens de manger.', audioNeg: 'Je ne viens pas de manger.' },
-            { subj: '3. Présent (Do / General)', pos: 'Je mange / Je me lève / Je pars.', neg: 'Je ne mange pas / Mon ordinateur ne marche pas.', rule: 'conjugated present stem', audioPos: 'Mon ordinateur ne marche pas très bien.', audioNeg: 'Je ne mange pas.' },
-            { subj: '4. Présent Continu (Right now)', pos: 'Je suis en train de préparer le dîner.', neg: 'Il est en train de réparer la fuite.', rule: 'être en train de + infinitive', audioPos: 'Je suis en train de préparer le dîner.', audioNeg: 'Il est en train de réparer la fuite.' },
-            { subj: '5. Futur Proche (Going to)', pos: 'Je vais faire un peu de bruit / regarder ça.', neg: 'Je ne vais pas faire de bruit.', rule: 'aller + infinitive', audioPos: 'Je vais faire un peu de bruit ce soir.', audioNeg: 'Je ne vais pas faire de bruit.' }
-          ]
-        },
-        {
-          id: 'a13_connectors',
-          label: 'ne...plus, ne...que & avant de (A1.3)',
-          note: 'Essential A1.3 negative nuances and time connectors',
-          rows: [
-            { subj: 'ne ... que (ONLY / JUST)', pos: 'Je ne dors que 3 heures. (= seulement 3h)', neg: 'Elle ne mange que des pâtes.', rule: 'ne + verb + que = only / just!', audioPos: 'Je ne dors que trois heures.', audioNeg: 'Elle ne mange que des pâtes.' },
-            { subj: 'ne ... que (Work example)', pos: 'Elle ne travaille que trois jours par semaine.', neg: 'Il ne boit que de l’eau.', rule: 'Not negative in meaning—means "only"', audioPos: 'Elle ne travaille que trois jours par semaine.', audioNeg: 'Il ne boit que de l’eau.' },
-            { subj: 'ne ... plus (NO LONGER)', pos: 'Mon chauffage ne fonctionne plus.', neg: 'L’eau ne s’écoule plus du tout.', rule: 'ne + verb + plus = stopped working', audioPos: 'Mon chauffage ne fonctionne plus.', audioNeg: 'L’eau ne s’écoule plus du tout.' },
-            { subj: 'avant de + inf. (BEFORE)', pos: 'Frapper avant d’entrer.', neg: 'Je me suis déshabillé(e) avant d’aller au lit.', rule: 'Always followed by INFINITIVE!', audioPos: 'Frapper avant d’entrer.', audioNeg: 'Je me suis déshabillée avant d’aller au lit.' },
-            { subj: 'à cause de / en raison de', pos: 'Elle est énervée à cause du bruit.', neg: 'Fermé en raison de travaux.', rule: 'à cause de (negative cause) / en raison de (formal)', audioPos: 'Elle est énervée à cause du bruit.', audioNeg: 'Fermé en raison de travaux.' }
-          ]
-        }
-      ]
+      id: 'refl_tromper_numero',
+      topic: 'reflexive',
+      topicLabel: 'Passé Composé · Se tromper',
+      scene: 'past-mistake-realize',
+      english: 'I dialed the wrong phone number.',
+      targetWords: ['Je', 'me', 'suis', 'trompé', 'de', 'numéro'],
+      fullSentence: 'Je me suis trompé de numéro.',
+      distractors: [
+        { word: 'ai', trap: 'auxiliary', tip: 'Auxiliary Error: "se tromper" uses ÊTRE (suis), never AVOIR (ai)!' },
+        { word: 'du', trap: 'preposition', tip: 'Preposition Error: The fixed idiom is "se tromper de + nom" (de numéro), not "du"!' }
+      ],
+      rule: 'Se tromper de + nom (se tromper de numéro, de train, d’adresse).'
+    },
+
+    // 2. Prepositions of Place (en vs au vs à vs dans)
+    {
+      id: 'prep_en_france',
+      topic: 'prepositions',
+      topicLabel: 'Prépositions de lieu (Pays)',
+      scene: 'chat-friends',
+      english: 'We are going on vacation to France.',
+      targetWords: ['Nous', 'allons', 'en', 'vacances', 'en', 'France'],
+      fullSentence: 'Nous allons en vacances en France.',
+      distractors: [
+        { word: 'ou', trap: 'preposition', tip: 'Spelling / Preposition Trap: "ou" means "or"! For the country destination, use "en France"!' },
+        { word: 'au', trap: 'preposition', tip: 'Preposition Error: Countries ending in -e like "la France" are feminine and take "en", not "au" (au is for masculine countries like au Canada)!' },
+        { word: 'à la', trap: 'preposition', tip: 'Preposition Error: Countries never use "à la", only "en" (feminine) or "au" (masculine)!' }
+      ],
+      rule: 'Feminine countries ending in -e (la France, l’Italie, l’Espagne) take "en". Masculine countries take "au" (au Canada, au Maroc).'
+    },
+    {
+      id: 'prep_au_cinema',
+      topic: 'prepositions',
+      topicLabel: 'Prépositions de lieu (Lieux)',
+      scene: 'cinema',
+      english: 'They went to the cinema yesterday.',
+      targetWords: ['Ils', 'sont', 'allés', 'au', 'cinéma', 'hier'],
+      fullSentence: 'Ils sont allés au cinéma hier.',
+      distractors: [
+        { word: 'en', trap: 'preposition', tip: 'Preposition Error: Masculine places take "au" (à + le = au cinéma), never "en"!' },
+        { word: 'ont', trap: 'auxiliary', tip: 'Auxiliary Error: "aller" is in the Maison d’Être, so it uses "sont", never "ont"!' },
+        { word: 'allé', trap: 'agreement', tip: 'Agreement Error: "Ils" is plural, so ÊTRE requires plural agreement +s (allés)!' }
+      ],
+      rule: 'Contraction: à + le cinéma = au cinéma. "Aller" uses ÊTRE and agrees with the subject (+s).'
+    },
+    {
+      id: 'prep_ville_rasht',
+      topic: 'prepositions',
+      topicLabel: 'Prépositions de lieu (Villes)',
+      scene: 'uni-degrees',
+      english: 'She was born in Paris.',
+      targetWords: ['Elle', 'est', 'née', 'à', 'Paris'],
+      fullSentence: 'Elle est née à Paris.',
+      distractors: [
+        { word: 'en', trap: 'preposition', tip: 'Preposition Error: Cities always take "à" (à Paris, à Rasht, à Téhéran), never "en"!' },
+        { word: 'a', trap: 'auxiliary', tip: 'Auxiliary Error: "naître" uses ÊTRE (est), not AVOIR (a)!' },
+        { word: 'né', trap: 'agreement', tip: 'Agreement Error: "Elle" is feminine singular, so ÊTRE requires +e (née)!' }
+      ],
+      rule: 'All cities take "à" (à Paris, à Montréal). "Naître" uses ÊTRE with agreement: né / née.'
+    },
+    {
+      id: 'prep_dans_hall',
+      topic: 'prepositions',
+      topicLabel: 'Prépositions de lieu (Immeuble)',
+      scene: 'bldg-common-areas',
+      english: 'I open the door and I am in the lobby.',
+      targetWords: ['J’ouvre', 'la', 'porte', 'et', 'je', 'suis', 'dans', 'le', 'hall'],
+      fullSentence: 'J’ouvre la porte et je suis dans le hall.',
+      distractors: [
+        { word: 'en', trap: 'preposition', tip: 'Preposition Error: For rooms and enclosed common areas, use "dans le hall", not "en"!' },
+        { word: 'au', trap: 'preposition', tip: 'Preposition Error: We say "dans le hall" to emphasize being inside the building hall.' }
+      ],
+      rule: 'Enclosed areas in buildings take "dans": dans le hall, dans le couloir, dans l’ascenseur.'
+    },
+
+    // 3. Se faire + Infinitif (A1.3 Passive & Invariable Fait)
+    {
+      id: 'se_faire_voler_lea',
+      topic: 'se_faire',
+      topicLabel: 'Se faire + infinitif (Passif)',
+      scene: 'se-faire-stolen',
+      english: 'Léa had her wallet stolen.',
+      targetWords: ['Léa', 's’est', 'fait', 'voler', 'son', 'portefeuille'],
+      fullSentence: 'Léa s’est fait voler son portefeuille.',
+      distractors: [
+        { word: 'faite', trap: 'invariable_fait', tip: 'Golden Rule Trap! In "se faire + infinitif", "fait" is strictly INVARIABLE! Never write "faite"!' },
+        { word: 'a', trap: 'auxiliary', tip: 'Auxiliary Error: "se faire" is reflexive: it uses ÊTRE (s’est), not AVOIR (a)!' },
+        { word: 'volé', trap: 'infinitive', tip: 'Structure Error: The second verb must be in the INFINITIVE (voler), not a participle!' }
+      ],
+      rule: 'Golden Rule: In "se faire + infinitif", "fait" NEVER changes (no +e, no +s). Elle s’est fait voler.'
+    },
+    {
+      id: 'se_faire_cambrioler_touristes',
+      topic: 'se_faire',
+      topicLabel: 'Se faire + infinitif (Pluriel)',
+      scene: 'se-faire-stolen',
+      english: 'They got burgled.',
+      targetWords: ['Ils', 'se', 'sont', 'fait', 'cambrioler'],
+      fullSentence: 'Ils se sont fait cambrioler.',
+      distractors: [
+        { word: 'faits', trap: 'invariable_fait', tip: 'Trap Alert! In "se faire + infinitif", "fait" NEVER agrees even in the plural (never write "faits")!' },
+        { word: 'ont', trap: 'auxiliary', tip: 'Auxiliary Error: Reflexive verbs always take ÊTRE (se sont), never AVOIR (ont)!' }
+      ],
+      rule: 'Even with plural subjects (Ils / Deux touristes), "fait" remains invariable before an infinitive: Ils se sont fait cambrioler.'
+    },
+    {
+      id: 'se_faire_couper_cheveux',
+      topic: 'se_faire',
+      topicLabel: 'Se faire + infinitif (Services)',
+      scene: 'se-faire-hair-nails',
+      english: 'I am here to get my hair cut.',
+      targetWords: ['Je', 'suis', 'là', 'pour', 'me', 'faire', 'couper', 'les', 'cheveux'],
+      fullSentence: 'Je suis là pour me faire couper les cheveux.',
+      distractors: [
+        { word: 'fais', trap: 'infinitive', tip: 'Structure Error: After the preposition "pour", the verb must be in the infinitive: "pour me faire", not "fais"!' },
+        { word: 'te', trap: 'pronoun', tip: 'Pronoun Error: With subject "Je", use the 1st person reflexive pronoun "me"!' }
+      ],
+      rule: 'Use "se faire + infinitif" when having someone provide a service: me faire couper les cheveux, me faire faire les ongles.'
+    },
+    {
+      id: 'se_faire_virer_directeur',
+      topic: 'se_faire',
+      topicLabel: 'Se faire + infinitif (Familier)',
+      scene: 'se-faire-fired-dumped',
+      english: 'The director got fired from the company.',
+      targetWords: ['Le', 'directeur', 's’est', 'fait', 'virer', 'de', 'l’entreprise'],
+      fullSentence: 'Le directeur s’est fait virer de l’entreprise.',
+      distractors: [
+        { word: 'a', trap: 'auxiliary', tip: 'Auxiliary Error: Use ÊTRE (s’est), not AVOIR (a)!' },
+        { word: 'viré', trap: 'infinitive', tip: 'Structure Error: "se faire" must be followed by an infinitive (virer), not a participle!' }
+      ],
+      rule: 'Se faire virer (informal) = se faire licencier (formal). Fait remains invariable.'
+    },
+
+    // 4. Maison d'Être Movement & State Verbs
+    {
+      id: 'maison_partir_enfants',
+      topic: 'maison',
+      topicLabel: 'La Maison d’Être (Accord)',
+      scene: 'bldg-balcony-lawn',
+      english: 'The children already left on vacation.',
+      targetWords: ['Les', 'enfants', 'sont', 'déjà', 'partis', 'en', 'vacances'],
+      fullSentence: 'Les enfants sont déjà partis en vacances.',
+      distractors: [
+        { word: 'ont', trap: 'auxiliary', tip: 'Auxiliary Error: "partir" is in the Maison d’Être, so it uses ÊTRE (sont), not AVOIR (ont)!' },
+        { word: 'parti', trap: 'agreement', tip: 'Agreement Error: "Les enfants" is plural, so the participle must agree (+s)!' }
+      ],
+      rule: 'All 15 verbs in the Maison d’Être use ÊTRE and agree in gender and number with the subject: partis.'
+    },
+    {
+      id: 'maison_descendre_ils',
+      topic: 'maison',
+      topicLabel: 'La Maison d’Être (Paires Opposées)',
+      scene: 'bldg-elevator',
+      english: 'They went down by the stairs.',
+      targetWords: ['Ils', 'sont', 'descendus', 'par', 'les', 'escaliers'],
+      fullSentence: 'Ils sont descendus par les escaliers.',
+      distractors: [
+        { word: 'ont', trap: 'auxiliary', tip: 'Auxiliary Error: "descendre" uses ÊTRE (sont), not AVOIR (ont)!' },
+        { word: 'descendu', trap: 'agreement', tip: 'Agreement Error: "Ils" is plural: requires plural agreement +s (descendus)!' }
+      ],
+      rule: 'Opposite pair: monter ↔ descendre. Both use ÊTRE in intransitive movement.'
+    },
+    {
+      id: 'maison_rentrer_tard',
+      topic: 'maison',
+      topicLabel: 'La Maison d’Être (Accord Féminin)',
+      scene: 'bedtime',
+      english: 'Yesterday evening, Sarah came home late.',
+      targetWords: ['Hier', 'soir', 'Sarah', 'est', 'rentrée', 'tard'],
+      fullSentence: 'Hier soir, Sarah est rentrée tard.',
+      distractors: [
+        { word: 'a', trap: 'auxiliary', tip: 'Auxiliary Error: "rentrer" uses ÊTRE (est), not AVOIR (a)!' },
+        { word: 'rentré', trap: 'agreement', tip: 'Agreement Error: "Sarah" is female, so ÊTRE requires +e (rentrée)!' }
+      ],
+      rule: 'Rentrer uses ÊTRE. The past participle agrees with Sarah (+e).'
+    },
+
+    // 5. Avoir Verbs & Irregular Participles
+    {
+      id: 'avoir_prendre_parapluie',
+      topic: 'avoir',
+      topicLabel: 'Passé Composé avec Avoir (Famille -IS)',
+      scene: 'rain',
+      english: 'He took his umbrella.',
+      targetWords: ['Il', 'a', 'pris', 'son', 'parapluie'],
+      fullSentence: 'Il a pris son parapluie.',
+      distractors: [
+        { word: 'est', trap: 'auxiliary', tip: 'Auxiliary Error: "prendre" uses AVOIR (a), not ÊTRE (est)!' },
+        { word: 'prendu', trap: 'participle', tip: 'Irregular Participle: "prendre" belongs to the -IS rhyme family: pris, not prendu!' },
+        { word: 'sa', trap: 'gender', tip: 'Gender Error: "parapluie" is masculine: "son parapluie", not "sa"!' }
+      ],
+      rule: 'Prendre, apprendre, comprendre belong to the -IS past participle family (pris, appris, compris).'
+    },
+    {
+      id: 'avoir_faire_grasse_matinee',
+      topic: 'avoir',
+      topicLabel: 'Passé Composé avec Avoir (Famille -IT)',
+      scene: 'past-sleep-in-11',
+      english: 'Last Sunday, I slept in until 11.',
+      targetWords: ['Dimanche', 'dernier', 'j’ai', 'fait', 'la', 'grasse', 'matinée'],
+      fullSentence: 'Dimanche dernier, j’ai fait la grasse matinée.',
+      distractors: [
+        { word: 'suis', trap: 'auxiliary', tip: 'Auxiliary Error: "faire" uses AVOIR (ai), not ÊTRE (suis)!' },
+        { word: 'fais', trap: 'participle', tip: 'Participle Error: The past participle of "faire" is "fait", not present "fais"!' }
+      ],
+      rule: 'Faire → fait (-IT family). Expression: "faire la grasse matinée" (to sleep in late).'
+    },
+    {
+      id: 'avoir_boire_vin',
+      topic: 'avoir',
+      topicLabel: 'Passé Composé avec Avoir (Famille -U)',
+      scene: 'chore-cooking',
+      english: 'They drank a little red wine.',
+      targetWords: ['Ils', 'ont', 'bu', 'un', 'peu', 'de', 'vin', 'rouge'],
+      fullSentence: 'Ils ont bu un peu de vin rouge.',
+      distractors: [
+        { word: 'sont', trap: 'auxiliary', tip: 'Auxiliary Error: "boire" uses AVOIR (ont), not ÊTRE (sont)!' },
+        { word: 'boit', trap: 'participle', tip: 'Participle Error: The past participle of "boire" is "bu" (-U family)!' },
+        { word: 'des', trap: 'preposition', tip: 'Preposition Error: After quantity expressions like "un peu", always use "de", not "des"!' }
+      ],
+      rule: 'Boire → bu (-U family). Fixed quantity preposition: un peu DE vin.'
+    },
+    {
+      id: 'avoir_oublier_cles',
+      topic: 'avoir',
+      topicLabel: 'Passé Composé avec Avoir (1er Groupe)',
+      scene: 'pro-locksmith',
+      english: 'I forgot my keys inside!',
+      targetWords: ['J’ai', 'oublié', 'mes', 'clés', 'à', 'l’intérieur', '!'],
+      fullSentence: 'J’ai oublié mes clés à l’intérieur !',
+      distractors: [
+        { word: 'suis', trap: 'auxiliary', tip: 'Auxiliary Error: "oublier" uses AVOIR (ai), not ÊTRE (suis)!' },
+        { word: 'mon', trap: 'plural', tip: 'Number Error: "clés" is plural, so it requires "mes", not "mon"!' }
+      ],
+      rule: '1st group verbs: -er → -é (oublié). Possession with plural noun: mes clés.'
+    },
+
+    // 6. Rules, Obligations & Interdictions (A1.3)
+    {
+      id: 'rule_interdit_fumer',
+      topic: 'rules',
+      topicLabel: 'Règlements & Interdiction (A1.3)',
+      scene: 'sign-swim-fish-no',
+      english: 'It is forbidden to smoke or vape.',
+      targetWords: ['Il', 'est', 'interdit', 'de', 'fumer', 'ou', 'de', 'vapoter'],
+      fullSentence: 'Il est interdit de fumer ou de vapoter.',
+      distractors: [
+        { word: 'à', trap: 'preposition', tip: 'Preposition Error: "Il est interdit" requires "de + infinitif", never "à"!' },
+        { word: 'interdite', trap: 'impersonal', tip: 'Impersonal Error: Impersonal "Il est..." always takes masculine singular adjective: "interdit", never "interdite"!' },
+        { word: 'fume', trap: 'infinitive', tip: 'Verb Error: After "de", the verb must be in the INFINITIVE (fumer)!' }
+      ],
+      rule: 'Formula: Il est interdit de + infinitif. Impersonal "Il" keeps the adjective masculine singular.'
+    },
+    {
+      id: 'rule_ne_pas_velo',
+      topic: 'rules',
+      topicLabel: 'Interdiction sur panneau (A1.3)',
+      scene: 'bldg-bike-room',
+      english: 'Do not leave your bike in the hallways.',
+      targetWords: ['Ne', 'pas', 'laisser', 'votre', 'vélo', 'dans', 'les', 'couloirs'],
+      fullSentence: 'Ne pas laisser votre vélo dans les couloirs.',
+      distractors: [
+        { word: 'laissez pas', trap: 'word_order', tip: 'Sign Rule: On public notices and signs with an infinitive, "Ne pas" stays TOGETHER BEFORE the infinitive!' },
+        { word: 'en', trap: 'preposition', tip: 'Preposition Error: In hallways, use "dans les couloirs", not "en"!' }
+      ],
+      rule: 'Negative sign formula: Ne pas + infinitif (Ne pas laisser votre vélo).'
+    },
+    {
+      id: 'rule_merci_fermer',
+      topic: 'rules',
+      topicLabel: 'Demande polie (A1.3)',
+      scene: 'bldg-common-areas',
+      english: 'Thank you for closing the entrance door.',
+      targetWords: ['Merci', 'de', 'fermer', 'la', 'porte', 'd’entrée'],
+      fullSentence: 'Merci de fermer la porte d’entrée.',
+      distractors: [
+        { word: 'pour', trap: 'preposition', tip: 'Preposition Trap: When making a polite request for a future action, use "Merci de + infinitif", not "Merci pour"!' },
+        { word: 'ferme', trap: 'infinitive', tip: 'Structure Error: "Merci de" requires an INFINITIVE (fermer)!' }
+      ],
+      rule: 'Polite building notice formula: Merci de + infinitif (Merci de fermer).'
+    },
+
+    // 7. Special Negations & Restrictions (ne...plus, ne...que, avant de)
+    {
+      id: 'neg_chauffage_plus',
+      topic: 'negation',
+      topicLabel: 'Négation : Ne ... plus (A1.3)',
+      scene: 'home-radiator-cold',
+      english: 'My heating is no longer working.',
+      targetWords: ['Mon', 'chauffage', 'ne', 'fonctionne', 'plus'],
+      fullSentence: 'Mon chauffage ne fonctionne plus.',
+      distractors: [
+        { word: 'pas', trap: 'negation', tip: 'Meaning Trap: "ne ... pas" means "does not work". To say "NO LONGER works" (it worked before and stopped), use "ne ... plus"!' },
+        { word: 'fonctionner', trap: 'conjugation', tip: 'Conjugation Error: The verb must be conjugated in the present tense (fonctionne), not infinitive!' }
+      ],
+      rule: 'ne + verbe + plus indicates the cessation of an action (no longer / stopped).'
+    },
+    {
+      id: 'restr_ne_que_dormir',
+      topic: 'negation',
+      topicLabel: 'Restriction : Ne ... que (A1.3)',
+      scene: 'past-sleep-in-11',
+      english: 'I only sleep 3 hours. (= just 3 hours)',
+      targetWords: ['Je', 'ne', 'dors', 'que', 'trois', 'heures'],
+      fullSentence: 'Je ne dors que trois heures.',
+      distractors: [
+        { word: 'pas', trap: 'restriction', tip: 'Meaning Trap: "ne ... pas" is negative (I do not sleep). "ne ... que" is a restriction meaning "only / just"!' },
+        { word: 'seulement que', trap: 'redundancy', tip: 'Redundancy Error: Never combine "seulement" and "que". "ne ... que" already means "only"!' }
+      ],
+      rule: 'ne + verbe + que expresses restriction (= seulement). Je ne dors que 3h = Je dors seulement 3h.'
+    },
+    {
+      id: 'conn_avant_de_lit',
+      topic: 'negation',
+      topicLabel: 'Connecteur : Avant de + inf. (A1.3)',
+      scene: 'bedtime',
+      english: 'Frapper avant d’entrer.',
+      targetWords: ['Frapper', 'avant', 'd’entrer'],
+      fullSentence: 'Frapper avant d’entrer.',
+      distractors: [
+        { word: 'de', trap: 'elision', tip: 'Elision Error: "de" elides to "d’" before a vowel: "avant d’entrer"!' },
+        { word: 'entre', trap: 'infinitive', tip: 'Structure Error: "avant de" is ALWAYS followed by an INFINITIVE (entrer)!' }
+      ],
+      rule: 'Time connector formula: avant de + verbe à l’infinitif (avant d’entrer, avant de manger).'
     }
   ];
 
-  let activeChapterId = 'reflexive';
-  let activeGroupIdx = 0;
-  let showNegative = false;
-  let practiceHideAll = false;
-  let revealedRows = new Set();
+  const TOPIC_CHIPS = [
+    { id: 'all', label: 'All Grammar Rules' },
+    { id: 'reflexive', label: '🛏️ Reflexive (Se...)' },
+    { id: 'prepositions', label: '📍 Prépositions (en, au, à)' },
+    { id: 'se_faire', label: '🔒 Se faire + Infinitif' },
+    { id: 'maison', label: '🏠 Maison d’Être' },
+    { id: 'avoir', label: '🍎 Avoir Participles' },
+    { id: 'rules', label: '📋 Obligation & Interdiction' },
+    { id: 'negation', label: '🚫 ne...plus, ne...que' }
+  ];
+
+  // Runtime State
+  let currentTopic = 'all';
+  let activeQueue = [];
+  let currentIndex = 0;
+  let selectedTokens = []; // [{ id, text, isDistractor, trap, tip }]
+  let availableTokens = []; // [{ id, text, isDistractor, trap, tip }]
+  let cardState = 'assembling'; // 'assembling' | 'evaluated'
+  let evaluationResult = null; // { isCorrect, message, trapTips }
+  let sessionMistakes = []; // [{ card, chosenDistractors, trapNames }]
+  let isRemediationActive = false;
+
+  function shuffle(arr) {
+    const a = arr.slice();
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  function getFilteredChallenges(topicId) {
+    if (!topicId || topicId === 'all') return CHALLENGES.slice();
+    return CHALLENGES.filter(c => c.topic === topicId);
+  }
+
+  function startSession(topicId, queueOverride = null) {
+    currentTopic = topicId || 'all';
+    activeQueue = queueOverride || getFilteredChallenges(currentTopic);
+    currentIndex = 0;
+    sessionMistakes = [];
+    isRemediationActive = !!queueOverride;
+    prepareCard();
+    rerender();
+  }
+
+  function prepareCard() {
+    selectedTokens = [];
+    cardState = 'assembling';
+    evaluationResult = null;
+
+    if (!activeQueue.length || currentIndex >= activeQueue.length) return;
+
+    const card = activeQueue[currentIndex];
+    let tokens = [];
+
+    // Correct tokens
+    card.targetWords.forEach((word, idx) => {
+      tokens.push({
+        id: 't_corr_' + idx + '_' + Math.random().toString(36).substr(2, 4),
+        text: word,
+        isDistractor: false
+      });
+    });
+
+    // Distractor tokens (handcrafted tricky foils!)
+    if (card.distractors && card.distractors.length) {
+      card.distractors.forEach((d, idx) => {
+        tokens.push({
+          id: 't_dist_' + idx + '_' + Math.random().toString(36).substr(2, 4),
+          text: d.word,
+          isDistractor: true,
+          trap: d.trap,
+          tip: d.tip
+        });
+      });
+    }
+
+    availableTokens = shuffle(tokens);
+  }
 
   function esc(s) {
     return String(s ?? '').replace(/[&<>"']/g, m => ({
@@ -295,195 +492,424 @@
     }[m]));
   }
 
+  function renderScene(sceneName) {
+    if (typeof window.sceneSVG === 'function') {
+      const svg = window.sceneSVG(sceneName);
+      if (svg) return svg;
+    }
+    if (window.ParlezIllustrations && typeof window.ParlezIllustrations.scene === 'function') {
+      const inner = window.ParlezIllustrations.scene(sceneName);
+      if (inner) {
+        if (inner.startsWith('<svg') || inner.startsWith('<img') || inner.startsWith('<div')) return inner;
+        return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 340" role="img" focusable="false" style="width:100%;height:100%;display:block;">${inner}</svg>`;
+      }
+    }
+    return `<div style="height:160px;background:#f1f5f9;display:flex;align-items:center;justify-content:center;border-radius:14px;color:#64748b;font-weight:700;">🖼️ ${esc(sceneName)}</div>`;
+  }
+
+  function playAudio(text, rate = 0.83) {
+    if (window.ParlezAudio && typeof window.ParlezAudio.speak === 'function') {
+      window.ParlezAudio.speak(text, rate);
+    } else if (typeof window.say === 'function') {
+      window.say(text, rate);
+    }
+  }
+
+  function selectToken(tokenId) {
+    if (cardState === 'evaluated') return;
+    const idx = availableTokens.findIndex(t => t.id === tokenId);
+    if (idx === -1) return;
+    const token = availableTokens.splice(idx, 1)[0];
+    selectedTokens.push(token);
+    rerender();
+  }
+
+  function deselectToken(tokenId) {
+    if (cardState === 'evaluated') return;
+    const idx = selectedTokens.findIndex(t => t.id === tokenId);
+    if (idx === -1) return;
+    const token = selectedTokens.splice(idx, 1)[0];
+    availableTokens.push(token);
+    rerender();
+  }
+
+  function clearSelection() {
+    if (cardState === 'evaluated') return;
+    availableTokens = availableTokens.concat(selectedTokens);
+    selectedTokens = [];
+    rerender();
+  }
+
+  function checkSentence() {
+    if (!selectedTokens.length) return;
+    const card = activeQueue[currentIndex];
+    const userWords = selectedTokens.map(t => t.text);
+    const chosenDistractors = selectedTokens.filter(t => t.isDistractor);
+
+    // Check exact match with targetWords
+    const isExactMatch = userWords.length === card.targetWords.length &&
+      userWords.every((w, i) => w === card.targetWords[i]);
+
+    if (isExactMatch && chosenDistractors.length === 0) {
+      // 100% Correct!
+      cardState = 'evaluated';
+      evaluationResult = {
+        isCorrect: true,
+        message: '🎉 Bravo ! Sentence Flawlessly Built !',
+        trapTips: []
+      };
+      playAudio(card.fullSentence);
+    } else {
+      // Mistake!
+      cardState = 'evaluated';
+      const trapTips = [];
+      if (chosenDistractors.length > 0) {
+        chosenDistractors.forEach(d => {
+          trapTips.push(d.tip || 'Watch out: this is a deceptive distractor!');
+        });
+      } else {
+        trapTips.push('Word Order Error: The sentence pieces were not assembled in the correct grammatical order.');
+      }
+
+      evaluationResult = {
+        isCorrect: false,
+        message: '⚠️ Grammar Trap Detected !',
+        trapTips: trapTips
+      };
+
+      // Record to session mistakes for end-of-session remediation
+      sessionMistakes.push({
+        card: card,
+        chosenDistractors: chosenDistractors,
+        trapTips: trapTips
+      });
+
+      playAudio(card.fullSentence, 0.75);
+    }
+    rerender();
+  }
+
+  function nextCard() {
+    currentIndex++;
+    if (currentIndex < activeQueue.length) {
+      prepareCard();
+    }
+    rerender();
+  }
+
+  function startTargetedRemediation() {
+    // Build unique queue of cards missed during this session
+    const missedCards = [];
+    const seenIds = new Set();
+    sessionMistakes.forEach(m => {
+      if (!seenIds.has(m.card.id)) {
+        seenIds.add(m.card.id);
+        missedCards.push(m.card);
+      }
+    });
+
+    startSession(currentTopic, missedCards);
+    rerender();
+  }
+
   function rerender() {
-    const root = document.getElementById('grammar-map-root');
+    const root = document.getElementById('grammar-flashcards-root');
     if (root) {
       root.outerHTML = page();
     }
   }
 
-  function selectChapter(chId) {
-    activeChapterId = chId;
-    activeGroupIdx = 0;
-    revealedRows.clear();
-    rerender();
-  }
-
-  function selectGroup(idx) {
-    activeGroupIdx = Number(idx) || 0;
-    revealedRows.clear();
-    rerender();
-  }
-
-  function toggleNegativeMode() {
-    showNegative = !showNegative;
-    rerender();
-  }
-
-  function togglePracticeMode() {
-    practiceHideAll = !practiceHideAll;
-    revealedRows.clear();
-    rerender();
-  }
-
-  function toggleRowReveal(idx) {
-    const i = Number(idx);
-    if (revealedRows.has(i)) revealedRows.delete(i);
-    else revealedRows.add(i);
-    rerender();
-  }
-
   function page() {
-    const chapter = CHAPTERS.find(c => c.id === activeChapterId) || CHAPTERS[0];
-    const group = chapter.groups[activeGroupIdx] || chapter.groups[0];
+    // If entire queue is finished
+    if (activeQueue.length > 0 && currentIndex >= activeQueue.length) {
+      const totalStudied = activeQueue.length;
+      const mistakesCount = sessionMistakes.length;
+      const accuracy = Math.round(100 * Math.max(0, totalStudied - mistakesCount) / Math.max(1, totalStudied));
+
+      return `
+        <div id="grammar-flashcards-root" class="challenge-container" style="max-width: 680px; margin: 0 auto;">
+          <div class="review-card" style="padding: 24px 20px; text-align: center; border-radius: 20px;">
+            <div style="font-size: 48px; margin-bottom: 10px;">
+              ${mistakesCount === 0 ? '🏆' : '🎯'}
+            </div>
+            
+            <h2 style="font-size: 22px; margin-bottom: 6px;">
+              ${mistakesCount === 0 ? 'Flawless Grammar Mastery !' : 'Session Completed !'}
+            </h2>
+
+            <p class="small muted" style="margin-bottom: 16px;">
+              ${isRemediationActive 
+                ? 'Targeted practice complete. Great job locking in those tricky rules!' 
+                : `You finished all ${totalStudied} grammar cards with ${accuracy}% first-try accuracy.`}
+            </p>
+
+            ${mistakesCount > 0 && !isRemediationActive ? `
+              <div style="background: #fffbeb; border: 1.5px solid #fde68a; border-radius: 14px; padding: 14px; margin-bottom: 20px; text-align: left;">
+                <div style="font-size: 13px; font-weight: 800; color: #92400e; margin-bottom: 8px;">
+                  ⚠️ ${mistakesCount} Rule ${mistakesCount === 1 ? 'Trap' : 'Traps'} Encountered:
+                </div>
+                <div style="display: grid; gap: 6px; font-size: 12.5px; color: #78350f;">
+                  ${sessionMistakes.map(m => `
+                    <div style="background: #ffffff; border: 1px solid #fef3c7; padding: 7px 10px; border-radius: 8px;">
+                      <b>${esc(m.card.topicLabel)} :</b> ${esc(m.trapTips[0] || 'Order mistake')}
+                    </div>
+                  `).join('')}
+                </div>
+                <div style="margin-top: 12px; text-align: center;">
+                  <button type="button" class="btn btn-primary btn-block" data-gflash-action="start-remediation" style="font-size: 14px;">
+                    🎯 Start Targeted Practice on Missed Rules (${mistakesCount})
+                  </button>
+                </div>
+              </div>
+            ` : ''}
+
+            <div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
+              <button type="button" class="btn btn-secondary" data-gflash-action="restart-all">
+                🔄 Study Deck Again
+              </button>
+              <button type="button" class="btn btn-white" data-gflash-topic="all">
+                All Topics
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // Normal Card Mode
+    if (!activeQueue.length) {
+      startSession('all');
+    }
+
+    const card = activeQueue[currentIndex];
+    const total = activeQueue.length;
+    const progressPct = Math.round((currentIndex / total) * 100);
 
     return `
-      <div id="grammar-map-root" class="challenge-container" style="max-width: 720px; margin: 0 auto;">
-        <h1 style="font-size: 19px; margin: 0 0 8px;">🗺️ Grammar Map & Full-Structure Table</h1>
-
-        <!-- 6 Organized Chapter Cards (Compact 3x2 Grid) -->
-        <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; margin-bottom: 10px;">
-          ${CHAPTERS.map(c => {
-            const active = c.id === chapter.id;
-            return `
-              <button type="button"
-                      data-gmap-chapter="${esc(c.id)}"
-                      style="text-align: left; padding: 7px 9px; border-radius: 10px; cursor: pointer; transition: all 0.15s ease; border: 1.5px solid ${active ? '#4f46e5' : '#e2e8f0'}; background: ${active ? '#4f46e5' : '#ffffff'}; color: ${active ? '#ffffff' : '#1e293b'}; box-shadow: ${active ? '0 3px 10px rgba(79,70,229,0.2)' : 'none'};">
-                <div style="font-size: 12px; font-weight: 800; line-height: 1.15; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${esc(c.number)}. ${esc(c.shortTitle)}</div>
-                <div style="font-size: 10px; opacity: ${active ? '0.9' : '0.65'}; margin-top: 2px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${esc(c.subtitle)}</div>
-              </button>
-            `;
-          }).join('')}
-        </div>
-
-        <!-- Master Formula & Memory Technique Banner -->
-        <div style="background: #f5f3ff; border: 1.5px solid #ddd6fe; border-radius: 12px; padding: 9px 12px; margin-bottom: 10px;">
-          <div style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: #4338ca; letter-spacing: 0.2px; margin-bottom: 3px;">
-            📐 ${esc(showNegative ? chapter.formulaNeg : chapter.formulaPos)}
-          </div>
-          <div style="font-size: 12px; color: #312e81; line-height: 1.35;">
-            💡 <b>Memory Hook:</b> ${esc(chapter.memoryHook)}
-          </div>
-        </div>
-
-        <!-- Sub-group Pills + Action Controls (Affirmative/Negative & Hide/Show) -->
-        <div style="display: flex; justify-content: space-between; align-items: center; gap: 6px; flex-wrap: wrap; margin-bottom: 8px;">
-          <div style="display: flex; gap: 5px; flex-wrap: wrap;">
-            ${chapter.groups.map((g, idx) => `
-              <button type="button"
-                      class="chip ${idx === activeGroupIdx ? 'active' : ''}"
-                      data-gmap-group="${idx}"
-                      style="font-size: 11.5px; padding: 5px 9px;">
-                ${esc(g.label)}
-              </button>
-            `).join('')}
-          </div>
-
-          <div style="display: flex; gap: 5px; flex-wrap: wrap;">
+      <div id="grammar-flashcards-root" class="challenge-container" style="max-width: 680px; margin: 0 auto;">
+        
+        <!-- Topic Filter Chips -->
+        <div style="display: flex; gap: 6px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 12px; -webkit-overflow-scrolling: touch;">
+          ${TOPIC_CHIPS.map(t => `
             <button type="button"
-                    class="btn btn-sm ${showNegative ? 'btn-primary' : 'btn-white'}"
-                    data-gmap-action="toggle-neg"
-                    style="font-size: 11.5px; padding: 5px 9px;">
-              ${showNegative ? '🚫 Negative / Alt' : '➕ Affirmative / 🚫 Neg'}
+                    class="chip ${currentTopic === t.id ? 'active' : ''}"
+                    data-gflash-topic="${esc(t.id)}"
+                    style="white-space: nowrap; font-size: 12px; padding: 5px 11px; flex-shrink: 0;">
+              ${esc(t.label)}
             </button>
-            <button type="button"
-                    class="btn btn-sm ${practiceHideAll ? 'btn-primary' : 'btn-secondary'}"
-                    data-gmap-action="toggle-hide"
-                    style="font-size: 11.5px; padding: 5px 9px;">
-              ${practiceHideAll ? '👁️ Show All' : '🙈 Hide to Test Yourself'}
-            </button>
-          </div>
+          `).join('')}
         </div>
 
-        <!-- Full-Structure Table Card -->
-        <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 16px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.03);">
-          <div style="background: #f8fafc; padding: 10px 14px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px;">
-            <div>
-              <strong style="font-size: 14px; color: #0f172a;">${esc(group.label)}</strong>
-              <span class="small muted" style="margin-left: 6px;">· ${esc(group.note)}</span>
+        <!-- Progress Header -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; padding: 0 4px;">
+          <div style="font-size: 12px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">
+            ${isRemediationActive ? '🎯 Targeted Practice' : '🗂️ Grammar Flashcard'} · Card ${currentIndex + 1} of ${total}
+          </div>
+          <span class="meta" style="font-size: 11px; margin: 0;">${esc(card.topicLabel)}</span>
+        </div>
+
+        <!-- The Flashcard -->
+        <div class="review-card hover-card" style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 18px rgba(0,0,0,0.04); margin-bottom: 14px;">
+          
+          <!-- Top: Flashcard Photo / Illustration -->
+          <div class="review-scene" style="height: 190px; background: #faf8f5; border-bottom: 1px solid #f1f5f9; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+            ${renderScene(card.scene)}
+          </div>
+
+          <!-- Direct Below Photo: English Prompt (User requirement: "dont hide the english in the reveal button. show it below the photo as well") -->
+          <div style="padding: 14px 18px 10px; border-bottom: 1px solid #f8fafc;">
+            <div style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: #818cf8; letter-spacing: 0.6px; margin-bottom: 4px;">
+              Sentence to Build:
             </div>
-            <span style="font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase;">
-              ${practiceHideAll ? '🎙️ Speak aloud, then tap row' : '🔊 Tap Listen on any row'}
-            </span>
+            <div style="font-size: 18px; font-weight: 800; color: #1e1b4b; line-height: 1.35;">
+              ${esc(card.english)}
+            </div>
           </div>
 
-          <div style="divide-y: 1px solid #f1f5f9;">
-            ${group.rows.map((r, idx) => {
-              const hidden = practiceHideAll && !revealedRows.has(idx);
-              const sentence = showNegative ? r.neg : r.pos;
-              const audioText = showNegative ? (r.audioNeg || r.neg) : (r.audioPos || r.pos);
-              return `
-                <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 11px 14px; border-bottom: 1px solid #f1f5f9; flex-wrap: wrap; background: ${idx % 2 === 1 ? '#fcfcfd' : '#ffffff'};">
-                  <div style="min-width: 125px; flex: 0 0 32%;">
-                    <span style="font-size: 13.5px; font-weight: 800; color: #334155;">${esc(r.subj)}</span>
-                  </div>
+          <!-- Sentence Assembly Strip -->
+          <div style="padding: 12px 18px; background: #fbfbfe; min-height: 64px; border-bottom: 1.5px dashed #e2e8f0;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <span style="font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase;">
+                Your Assembled Sentence:
+              </span>
+              ${selectedTokens.length > 0 && cardState === 'assembling' ? `
+                <button type="button" data-gflash-action="clear-words" style="background: none; border: none; color: #ef4444; font-size: 11.5px; font-weight: 700; cursor: pointer; padding: 0;">
+                  ↺ Reset Words
+                </button>
+              ` : ''}
+            </div>
 
-                  <div style="flex: 1; min-width: 180px; display: flex; align-items: center; justify-content: space-between; gap: 8px;">
-                    ${hidden ? `
-                      <button type="button"
-                              data-gmap-reveal-row="${idx}"
-                              style="width: 100%; text-align: left; padding: 8px 12px; border-radius: 10px; border: 1.5px dashed #a5b4fc; background: #eef2ff; color: #4338ca; font-size: 13px; font-weight: 700; cursor: pointer;">
-                        🎙️ Say aloud for "${esc(r.subj)}" → Tap to check
-                      </button>
-                    ` : `
-                      <div style="flex: 1;">
-                        <div style="font-size: 15px; font-weight: 800; color: #1e1b4b; line-height: 1.3;">
-                          ${esc(sentence)}
-                        </div>
-                        <div style="font-size: 11.5px; font-weight: 600; color: #059669; margin-top: 2px;">
-                          ✓ ${esc(r.rule)}
-                        </div>
-                      </div>
-                      <button type="button"
-                              class="round-btn btn-sm"
-                              data-say="${esc(audioText)}"
-                              aria-label="Listen"
-                              title="Listen"
-                              style="flex-shrink: 0;">
-                        🔊
-                      </button>
-                    `}
+            <!-- Placed Words Strip -->
+            <div style="display: flex; flex-wrap: wrap; gap: 7px; min-height: 38px; align-items: center;">
+              ${selectedTokens.length === 0 ? `
+                <span style="color: #94a3b8; font-size: 13.5px; font-style: italic;">
+                  Tap the words below in order to build the sentence...
+                </span>
+              ` : selectedTokens.map((t, idx) => `
+                <button type="button"
+                        data-gflash-deselect="${esc(t.id)}"
+                        ${cardState === 'evaluated' ? 'disabled' : ''}
+                        style="display: inline-flex; align-items: center; gap: 5px; background: #eef2ff; border: 1.5px solid #818cf8; color: #3730a3; padding: 7px 12px; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; transition: transform 0.1s ease; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                  <span>${esc(t.text)}</span>
+                  ${cardState === 'assembling' ? `<span style="font-size: 13px; opacity: 0.6;">✕</span>` : ''}
+                </button>
+              `).join('')}
+            </div>
+          </div>
+
+          <!-- Word Bank (Tiles to choose, including deceptive distractors!) -->
+          ${cardState === 'assembling' ? `
+            <div style="padding: 16px 18px 20px;">
+              <div style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: #64748b; margin-bottom: 10px; letter-spacing: 0.5px;">
+                Word Bank (Select one by one · Beware of deceptive traps!):
+              </div>
+              <div style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;">
+                ${availableTokens.map(t => `
+                  <button type="button"
+                          data-gflash-select="${esc(t.id)}"
+                          style="background: #ffffff; border: 1.5px solid #cbd5e1; color: #1e293b; padding: 9px 15px; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; transition: all 0.12s ease; box-shadow: 0 2px 5px rgba(0,0,0,0.04); min-height: 42px;">
+                    ${esc(t.text)}
+                  </button>
+                `).join('')}
+              </div>
+
+              <!-- Check Sentence Button -->
+              <div style="margin-top: 18px;">
+                <button type="button"
+                        class="btn btn-primary btn-block btn-lg"
+                        data-gflash-action="check-sentence"
+                        ${selectedTokens.length === 0 ? 'disabled' : ''}
+                        style="font-size: 15px; border-radius: 14px;">
+                  ✓ Check Sentence
+                </button>
+              </div>
+            </div>
+          ` : `
+            <!-- Revealed State / Feedback Card -->
+            <div style="padding: 18px; animation: fadeIn 0.2s ease;">
+              
+              <!-- Result Alert Banner -->
+              <div style="background: ${evaluationResult.isCorrect ? '#ecfdf5' : '#fff1f2'}; border: 1.5px solid ${evaluationResult.isCorrect ? '#6ee7b7' : '#fca5a5'}; border-radius: 14px; padding: 12px 14px; margin-bottom: 14px;">
+                <div style="font-size: 14px; font-weight: 800; color: ${evaluationResult.isCorrect ? '#065f46' : '#991b1b'}; display: flex; align-items: center; gap: 6px;">
+                  ${esc(evaluationResult.message)}
+                </div>
+                ${!evaluationResult.isCorrect ? `
+                  <div style="margin-top: 6px; font-size: 12.5px; color: #b91c1c; line-height: 1.4;">
+                    ${evaluationResult.trapTips.map(tip => `<div>• <b>${esc(tip)}</b></div>`).join('')}
+                  </div>
+                ` : ''}
+              </div>
+
+              <!-- Correct Spoken French Bar with Audio Buttons -->
+              <div style="background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 14px; padding: 14px 16px; margin-bottom: 12px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                  <span style="font-size: 10.5px; font-weight: 800; text-transform: uppercase; color: #64748b; letter-spacing: 0.5px;">Correct Spoken French</span>
+                  <div style="display: flex; gap: 6px;">
+                    <button type="button" class="btn btn-secondary btn-sm" data-gflash-say="${esc(card.fullSentence)}">
+                      🔊 Listen
+                    </button>
+                    <button type="button" class="btn btn-secondary btn-sm slow-btn" data-gflash-slow="${esc(card.fullSentence)}">
+                      🐢 0.6x Slow
+                    </button>
                   </div>
                 </div>
-              `;
-            }).join('')}
-          </div>
+                <div style="font-size: 19px; font-weight: 800; color: #1e1b4b; line-height: 1.3;">
+                  ${esc(card.fullSentence)}
+                </div>
+              </div>
+
+              <!-- Succinct Grammar Rule Note -->
+              <div style="background: #fdf4ff; border: 1px solid #f5d0fe; border-radius: 12px; padding: 10px 14px; margin-bottom: 16px; font-size: 12.5px; color: #701a75; line-height: 1.45;">
+                💡 <b>Grammar Rule:</b> ${esc(card.rule)}
+              </div>
+
+              <!-- Next Button -->
+              <button type="button"
+                      class="btn btn-primary btn-block btn-lg"
+                      data-gflash-action="next-card"
+                      style="font-size: 15px; border-radius: 14px;">
+                ${currentIndex + 1 < total ? 'Next Sentence ➜' : 'Complete Session 🏁'}
+              </button>
+            </div>
+          `}
+        </div>
+
+        <!-- Session Progress Mini Track -->
+        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: #94a3b8; padding: 0 6px;">
+          <span>Session Accuracy: <b>${Math.max(0, currentIndex - sessionMistakes.length)} / ${Math.max(1, currentIndex + (cardState === 'evaluated' ? 1 : 0))}</b></span>
+          ${sessionMistakes.length > 0 ? `<span style="color: #ef4444; font-weight: 700;">⚠️ ${sessionMistakes.length} mistakes saved for end practice</span>` : '<span style="color: #10b981; font-weight: 700;">✓ 0 Mistakes</span>'}
         </div>
       </div>
     `;
   }
 
+  // Event Listeners for Flashcard Interactions
   document.addEventListener('click', function (e) {
     const btn = e.target.closest('button');
     if (!btn) return;
 
-    if (btn.dataset.gmapChapter) {
-      selectChapter(btn.dataset.gmapChapter);
+    if (btn.dataset.gflashTopic) {
+      startSession(btn.dataset.gflashTopic);
+      rerender();
       return;
     }
-    if (btn.dataset.gmapGroup !== undefined) {
-      selectGroup(btn.dataset.gmapGroup);
+
+    if (btn.dataset.gflashSelect) {
+      selectToken(btn.dataset.gflashSelect);
       return;
     }
-    if (btn.dataset.gmapAction === 'toggle-neg') {
-      toggleNegativeMode();
+
+    if (btn.dataset.gflashDeselect) {
+      deselectToken(btn.dataset.gflashDeselect);
       return;
     }
-    if (btn.dataset.gmapAction === 'toggle-hide') {
-      togglePracticeMode();
+
+    if (btn.dataset.gflashAction === 'clear-words') {
+      clearSelection();
       return;
     }
-    if (btn.dataset.gmapRevealRow !== undefined) {
-      toggleRowReveal(btn.dataset.gmapRevealRow);
+
+    if (btn.dataset.gflashAction === 'check-sentence') {
+      checkSentence();
+      return;
+    }
+
+    if (btn.dataset.gflashAction === 'next-card') {
+      nextCard();
+      return;
+    }
+
+    if (btn.dataset.gflashAction === 'start-remediation') {
+      startTargetedRemediation();
+      return;
+    }
+
+    if (btn.dataset.gflashAction === 'restart-all') {
+      startSession(currentTopic);
+      rerender();
+      return;
+    }
+
+    if (btn.dataset.gflashSay) {
+      playAudio(btn.dataset.gflashSay, 0.83);
+      return;
+    }
+
+    if (btn.dataset.gflashSlow) {
+      playAudio(btn.dataset.gflashSlow, 0.6);
       return;
     }
   });
 
+  // Initialize
+  startSession('all');
+
   window.ParlezChallenge = {
     page,
-    selectChapter,
-    selectGroup,
-    toggleNegativeMode,
-    togglePracticeMode
+    startSession,
+    selectToken,
+    deselectToken,
+    checkSentence,
+    nextCard
   };
 })();
