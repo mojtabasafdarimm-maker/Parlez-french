@@ -1023,7 +1023,7 @@ function persist(){
 persist();
 let view='home',reviewSession=null,revealed=false,promptPeeked=false,libSearch='',libTopic='All',libType='All',modalOpen=false,editId=null,editImage=null,editScene='wake',gramTab='All',grammarInput='',grammarFeedback='',grammarAt=0,speakAt=0,speakShown=false,speakHint=false,speakResponse='',speakResult='';
 let vocabSession=null,vocabLessonFilter='All',vocabTopicFilter='All',vocabGenderFilter='All',vocabSearch='';
-let grammarSubView='game',grammarTopicFilter='All',grammarSession=null;
+let grammarSubView='challenge',grammarTopicFilter='All',grammarSession=null;
 let drillGroupFilter='all',drillVerbId='parler',drillPronounKey='je',drillRevealed=false;
 function todayHistory(){return activeProfile().history.filter(e=>todayKey(e.time)===todayKey());}
 function lastStreak(){const dates=new Set(activeProfile().history.map(e=>todayKey(e.time)));let streak=0;let d=new Date();if(!dates.has(todayKey(d)))d.setDate(d.getDate()-1);while(dates.has(todayKey(d))){streak++;d.setDate(d.getDate()-1);}return streak;}
@@ -1757,11 +1757,12 @@ function conjugationDrillPage(){
 function grammarPage(){
   return `<div>
     ${grammarSession?'':`<div class="tabline" style="margin-bottom:12px;flex-wrap:wrap;gap:6px">
-      <button class="chip ${grammarSubView==='game'?'active':''}" data-grammar-subview="game">🎮 Verb Game</button>
+      <button class="chip ${grammarSubView==='challenge'?'active':''}" data-grammar-subview="challenge">🎯 Sentence Challenge</button>
       <button class="chip ${grammarSubView==='drills'?'active':''}" data-grammar-subview="drills">🧩 Verb Drills</button>
+      <button class="chip ${grammarSubView==='game'?'active':''}" data-grammar-subview="game">🎮 Verb Game</button>
       <button class="chip ${grammarSubView==='cards'?'active':''}" data-grammar-subview="cards">🗂️ Rules</button>
     </div>`}
-    ${grammarSubView==='game'?window.ParlezGrammarGame.page():(grammarSubView==='drills'?conjugationDrillPage():(grammarSession?grammarCardSessionView():grammarFlashcardsView()))}
+    ${grammarSubView==='challenge'&&window.ParlezChallenge?window.ParlezChallenge.page():(grammarSubView==='game'?window.ParlezGrammarGame.page():(grammarSubView==='drills'?conjugationDrillPage():(grammarSession?grammarCardSessionView():grammarFlashcardsView())))}
   </div>`;
 }
 function grammarPracticePage(){let groups=['All',...new Set(grammarExercises.map(g=>g.group))],filtered=grammarExercises.filter(g=>gramTab==='All'||g.group===gramTab);return `<div><div class="eyebrow">LEARN BY DOING</div><h2>Other practice</h2><div class="tabline">${groups.map(t=>`<button class="chip ${t===gramTab?'active':''}" data-gramtab="${esc(t)}">${esc(t)}</button>`).join('')}</div><div class="exercise">${filtered.map((g,i)=>`<div class="exercise-card"><div class="review-scene">${sceneSVG(g.scene)}<span class="corner">${esc(g.group)}</span></div><h3 style="margin:17px 0 5px">${esc(g.title)}</h3><div class="small muted" style="margin-bottom:8px">${esc(g.prompt)}</div><p style="font-weight:600">${esc(g.fill)}</p><div class="field"><label for="gr-${grammarExercises.indexOf(g)}">Fill the blank</label><input class="input" id="gr-${grammarExercises.indexOf(g)}" data-grammar-input="${grammarExercises.indexOf(g)}" placeholder="Type the missing word" autocomplete="off"/></div><button class="btn btn-secondary" data-check-grammar="${grammarExercises.indexOf(g)}">Check answer</button><div id="res-${grammarExercises.indexOf(g)}"></div></div>`).join('')}</div></div>`;}
@@ -2141,5 +2142,5 @@ const initialHash=location.hash.slice(1);if(['home','vocab','review','grammar','
 if('serviceWorker' in navigator && location.protocol.startsWith('http')){
   let refreshing=false;
   navigator.serviceWorker.addEventListener('controllerchange',()=>{if(!refreshing){refreshing=true;location.reload();}});
-  navigator.serviceWorker.register('./sw.js?v=28').then(reg=>reg.update()).catch(()=>{});
+  navigator.serviceWorker.register('./sw.js?v=29').then(reg=>reg.update()).catch(()=>{});
 }
