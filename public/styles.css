@@ -1241,3 +1241,130 @@
   from { opacity: 0; transform: translateY(6px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+/* Minimalistic Home Page & Collapsible Dropdowns */
+.home-minimal-hero {
+  padding: 32px 34px;
+  min-height: auto !important;
+}
+.home-minimal-hero h1 {
+  margin-bottom: 8px;
+}
+.home-summary-line {
+  margin: 0 0 20px !important;
+  font-size: 15px;
+  color: #545770;
+}
+.home-primary-cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.home-secondary-hint {
+  margin-top: 10px;
+  position: relative;
+  z-index: 2;
+}
+.gflash-scene .card-corner-mem {
+  right: 12px;
+}
+.gflash-scene .corner {
+  max-width: calc(100% - 175px);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.home-stats-compact {
+  margin-top: 16px;
+}
+.home-dropdowns {
+  display: grid;
+  gap: 10px;
+  margin-top: 18px;
+}
+.home-dropdown {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  overflow: hidden;
+}
+.home-dropdown-summary {
+  list-style: none;
+  cursor: pointer;
+  padding: 15px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--ink);
+  user-select: none;
+}
+.home-dropdown-summary > span:last-child {
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.home-dropdown-summary::-webkit-details-marker {
+  display: none;
+}
+.home-dropdown-summary:hover {
+  background: #faf9fd;
+}
+.home-dropdown[open] .home-dropdown-summary {
+  border-bottom: 1px solid #f0eff5;
+}
+.home-dropdown-body {
+  padding: 14px 18px 18px;
+}
+.home-mastery-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.home-tools-list {
+  display: grid;
+  gap: 6px;
+  padding: 10px 12px;
+}
+.home-tool-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  padding: 12px 12px;
+  border: 0;
+  border-radius: 12px;
+  background: #faf9fd;
+  color: var(--ink);
+  font-weight: 600;
+  font-size: 14px;
+  text-align: left;
+}
+.home-tool-row span:first-child {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+.home-tool-row svg {
+  width: 18px;
+  height: 18px;
+  color: var(--purple);
+}
+.home-tool-row:hover {
+  background: #efecfb;
+}
+@media (max-width: 570px) {
+  .home-minimal-hero {
+    padding: 22px 20px !important;
+  }
+  .home-minimal-hero .btn-lg {
+    width: 100%;
+  }
+  .home-dropdown-summary {
+    padding: 14px 15px;
+    font-size: 13.5px;
+  }
+}

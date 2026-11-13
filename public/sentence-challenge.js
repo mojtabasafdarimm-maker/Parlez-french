@@ -407,6 +407,7 @@
 
   const TOPIC_CHIPS = [
     { id: 'all', label: 'All Grammar Rules' },
+    { id: 'due', label: '🧠 Due & New Today' },
     { id: 'reflexive', label: '🛏️ Reflexive (Se...)' },
     { id: 'prepositions', label: '📍 Prépositions (en, au, à)' },
     { id: 'se_faire', label: '🔒 Se faire + Infinitif' },
@@ -416,7 +417,7 @@
     { id: 'negation', label: '🚫 ne...plus, ne...que' }
   ];
 
-  // Runtime State
+  // Standalone Runtime State
   let currentTopic = 'all';
   let activeQueue = [];
   let currentIndex = 0;
@@ -427,6 +428,13 @@
   let sessionMistakes = []; // [{ card, chosenDistractors, trapNames }]
   let isRemediationActive = false;
 
+  // Embedded Unified Review State
+  let embeddedCardId = null;
+  let embeddedSelected = [];
+  let embeddedAvailable = [];
+  let embeddedCardState = 'assembling';
+  let embeddedEval = null;
+
   function shuffle(arr) {
     const a = arr.slice();
     for (let i = a.length - 1; i > 0; i--) {
@@ -436,9 +444,59 @@
     return a;
   }
 
+  function getChallenges() {
+    return CHALLENGES;
+  }
+
+  function getById(id) {
+    return CHALLENGES.find(c => c.id === id) || null;
+  }
+
   function getFilteredChallenges(topicId) {
+    if (topicId === 'due') {
+      const now = Date.now();
+      const fsrs = window.ParlezFSRS;
+      if (fsrs) {
+        const learning = [];
+        const due = [];
+        const unseen = [];
+        CHALLENGES.forEach(c => {
+          const p = fsrs.grammarProgressFor(c.id);
+          if (!p.lastReviewed || p.reviews === 0) unseen.push(c);
+          else if (p.interval === 0) learning.push(c);
+          else if (!p.dueAt || p.dueAt <= now) due.push(c);
+        });
+        const allowance = fsrs.remainingDailyNewAllowance ? fsrs.remainingDailyNewAllowance() : 10;
+        const combined = [...learning, ...due, ...unseen.slice(0, Math.max(0, allowance))];
+        return combined;
+      }
+    }
     if (!topicId || topicId === 'all') return CHALLENGES.slice();
     return CHALLENGES.filter(c => c.topic === topicId);
+  }
+
+  function buildTokensForCard(card) {
+    if (!card) return [];
+    const tokens = [];
+    card.targetWords.forEach((word, idx) => {
+      tokens.push({
+        id: 't_corr_' + idx + '_' + Math.random().toString(36).substr(2, 4),
+        text: word,
+        isDistractor: false
+      });
+    });
+    if (card.distractors && card.distractors.length) {
+      card.distractors.forEach((d, idx) => {
+        tokens.push({
+          id: 't_dist_' + idx + '_' + Math.random().toString(36).substr(2, 4),
+          text: d.word,
+          isDistractor: true,
+          trap: d.trap,
+          tip: d.tip
+        });
+      });
+    }
+    return shuffle(tokens);
   }
 
   function startSession(topicId, queueOverride = null) {
@@ -455,35 +513,33 @@
     selectedTokens = [];
     cardState = 'assembling';
     evaluationResult = null;
-
-    if (!activeQueue.length || currentIndex >= activeQueue.length) return;
-
-    const card = activeQueue[currentIndex];
-    let tokens = [];
-
-    // Correct tokens
-    card.targetWords.forEach((word, idx) => {
-      tokens.push({
-        id: 't_corr_' + idx + '_' + Math.random().toString(36).substr(2, 4),
-        text: word,
-        isDistractor: false
-      });
-    });
-
-    // Distractor tokens (handcrafted tricky foils!)
-    if (card.distractors && card.distractors.length) {
-      card.distractors.forEach((d, idx) => {
-        tokens.push({
-          id: 't_dist_' + idx + '_' + Math.random().toString(36).substr(2, 4),
-          text: d.word,
-          isDistractor: true,
-          trap: d.trap,
-          tip: d.tip
-        });
-      });
+    if (!activeQueue.length || currentIndex >= activeQueue.length) {
+      availableTokens = [];
+      return;
     }
+    availableTokens = buildTokensForCard(activeQueue[currentIndex]);
+  }
 
-    availableTokens = shuffle(tokens);
+  function prepareEmbeddedForId(id) {
+    const card = getById(id);
+    embeddedCardId = card ? card.id : null;
+    embeddedSelected = [];
+    embeddedCardState = 'assembling';
+    embeddedEval = null;
+    embeddedAvailable = card ? buildTokensForCard(card) : [];
+  }
+
+  function resetEmbeddedState() {
+    embeddedCardId = null;
+    embeddedSelected = [];
+    embeddedAvailable = [];
+    embeddedCardState = 'assembling';
+    embeddedEval = null;
+  }
+
+  function isEmbeddedModeActive() {
+    const root = document.getElementById('grammar-flashcards-root');
+    return !!(root && root.dataset.gflashEmbedded === 'true');
   }
 
   function esc(s) {
@@ -515,78 +571,146 @@
     }
   }
 
+  function getActiveState(embedded) {
+    if (embedded) {
+      return {
+        card: getById(embeddedCardId),
+        selected: embeddedSelected,
+        available: embeddedAvailable,
+        state: embeddedCardState,
+        evalRes: embeddedEval
+      };
+    }
+    return {
+      card: activeQueue[currentIndex] || null,
+      selected: selectedTokens,
+      available: availableTokens,
+      state: cardState,
+      evalRes: evaluationResult
+    };
+  }
+
   function selectToken(tokenId) {
-    if (cardState === 'evaluated') return;
-    const idx = availableTokens.findIndex(t => t.id === tokenId);
+    const embedded = isEmbeddedModeActive();
+    const st = getActiveState(embedded);
+    if (st.state === 'evaluated') return;
+    const idx = st.available.findIndex(t => t.id === tokenId);
     if (idx === -1) return;
-    const token = availableTokens.splice(idx, 1)[0];
-    selectedTokens.push(token);
+    const token = st.available.splice(idx, 1)[0];
+    st.selected.push(token);
     rerender();
   }
 
   function deselectToken(tokenId) {
-    if (cardState === 'evaluated') return;
-    const idx = selectedTokens.findIndex(t => t.id === tokenId);
+    const embedded = isEmbeddedModeActive();
+    const st = getActiveState(embedded);
+    if (st.state === 'evaluated') return;
+    const idx = st.selected.findIndex(t => t.id === tokenId);
     if (idx === -1) return;
-    const token = selectedTokens.splice(idx, 1)[0];
-    availableTokens.push(token);
+    const token = st.selected.splice(idx, 1)[0];
+    st.available.push(token);
     rerender();
   }
 
   function clearSelection() {
-    if (cardState === 'evaluated') return;
-    availableTokens = availableTokens.concat(selectedTokens);
-    selectedTokens = [];
+    const embedded = isEmbeddedModeActive();
+    if (embedded) {
+      if (embeddedCardState === 'evaluated') return;
+      embeddedAvailable = embeddedAvailable.concat(embeddedSelected);
+      embeddedSelected = [];
+    } else {
+      if (cardState === 'evaluated') return;
+      availableTokens = availableTokens.concat(selectedTokens);
+      selectedTokens = [];
+    }
     rerender();
   }
 
-  function checkSentence() {
-    if (!selectedTokens.length) return;
-    const card = activeQueue[currentIndex];
-    const userWords = selectedTokens.map(t => t.text);
-    const chosenDistractors = selectedTokens.filter(t => t.isDistractor);
-
-    // Check exact match with targetWords
+  function evaluateTokensForCard(card, selTokens) {
+    const userWords = selTokens.map(t => t.text);
+    const chosenDistractors = selTokens.filter(t => t.isDistractor);
     const isExactMatch = userWords.length === card.targetWords.length &&
       userWords.every((w, i) => w === card.targetWords[i]);
 
     if (isExactMatch && chosenDistractors.length === 0) {
-      // 100% Correct!
-      cardState = 'evaluated';
-      evaluationResult = {
+      playAudio(card.fullSentence);
+      return {
         isCorrect: true,
         message: '🎉 Bravo ! Sentence Flawlessly Built !',
-        trapTips: []
+        trapTips: [],
+        chosenDistractors
       };
-      playAudio(card.fullSentence);
-    } else {
-      // Mistake!
-      cardState = 'evaluated';
-      const trapTips = [];
-      if (chosenDistractors.length > 0) {
-        chosenDistractors.forEach(d => {
-          trapTips.push(d.tip || 'Watch out: this is a deceptive distractor!');
-        });
-      } else {
-        trapTips.push('Word Order Error: The sentence pieces were not assembled in the correct grammatical order.');
-      }
+    }
 
-      evaluationResult = {
-        isCorrect: false,
-        message: '⚠️ Grammar Trap Detected !',
-        trapTips: trapTips
-      };
-
-      // Record to session mistakes for end-of-session remediation
-      sessionMistakes.push({
-        card: card,
-        chosenDistractors: chosenDistractors,
-        trapTips: trapTips
+    const trapTips = [];
+    if (chosenDistractors.length > 0) {
+      chosenDistractors.forEach(d => {
+        trapTips.push(d.tip || 'Watch out: this is a deceptive distractor!');
       });
+    } else {
+      trapTips.push('Word Order Error: The sentence pieces were not assembled in the correct grammatical order.');
+    }
+    playAudio(card.fullSentence, 0.75);
+    return {
+      isCorrect: false,
+      message: '⚠️ Grammar Trap Detected !',
+      trapTips,
+      chosenDistractors
+    };
+  }
 
-      playAudio(card.fullSentence, 0.75);
+  function checkSentence() {
+    const embedded = isEmbeddedModeActive();
+    const st = getActiveState(embedded);
+    if (!st.selected.length || !st.card) return;
+
+    const result = evaluateTokensForCard(st.card, st.selected);
+    if (embedded) {
+      embeddedCardState = 'evaluated';
+      embeddedEval = result;
+      if (!result.isCorrect && window.ParlezFSRS?.recordGrammarMistakeInReview) {
+        window.ParlezFSRS.recordGrammarMistakeInReview(st.card, result.trapTips);
+      }
+    } else {
+      cardState = 'evaluated';
+      evaluationResult = result;
+      if (!result.isCorrect) {
+        sessionMistakes.push({
+          card: st.card,
+          chosenDistractors: result.chosenDistractors,
+          trapTips: result.trapTips
+        });
+      }
     }
     rerender();
+  }
+
+  function rateAndAdvance(level) {
+    const embedded = isEmbeddedModeActive();
+    if (embedded) {
+      if (embeddedCardId && window.ParlezFSRS?.rateGrammarInReview) {
+        window.ParlezFSRS.rateGrammarInReview(embeddedCardId, level);
+      }
+      return;
+    }
+
+    const card = activeQueue[currentIndex];
+    if (card && window.ParlezFSRS?.applyGrammarProgressRating) {
+      const next = window.ParlezFSRS.applyGrammarProgressRating(card.id, level);
+      if (!isRemediationActive) {
+        if (next.requeue === 'soon') {
+          const remaining = activeQueue.length - currentIndex - 1;
+          if (remaining > 3) activeQueue.splice(currentIndex + 4, 0, card);
+          else activeQueue.push(card);
+        } else if (next.requeue === 'end') {
+          const pendingAfter = activeQueue.slice(currentIndex + 1);
+          if (!pendingAfter.some(x => x.id === card.id)) {
+            activeQueue.push(card);
+          }
+        }
+      }
+    }
+    nextCard();
   }
 
   function nextCard() {
@@ -598,7 +722,6 @@
   }
 
   function startTargetedRemediation() {
-    // Build unique queue of cards missed during this session
     const missedCards = [];
     const seenIds = new Set();
     sessionMistakes.forEach(m => {
@@ -614,13 +737,199 @@
 
   function rerender() {
     const root = document.getElementById('grammar-flashcards-root');
-    if (root) {
+    if (!root) return;
+    if (root.dataset.gflashEmbedded === 'true') {
+      const card = getById(embeddedCardId);
+      if (card) {
+        root.outerHTML = renderEmbeddedCard(card, {
+          index: Number(root.dataset.gflashIndex || 0),
+          total: Number(root.dataset.gflashTotal || 1)
+        });
+      }
+    } else {
       root.outerHTML = page();
     }
   }
 
+  function renderFlashcardBody(card, st, options = {}) {
+    const { embedded = false, index = 0, total = 1 } = options;
+    const fsrs = window.ParlezFSRS;
+    const mem = fsrs?.grammarCardMemoryStatus ? fsrs.grammarCardMemoryStatus(card.id) : null;
+    const sched = fsrs?.previewGrammarSchedule ? fsrs.previewGrammarSchedule(card.id) : {
+      again: { label: '< 10 min' },
+      hard: { label: '10 min' },
+      good: { label: '10m → 1 day' },
+      easy: { label: '4 days' }
+    };
+
+    const rateButtons = [
+      ['Again', sched.again.label, 'again'],
+      ['Hard', sched.hard.label, 'hard'],
+      ['Good', sched.good.label, 'good'],
+      ['Easy', sched.easy.label, 'easy']
+    ];
+
+    const isLast = !embedded && (index + 1 >= total);
+    const defaultSuggestAgain = st.evalRes && !st.evalRes.isCorrect;
+
+    return `
+      <!-- The Flashcard -->
+      <div class="review-card hover-card" style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 18px rgba(0,0,0,0.04); margin-bottom: 14px;">
+
+        <!-- Top: Flashcard Photo / Illustration -->
+        <div class="review-scene gflash-scene" style="height: 190px; background: #faf8f5; border-bottom: 1px solid #f1f5f9; display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative;">
+          ${renderScene(card.scene)}
+          <span class="corner">${esc(card.topicLabel)}</span>
+          ${mem ? `<span class="mem-badge card-corner-mem ${mem.badgeClass}">${mem.label}</span>` : ''}
+        </div>
+
+        <!-- Direct Below Photo: English Prompt (never hidden behind reveal) -->
+        <div style="padding: 14px 18px 10px; border-bottom: 1px solid #f8fafc;">
+          <div style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: #818cf8; letter-spacing: 0.6px; margin-bottom: 4px;">
+            Sentence to Build:
+          </div>
+          <div style="font-size: 18px; font-weight: 800; color: #1e1b4b; line-height: 1.35;">
+            ${esc(card.english)}
+          </div>
+        </div>
+
+        <!-- Sentence Assembly Strip -->
+        <div style="padding: 12px 18px; background: #fbfbfe; min-height: 64px; border-bottom: 1.5px dashed #e2e8f0;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <span style="font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase;">
+              Your Assembled Sentence:
+            </span>
+            ${st.selected.length > 0 && st.state === 'assembling' ? `
+              <button type="button" data-gflash-action="clear-words" style="background: none; border: none; color: #ef4444; font-size: 11.5px; font-weight: 700; cursor: pointer; padding: 0;">
+                ↺ Reset Words
+              </button>
+            ` : ''}
+          </div>
+
+          <div style="display: flex; flex-wrap: wrap; gap: 7px; min-height: 38px; align-items: center;">
+            ${st.selected.length === 0 ? `
+              <span style="color: #94a3b8; font-size: 13.5px; font-style: italic;">
+                Tap the words below in order to build the sentence...
+              </span>
+            ` : st.selected.map(t => `
+              <button type="button"
+                      data-gflash-deselect="${esc(t.id)}"
+                      ${st.state === 'evaluated' ? 'disabled' : ''}
+                      style="display: inline-flex; align-items: center; gap: 5px; background: #eef2ff; border: 1.5px solid #818cf8; color: #3730a3; padding: 7px 12px; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; transition: transform 0.1s ease; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                <span>${esc(t.text)}</span>
+                ${st.state === 'assembling' ? `<span style="font-size: 13px; opacity: 0.6;">✕</span>` : ''}
+              </button>
+            `).join('')}
+          </div>
+        </div>
+
+        ${st.state === 'assembling' ? `
+          <div style="padding: 16px 18px 20px;">
+            <div style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: #64748b; margin-bottom: 10px; letter-spacing: 0.5px;">
+              Word Bank (Select one by one · Beware of traps!):
+            </div>
+            <div style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;">
+              ${st.available.map(t => `
+                <button type="button"
+                        data-gflash-select="${esc(t.id)}"
+                        style="background: #ffffff; border: 1.5px solid #cbd5e1; color: #1e293b; padding: 9px 15px; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; transition: all 0.12s ease; box-shadow: 0 2px 5px rgba(0,0,0,0.04); min-height: 42px;">
+                  ${esc(t.text)}
+                </button>
+              `).join('')}
+            </div>
+
+            <div style="margin-top: 18px;">
+              <button type="button"
+                      class="btn btn-primary btn-block btn-lg"
+                      data-gflash-action="check-sentence"
+                      ${st.selected.length === 0 ? 'disabled' : ''}
+                      style="font-size: 15px; border-radius: 14px;">
+                ✓ Check Sentence
+              </button>
+            </div>
+          </div>
+        ` : `
+          <div style="padding: 18px; animation: fadeIn 0.2s ease;">
+            <div style="background: ${st.evalRes.isCorrect ? '#ecfdf5' : '#fff1f2'}; border: 1.5px solid ${st.evalRes.isCorrect ? '#6ee7b7' : '#fca5a5'}; border-radius: 14px; padding: 12px 14px; margin-bottom: 14px;">
+              <div style="font-size: 14px; font-weight: 800; color: ${st.evalRes.isCorrect ? '#065f46' : '#991b1b'}; display: flex; align-items: center; gap: 6px;">
+                ${esc(st.evalRes.message)}
+              </div>
+              ${!st.evalRes.isCorrect ? `
+                <div style="margin-top: 6px; font-size: 12.5px; color: #b91c1c; line-height: 1.4;">
+                  ${st.evalRes.trapTips.map(tip => `<div>• <b>${esc(tip)}</b></div>`).join('')}
+                </div>
+              ` : ''}
+            </div>
+
+            <div style="background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 14px; padding: 14px 16px; margin-bottom: 12px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; gap: 8px; flex-wrap: wrap;">
+                <span style="font-size: 10.5px; font-weight: 800; text-transform: uppercase; color: #64748b; letter-spacing: 0.5px;">Correct Spoken French</span>
+                <div style="display: flex; gap: 6px;">
+                  <button type="button" class="btn btn-secondary btn-sm" data-gflash-say="${esc(card.fullSentence)}">
+                    🔊 Listen
+                  </button>
+                  <button type="button" class="btn btn-secondary btn-sm slow-btn" data-gflash-slow="${esc(card.fullSentence)}">
+                    🐢 0.6x Slow
+                  </button>
+                </div>
+              </div>
+              <div style="font-size: 19px; font-weight: 800; color: #1e1b4b; line-height: 1.3;">
+                ${esc(card.fullSentence)}
+              </div>
+            </div>
+
+            <div style="background: #fdf4ff; border: 1px solid #f5d0fe; border-radius: 12px; padding: 10px 14px; margin-bottom: 14px; font-size: 12.5px; color: #701a75; line-height: 1.45;">
+              💡 <b>Grammar Rule:</b> ${esc(card.rule)}
+            </div>
+
+            <div class="small muted" style="text-align:center;margin-bottom:8px;font-size:11.5px;font-weight:700;">
+              ${defaultSuggestAgain ? 'Schedule & continue (Again recommended):' : `Rate to schedule${isLast ? ' & finish' : ' & continue'}:`}
+            </div>
+            <div class="rating-row" style="margin-top:0;">
+              ${rateButtons.map(([label, sub, rate]) => {
+                const isPrimary = defaultSuggestAgain ? rate === 'again' : rate === 'good';
+                const extraAttr = rate === 'good' ? 'data-gflash-action="next-card"' : '';
+                return `<button type="button" data-gflash-rate="${rate}" ${extraAttr} class="btn ${isPrimary ? 'btn-primary' : 'btn-white'}">${label}<span>${sub}</span></button>`;
+              }).join('')}
+            </div>
+          </div>
+        `}
+      </div>
+    `;
+  }
+
+  function renderEmbeddedCard(card, options = {}) {
+    if (!card) return '';
+    if (embeddedCardId !== card.id) {
+      prepareEmbeddedForId(card.id);
+    }
+    const st = getActiveState(true);
+    return `<div id="grammar-flashcards-root" data-gflash-embedded="true" data-gflash-index="${options.index || 0}" data-gflash-total="${options.total || 1}">
+      ${renderFlashcardBody(card, st, { embedded: true, index: options.index || 0, total: options.total || 1 })}
+    </div>`;
+  }
+
   function page() {
-    // If entire queue is finished
+    // Empty queue (e.g. 'due' filter when caught up)
+    if (activeQueue.length === 0 && currentTopic === 'due') {
+      return `
+        <div id="grammar-flashcards-root" class="challenge-container" style="max-width: 680px; margin: 0 auto;">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap;">
+            <span class="small muted" style="font-weight:700;">Grammar Flashcards</span>
+            <select id="gflash-topic-select" class="select select-sm" aria-label="Filter grammar flashcards">
+              ${TOPIC_CHIPS.map(t => `<option value="${esc(t.id)}" ${currentTopic === t.id ? 'selected' : ''}>${esc(t.label)}</option>`).join('')}
+            </select>
+          </div>
+          <div class="empty">
+            <div class="empty-emoji">✨</div>
+            <h2>Grammar Caught Up!</h2>
+            <p class="subline">All due grammar flashcards are scheduled. Switch to All Grammar Rules to practice anytime.</p>
+            <button type="button" class="btn btn-primary" data-gflash-topic="all">Practice All Rules</button>
+          </div>
+        </div>`;
+    }
+
+    // Completed session screen
     if (activeQueue.length > 0 && currentIndex >= activeQueue.length) {
       const totalStudied = activeQueue.length;
       const mistakesCount = sessionMistakes.length;
@@ -632,15 +941,15 @@
             <div style="font-size: 48px; margin-bottom: 10px;">
               ${mistakesCount === 0 ? '🏆' : '🎯'}
             </div>
-            
+
             <h2 style="font-size: 22px; margin-bottom: 6px;">
               ${mistakesCount === 0 ? 'Flawless Grammar Mastery !' : 'Session Completed !'}
             </h2>
 
             <p class="small muted" style="margin-bottom: 16px;">
-              ${isRemediationActive 
-                ? 'Targeted practice complete. Great job locking in those tricky rules!' 
-                : `You finished all ${totalStudied} grammar cards with ${accuracy}% first-try accuracy.`}
+              ${isRemediationActive
+                ? 'Targeted practice complete. Great job locking in those tricky rules!'
+                : `You finished ${totalStudied} grammar cards (${accuracy}% first-try accuracy) and scheduled them for Today’s Review.`}
             </p>
 
             ${mistakesCount > 0 && !isRemediationActive ? `
@@ -683,167 +992,40 @@
 
     const card = activeQueue[currentIndex];
     const total = activeQueue.length;
-    const progressPct = Math.round((currentIndex / total) * 100);
+    const st = getActiveState(false);
 
     return `
       <div id="grammar-flashcards-root" class="challenge-container" style="max-width: 680px; margin: 0 auto;">
-        
-        <!-- Topic Filter Chips -->
-        <div style="display: flex; gap: 6px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 12px; -webkit-overflow-scrolling: touch;">
-          ${TOPIC_CHIPS.map(t => `
-            <button type="button"
-                    class="chip ${currentTopic === t.id ? 'active' : ''}"
-                    data-gflash-topic="${esc(t.id)}"
-                    style="white-space: nowrap; font-size: 12px; padding: 5px 11px; flex-shrink: 0;">
-              ${esc(t.label)}
-            </button>
-          `).join('')}
-        </div>
 
-        <!-- Progress Header -->
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; padding: 0 4px;">
+        <!-- Clean Minimal Filter & Progress Header -->
+        <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 10px; flex-wrap: wrap;">
           <div style="font-size: 12px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">
-            ${isRemediationActive ? '🎯 Targeted Practice' : '🗂️ Grammar Flashcard'} · Card ${currentIndex + 1} of ${total}
+            ${isRemediationActive ? '🎯 Targeted Practice' : '🗂️ Grammar Flashcard'} · ${currentIndex + 1} / ${total}
           </div>
-          <span class="meta" style="font-size: 11px; margin: 0;">${esc(card.topicLabel)}</span>
+          <select id="gflash-topic-select" class="select select-sm" aria-label="Filter grammar flashcards">
+            ${TOPIC_CHIPS.map(t => `<option value="${esc(t.id)}" ${currentTopic === t.id ? 'selected' : ''}>${esc(t.label)}</option>`).join('')}
+          </select>
         </div>
 
-        <!-- The Flashcard -->
-        <div class="review-card hover-card" style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 18px rgba(0,0,0,0.04); margin-bottom: 14px;">
-          
-          <!-- Top: Flashcard Photo / Illustration -->
-          <div class="review-scene" style="height: 190px; background: #faf8f5; border-bottom: 1px solid #f1f5f9; display: flex; align-items: center; justify-content: center; overflow: hidden;">
-            ${renderScene(card.scene)}
-          </div>
-
-          <!-- Direct Below Photo: English Prompt (User requirement: "dont hide the english in the reveal button. show it below the photo as well") -->
-          <div style="padding: 14px 18px 10px; border-bottom: 1px solid #f8fafc;">
-            <div style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: #818cf8; letter-spacing: 0.6px; margin-bottom: 4px;">
-              Sentence to Build:
-            </div>
-            <div style="font-size: 18px; font-weight: 800; color: #1e1b4b; line-height: 1.35;">
-              ${esc(card.english)}
-            </div>
-          </div>
-
-          <!-- Sentence Assembly Strip -->
-          <div style="padding: 12px 18px; background: #fbfbfe; min-height: 64px; border-bottom: 1.5px dashed #e2e8f0;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-              <span style="font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase;">
-                Your Assembled Sentence:
-              </span>
-              ${selectedTokens.length > 0 && cardState === 'assembling' ? `
-                <button type="button" data-gflash-action="clear-words" style="background: none; border: none; color: #ef4444; font-size: 11.5px; font-weight: 700; cursor: pointer; padding: 0;">
-                  ↺ Reset Words
-                </button>
-              ` : ''}
-            </div>
-
-            <!-- Placed Words Strip -->
-            <div style="display: flex; flex-wrap: wrap; gap: 7px; min-height: 38px; align-items: center;">
-              ${selectedTokens.length === 0 ? `
-                <span style="color: #94a3b8; font-size: 13.5px; font-style: italic;">
-                  Tap the words below in order to build the sentence...
-                </span>
-              ` : selectedTokens.map((t, idx) => `
-                <button type="button"
-                        data-gflash-deselect="${esc(t.id)}"
-                        ${cardState === 'evaluated' ? 'disabled' : ''}
-                        style="display: inline-flex; align-items: center; gap: 5px; background: #eef2ff; border: 1.5px solid #818cf8; color: #3730a3; padding: 7px 12px; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; transition: transform 0.1s ease; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
-                  <span>${esc(t.text)}</span>
-                  ${cardState === 'assembling' ? `<span style="font-size: 13px; opacity: 0.6;">✕</span>` : ''}
-                </button>
-              `).join('')}
-            </div>
-          </div>
-
-          <!-- Word Bank (Tiles to choose, including deceptive distractors!) -->
-          ${cardState === 'assembling' ? `
-            <div style="padding: 16px 18px 20px;">
-              <div style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: #64748b; margin-bottom: 10px; letter-spacing: 0.5px;">
-                Word Bank (Select one by one · Beware of deceptive traps!):
-              </div>
-              <div style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;">
-                ${availableTokens.map(t => `
-                  <button type="button"
-                          data-gflash-select="${esc(t.id)}"
-                          style="background: #ffffff; border: 1.5px solid #cbd5e1; color: #1e293b; padding: 9px 15px; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; transition: all 0.12s ease; box-shadow: 0 2px 5px rgba(0,0,0,0.04); min-height: 42px;">
-                    ${esc(t.text)}
-                  </button>
-                `).join('')}
-              </div>
-
-              <!-- Check Sentence Button -->
-              <div style="margin-top: 18px;">
-                <button type="button"
-                        class="btn btn-primary btn-block btn-lg"
-                        data-gflash-action="check-sentence"
-                        ${selectedTokens.length === 0 ? 'disabled' : ''}
-                        style="font-size: 15px; border-radius: 14px;">
-                  ✓ Check Sentence
-                </button>
-              </div>
-            </div>
-          ` : `
-            <!-- Revealed State / Feedback Card -->
-            <div style="padding: 18px; animation: fadeIn 0.2s ease;">
-              
-              <!-- Result Alert Banner -->
-              <div style="background: ${evaluationResult.isCorrect ? '#ecfdf5' : '#fff1f2'}; border: 1.5px solid ${evaluationResult.isCorrect ? '#6ee7b7' : '#fca5a5'}; border-radius: 14px; padding: 12px 14px; margin-bottom: 14px;">
-                <div style="font-size: 14px; font-weight: 800; color: ${evaluationResult.isCorrect ? '#065f46' : '#991b1b'}; display: flex; align-items: center; gap: 6px;">
-                  ${esc(evaluationResult.message)}
-                </div>
-                ${!evaluationResult.isCorrect ? `
-                  <div style="margin-top: 6px; font-size: 12.5px; color: #b91c1c; line-height: 1.4;">
-                    ${evaluationResult.trapTips.map(tip => `<div>• <b>${esc(tip)}</b></div>`).join('')}
-                  </div>
-                ` : ''}
-              </div>
-
-              <!-- Correct Spoken French Bar with Audio Buttons -->
-              <div style="background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 14px; padding: 14px 16px; margin-bottom: 12px;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                  <span style="font-size: 10.5px; font-weight: 800; text-transform: uppercase; color: #64748b; letter-spacing: 0.5px;">Correct Spoken French</span>
-                  <div style="display: flex; gap: 6px;">
-                    <button type="button" class="btn btn-secondary btn-sm" data-gflash-say="${esc(card.fullSentence)}">
-                      🔊 Listen
-                    </button>
-                    <button type="button" class="btn btn-secondary btn-sm slow-btn" data-gflash-slow="${esc(card.fullSentence)}">
-                      🐢 0.6x Slow
-                    </button>
-                  </div>
-                </div>
-                <div style="font-size: 19px; font-weight: 800; color: #1e1b4b; line-height: 1.3;">
-                  ${esc(card.fullSentence)}
-                </div>
-              </div>
-
-              <!-- Succinct Grammar Rule Note -->
-              <div style="background: #fdf4ff; border: 1px solid #f5d0fe; border-radius: 12px; padding: 10px 14px; margin-bottom: 16px; font-size: 12.5px; color: #701a75; line-height: 1.45;">
-                💡 <b>Grammar Rule:</b> ${esc(card.rule)}
-              </div>
-
-              <!-- Next Button -->
-              <button type="button"
-                      class="btn btn-primary btn-block btn-lg"
-                      data-gflash-action="next-card"
-                      style="font-size: 15px; border-radius: 14px;">
-                ${currentIndex + 1 < total ? 'Next Sentence ➜' : 'Complete Session 🏁'}
-              </button>
-            </div>
-          `}
-        </div>
+        ${renderFlashcardBody(card, st, { embedded: false, index: currentIndex, total })}
 
         <!-- Session Progress Mini Track -->
         <div style="display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: #94a3b8; padding: 0 6px;">
           <span>Session Accuracy: <b>${Math.max(0, currentIndex - sessionMistakes.length)} / ${Math.max(1, currentIndex + (cardState === 'evaluated' ? 1 : 0))}</b></span>
-          ${sessionMistakes.length > 0 ? `<span style="color: #ef4444; font-weight: 700;">⚠️ ${sessionMistakes.length} mistakes saved for end practice</span>` : '<span style="color: #10b981; font-weight: 700;">✓ 0 Mistakes</span>'}
+          ${sessionMistakes.length > 0 ? `<span style="color: #ef4444; font-weight: 700;">⚠️ ${sessionMistakes.length} saved for end practice</span>` : '<span style="color: #10b981; font-weight: 700;">✓ 0 Mistakes</span>'}
         </div>
       </div>
     `;
   }
 
   // Event Listeners for Flashcard Interactions
+  document.addEventListener('change', function (e) {
+    if (e.target && e.target.id === 'gflash-topic-select') {
+      startSession(e.target.value);
+      rerender();
+    }
+  });
+
   document.addEventListener('click', function (e) {
     const btn = e.target.closest('button');
     if (!btn) return;
@@ -871,6 +1053,11 @@
 
     if (btn.dataset.gflashAction === 'check-sentence') {
       checkSentence();
+      return;
+    }
+
+    if (btn.dataset.gflashRate) {
+      rateAndAdvance(btn.dataset.gflashRate);
       return;
     }
 
@@ -906,6 +1093,11 @@
 
   window.ParlezChallenge = {
     page,
+    getChallenges,
+    getById,
+    renderEmbeddedCard,
+    prepareEmbeddedForId,
+    resetEmbeddedState,
     startSession,
     selectToken,
     deselectToken,
