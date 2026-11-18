@@ -1737,7 +1737,8 @@ function vocabCatalogView(){
     'A1.2 · Séances 7–8',
     'A1.2 · Séances 9–10',
     'A1.2 · Marché & Resto',
-    'A1.3 · Séances 1–2'
+    'A1.3 · Séances 1–2',
+    'A1.3 · Séances 3–4'
   ];
   const distinctTopics=['All',...new Set(allCards.map(c=>c.topic).filter(Boolean))];
   const pool=getVocabPool();
@@ -1753,7 +1754,8 @@ function vocabCatalogView(){
     'A1.2 · Séances 7–8':{title:'Vie quotidienne, Corvées & Invitations',desc:'Se réveiller, se lever, faire les courses, la vaisselle, la lessive, ça te dit de... ?',icon:'☕'},
     'A1.2 · Séances 9–10':{title:'Logement, Vide-grenier, Prépositions & Passé Composé',desc:'Déménager, emménager, louer un T2, meubles, électroménager, sur/sous/devant/derrière & passé composé (avoir).',icon:'🏠'},
     'A1.2 · Marché & Resto':{title:'Au Marché & Au Restaurant',desc:'Qu’est-ce qu’il vous faudra, tomates, laitue, oignons, l’addition s’il vous plaît.',icon:'🥖'},
-    'A1.3 · Séances 1–2':{title:'Voisinage, Règlements, Pannes, Maison d’Être & Se faire',desc:'Parties communes, ascenseur, plombier, serrurier, obligation/interdiction, Maison d’Être, pronominaux (se...) & se faire + infinitif.',icon:'🏢'}
+    'A1.3 · Séances 1–2':{title:'Voisinage, Règlements, Pannes, Maison d’Être & Se faire',desc:'Parties communes, ascenseur, plombier, serrurier, obligation/interdiction, Maison d’Être, pronominaux (se...) & se faire + infinitif.',icon:'🏢'},
+    'A1.3 · Séances 3–4':{title:'Pronoms COD & COI, Accord Passé, Pharmacie & Loisirs',desc:'Pronoms directs et indirects (le/la/les, lui/leur), accord passé composé avec avoir, connaître vs savoir, armoire à pharmacie, salle de sport & parc de loisirs.',icon:'🎯'}
   };
   const now = Date.now();
   const deckCardsHtml=distinctLessons.map(lessonKey=>{
@@ -2209,7 +2211,7 @@ function grammarPage(){
       <button class="chip ${grammarSubView==='study'?'active':''}" data-grammar-subview="study">📚 Grammar Tables &amp; Rules</button>
       <button class="chip ${grammarSubView==='drills'?'active':''}" data-grammar-subview="drills">🧩 Verb Drills</button>
       <button class="chip ${grammarSubView==='game'?'active':''}" data-grammar-subview="game">🎮 Verb Game</button>
-      <button class="chip ${grammarSubView==='cards'?'active':''}" data-grammar-subview="cards">📖 Rule Handbook</button>
+      <button class="chip ${grammarSubView==='cards'?'active':''}" data-grammar-subview="cards">📖 Rule Cards</button>
     </div>`}
     ${grammarSubView==='study'&&window.ParlezGrammarTables?window.ParlezGrammarTables.page():(grammarSubView==='challenge'&&window.ParlezChallenge?window.ParlezChallenge.page():(grammarSubView==='game'?window.ParlezGrammarGame.page():(grammarSubView==='drills'?conjugationDrillPage():(grammarSession?grammarCardSessionView():grammarFlashcardsView()))))}
   </div>`;

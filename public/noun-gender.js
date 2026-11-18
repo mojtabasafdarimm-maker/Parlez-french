@@ -99,7 +99,27 @@ window.ParlezGender = (() => {
     c2_canape_table_tapis: { gender: 'mf', article: 'un / une', bare: 'canapé (♂), une table basse (♀), un tapis (♂)', tip: 'un canapé and un tapis are Masculine (♂); une table basse is Feminine (♀).' },
     c2_oreiller_couverture: { gender: 'mf', article: 'un / une', bare: 'oreiller (♂), un coussin (♂), une couverture (♀)', tip: 'un oreiller (-er) and un coussin (-in) are Masculine (♂); une couverture (-ure) is Feminine (♀).' },
     c2_murs_rideaux: { gender: 'm', isPlural: true, article: 'les', singular: 'un mur / un rideau', bare: 'murs, les rideaux et un miroir', tip: 'un mur, un rideau (-eau), and un miroir (-oir) are all Masculine (♂ un/le)!' },
-    c2_electromenager: { gender: 'mf', article: 'un / une', bare: 'frigo (♂), un lave-linge (♂), une cuisinière (♀)', tip: 'un frigo, un lave-linge, un four à micro-ondes are Masculine (♂); une cuisinière (-ière) is Feminine (♀).' }
+    c2_electromenager: { gender: 'mf', article: 'un / une', bare: 'frigo (♂), un lave-linge (♂), une cuisinière (♀)', tip: 'un frigo, un lave-linge, un four à micro-ondes are Masculine (♂); une cuisinière (-ière) is Feminine (♀).' },
+    // Curriculum A1.3 Séances 3–4
+    c12_parc_loisirs: { gender: 'm', article: 'un', bare: 'parc de loisirs', tip: 'un parc is Masculine (♂ un/le parc).' },
+    c12_montagne_russe: { gender: 'f', article: 'la', bare: 'montagne russe', tip: 'Nouns ending in -agne (la montagne, la campagne) are Feminine (♀ une/la).' },
+    c12_manege: { gender: 'm', article: 'un', bare: 'manège', tip: 'Nouns ending in -ège (un manège, un piège, un privilège) are 100% Masculine (♂).' },
+    c12_aire_piquenique: { gender: 'f', article: 'une', bare: 'aire de pique-nique', tip: 'une aire is Feminine (♀ une aire), but le pique-nique is Masculine (♂).' },
+    c12_salle_sport: { gender: 'f', article: 'une', bare: 'salle de sport', tip: 'Nouns ending in -alle (une salle, une balle) are Feminine (♀ une/la).' },
+    c12_abonnement_sport: { gender: 'm', article: 'un', bare: 'abonnement', tip: 'Nouns ending in -ment (un abonnement, un appartement, un logement) are 100% Masculine (♂).' },
+    c12_cours_danse_yoga: { gender: 'm', article: 'un', bare: 'cours de danse / le yoga', tip: 'un cours (silent s) is Masculine (♂); le yoga and le sport are Masculine (♂).' },
+    c12_natation: { gender: 'f', article: 'la', bare: 'natation', tip: 'Nouns ending in -tion (la natation, la solution, l’invitation) are 100% Feminine (♀).' },
+    c12_armoire_pharmacie: { gender: 'f', article: 'une', bare: 'armoire à pharmacie', tip: 'une armoire is Feminine (♀ une armoire); la pharmacie (-ie) is 100% Feminine (♀).' },
+    c12_boite_pansements: { gender: 'f', article: 'une', bare: 'boîte de pansements', tip: 'une boîte is Feminine (♀ une boîte); un pansement (-ment) is Masculine (♂).' },
+    c12_thermometre: { gender: 'm', article: 'un', bare: 'thermomètre', tip: 'Nouns ending in -mètre (un thermomètre, un kilomètre) are 100% Masculine (♂).' },
+    c12_pommade_muscles: { gender: 'm', article: 'un', bare: 'tube de pommade', tip: 'un tube is Masculine (♂ un/le tube); une pommade is Feminine (♀).' },
+    c12_sirop_toux: { gender: 'm', article: 'un', bare: 'sirop pour la toux', tip: 'un sirop is Masculine (♂); la toux is Feminine (♀).' },
+    c12_comprimes_dormir: { gender: 'm', isPlural: true, article: 'des', singular: 'un comprimé', bare: 'comprimés pour dormir', tip: 'un comprimé (ending in accented -é) is Masculine (♂ un → des).' },
+    c12_aspirine: { gender: 'f', article: 'l’', targetArticle: 'une / la', bare: 'aspirine', tip: 'l’aspirine is Feminine: une aspirine (♀).' },
+    c12_pharmacien: { gender: 'mf', article: 'le / la', bare: 'pharmacien / pharmacienne', tip: 'un pharmacien (♂ -ien) becomes une pharmacienne (♀ -ienne).' },
+    c12_depanneur_panne: { gender: 'm', article: 'le', bare: 'dépanneur', tip: 'Nouns ending in -eur for professions (le dépanneur, le serveur, le chauffeur) are Masculine (♂).' },
+    c12_ticket_metro_composter: { gender: 'm', isExpr: true, noun: 'un ticket de métro', tip: 'Nouns ending in -et (un ticket, un livret, un bonnet) are 100% Masculine (♂).' },
+    c12_chemise_repasser_ranger: { gender: 'f', isExpr: true, noun: 'une chemise', tip: 'Nouns ending in -ise (une chemise, une valise, une surprise) are Feminine (♀).' }
   };
 
   // Fallback detector for user-created custom cards

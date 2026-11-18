@@ -61,7 +61,8 @@ function startServer() {
     page.on('pageerror', e => errors.push(e.message));
 
     console.log('Navigating to', url);
-    await page.goto(url);
+    await page.goto(url, { waitUntil: 'networkidle' });
+    await page.waitForTimeout(500);
 
     assert.equal(errors.length, 0, 'Page errors on load: ' + errors.join(', '));
 
@@ -76,7 +77,7 @@ function startServer() {
 
     const deckCards = await page.locator('.vocab-deck-card').count();
     console.log('Classroom deck cards visible in Vocab tab:', deckCards);
-    assert.equal(deckCards, 11, 'Expected 11 curriculum decks, got ' + deckCards);
+    assert.equal(deckCards, 13, 'Expected 13 curriculum decks, got ' + deckCards);
 
     await page.screenshot({ path: path.join(out, 'vocab-catalog-390.png'), fullPage: false });
 
@@ -160,6 +161,12 @@ function startServer() {
     console.log('Navigating to Grammar tab...');
     await page.locator('.bottom-nav [data-view="grammar"]').click();
     await page.waitForTimeout(200);
+
+    // Switch to Verb Game subview
+    if (await page.locator('[data-grammar-subview="game"]').count() > 0) {
+      await page.locator('[data-grammar-subview="game"]').click();
+      await page.waitForTimeout(200);
+    }
 
     // Verify Verb Game is open
     const hasPlayBtn = await page.locator('[data-game="start"]').count();

@@ -51,8 +51,8 @@ function startServer() {
   const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
 
   try {
-    await page.goto(url);
-    await page.waitForTimeout(300);
+    await page.goto(url, { waitUntil: 'networkidle' });
+    await page.waitForFunction(() => typeof state !== 'undefined');
 
     // 1. Check all cards coverage in state
     const stats = await page.evaluate(() => {
