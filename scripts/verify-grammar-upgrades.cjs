@@ -82,11 +82,11 @@ server.listen(0, '127.0.0.1', async () => {
 
     const modalTitle = await modalDialog.locator('h3').first().textContent();
     console.log('Modal title:', modalTitle.trim());
-    assert(modalTitle.includes('Passé Composé') || modalTitle.includes('Verbes Réflexifs'), 'Modal must show structure title');
+    assert(modalTitle.includes('Cause') || modalTitle.includes('Passé Composé') || modalTitle.includes('Verbes Réflexifs'), 'Modal must show structure title');
 
     const tableRowsCount = await modalDialog.locator('table tbody tr').count();
     console.log('Modal table rows count:', tableRowsCount);
-    assert(tableRowsCount >= 6, 'Table must contain complete subject conjugations');
+    assert(tableRowsCount >= 4, 'Table must contain reference rows');
 
     const trapsCount = await modalDialog.locator('div:has-text("Traps & Common Mistakes")').count();
     assert(trapsCount > 0, 'Must show traps and common mistakes box');

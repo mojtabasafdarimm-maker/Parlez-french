@@ -4,26 +4,28 @@ const { GRAMMAR_STRUCTURES } = require('./grammar-structures.cjs');
 const { CHALLENGES } = require('./grammar-challenges.cjs');
 
 const TOPIC_CHIPS = [
-  { id: 'all', label: 'All Grammar Rules' },
-  { id: 'due', label: '🧠 Due & New Today' },
-  { id: 'reflexive', label: '🛏️ Verbes Réflexifs' },
-  { id: 'maison', label: '🏠 Maison d’Être' },
+  { id: 'all', label: '🎯 Purposeful Learning Track (Curated Chains)' },
+  { id: 'showdowns', label: '⚖️ Grammar Showdowns & Contrasts (Pairs)' },
+  { id: 'shifts', label: '🔄 Subject Shifts & Agreement Rounds' },
+  { id: 'due', label: '🧠 Due & Smart Review (FSRS)' },
+  { id: 'cause', label: '⚡ Cause (Grâce à / À cause de / En raison de)' },
+  { id: 'neque', label: '🚫 Ne ... que (Restrictive Only)' },
   { id: 'se_faire', label: '🔒 Se faire + Infinitif' },
-  { id: 'neque', label: '🚫 Ne ... que (Only)' },
-  { id: 'cause', label: '⚡ Cause (Parce que / À cause de)' },
-  { id: 'rules', label: '📋 Obligation & Interdiction' },
-  { id: 'repairs', label: '🔧 Logement & Réparations' },
-  { id: 'sequence', label: '⏱️ Temps & Chronologie' },
-  { id: 'prepositions', label: '📍 Prépositions de Lieu' },
+  { id: 'reflexive', label: '🛏️ Verbes Réflexifs (Être)' },
+  { id: 'maison', label: '🏠 Maison d’Être (Movement Verbs)' },
   { id: 'cod_coi', label: '🎯 Pronoms COD & COI' },
   { id: 'connaitre_savoir', label: '💡 Connaître vs Savoir' },
-  { id: 'avoir', label: '🍎 Avoir Participles' }
+  { id: 'sequence', label: '⏱️ Temps & Chronologie' },
+  { id: 'rules', label: '📋 Obligation & Interdiction' },
+  { id: 'repairs', label: '🔧 Logement & Réparations' },
+  { id: 'prepositions', label: '📍 Prépositions de Lieu' },
+  { id: 'avoir', label: '🍎 Avoir Participles & Accord' }
 ];
 
-const jsContent = `// Parlez Grammar Flashcard Sentence Builder with Tricky Distractors & Targeted Remediation (v32)
+const jsContent = `// Parlez Grammar Flashcard Sentence Builder with Tricky Distractors & Targeted Remediation (v36)
 // Visual-first grammar learning with authentic scenes, prompt visible below photo,
 // interactive scrambled word builder with deceptive distractors, targeted remediation,
-// and accessible comprehensive Grammar Structure & Conjugation Reference Tables on every card.
+// purposeful pedagogical chaining, and accessible Grammar Structure Reference Tables on every card.
 (function () {
   const GRAMMAR_STRUCTURES = ${JSON.stringify(GRAMMAR_STRUCTURES, null, 2)};
 
@@ -86,6 +88,12 @@ const jsContent = `// Parlez Grammar Flashcard Sentence Builder with Tricky Dist
         return combined;
       }
     }
+    if (topicId === 'showdowns') {
+      return CHALLENGES.filter(c => c.chainType === 'contrast');
+    }
+    if (topicId === 'shifts') {
+      return CHALLENGES.filter(c => c.chainType === 'subject_shift');
+    }
     if (!topicId || topicId === 'all') return CHALLENGES.slice();
     return CHALLENGES.filter(c => c.topic === topicId);
   }
@@ -100,7 +108,8 @@ const jsContent = `// Parlez Grammar Flashcard Sentence Builder with Tricky Dist
         isDistractor: false
       });
     });
-    if (card.distractors && card.distractors.length) {
+
+    if (Array.isArray(card.distractors)) {
       card.distractors.forEach((d, idx) => {
         tokens.push({
           id: 't_dist_' + idx + '_' + Math.random().toString(36).substr(2, 4),
@@ -111,6 +120,7 @@ const jsContent = `// Parlez Grammar Flashcard Sentence Builder with Tricky Dist
         });
       });
     }
+
     return shuffle(tokens);
   }
 
@@ -400,36 +410,32 @@ const jsContent = `// Parlez Grammar Flashcard Sentence Builder with Tricky Dist
               \` : ''}
             </div>
 
-            <!-- Full Structure Reference Table -->
-            <div style="margin-bottom: 18px;">
-              <div style="font-size: 11.5px; font-weight: 800; text-transform: uppercase; color: #64748b; margin-bottom: 8px; letter-spacing: 0.5px; display: flex; justify-content: space-between; align-items: center;">
-                <span>📊 Reference Table & Conjugations:</span>
-                <span style="font-size: 11px; color: #818cf8; font-weight: 600;">Tap 🔊 to listen</span>
+            <!-- Full Conjugation / Paradigm Table -->
+            <div style="margin-bottom: 16px;">
+              <div style="font-size: 11.5px; font-weight: 800; text-transform: uppercase; margin-bottom: 8px; color: #1e293b;">
+                📋 Complete Reference Table:
               </div>
-              <div style="overflow-x: auto; border: 1.5px solid #e2e8f0; border-radius: 12px;">
-                <table style="width: 100%; border-collapse: collapse; font-size: 12.5px; text-align: left;">
-                  <thead>
-                    <tr style="background: #f8fafc; border-bottom: 1.5px solid #e2e8f0;">
-                      \${struct.headers.map(h => \`<th style="padding: 9px 10px; font-weight: 800; color: #334155; white-space: nowrap;">\${esc(h)}</th>\`).join('')}
+              <div class="gt-table-responsive" style="max-height: 280px; overflow-y: auto; border: 1px solid #e2e8f0; border-radius: 12px;">
+                <table class="gt-table" style="width: 100%; border-collapse: collapse; font-size: 12.5px; text-align: left;">
+                  <thead style="position: sticky; top: 0; background: #f8fafc; z-index: 1;">
+                    <tr style="border-bottom: 1.5px solid #cbd5e1;">
+                      \${struct.headers.map(h => \`<th style="padding: 8px 10px; font-weight: 800; color: #475569;">\${esc(h)}</th>\`).join('')}
+                      <th style="padding: 8px 10px; text-align: center; color: #475569;">Audio</th>
                     </tr>
                   </thead>
                   <tbody>
                     \${struct.rows.map((row, rIdx) => \`
-                      <tr style="border-bottom: 1px solid #f1f5f9; background: \${rIdx % 2 === 0 ? '#ffffff' : '#fcfcfd'};">
+                      <tr style="border-bottom: 1px solid #f1f5f9; background: \${rIdx % 2 === 0 ? '#ffffff' : '#fafafa'};">
                         \${row.map((cell, cIdx) => \`
-                          <td style="padding: 9px 10px; color: #1e293b; vertical-align: middle;">
-                            \${cIdx === (row.length - 2) ? \`
-                              <div style="display: flex; align-items: center; justify-content: space-between; gap: 6px;">
-                                <span style="font-weight: 700; color: #1e1b4b;">\${esc(cell)}</span>
-                                <button type="button" class="btn btn-secondary btn-sm" data-gflash-say="\${esc(cell)}" style="padding: 2px 7px; font-size: 11px; border-radius: 8px; flex-shrink: 0;">
-                                  🔊
-                                </button>
-                              </div>
-                            \` : \`
-                              \${cIdx === 0 ? \`<b>\${esc(cell)}</b>\` : esc(cell)}
-                            \`}
+                          <td style="padding: 8px 10px; \${cIdx === 0 ? 'font-weight: 800; color: #3730a3;' : (cIdx === 2 ? 'font-weight: 700; color: #e11d48;' : '')}">
+                            \${esc(cell)}
                           </td>
                         \`).join('')}
+                        <td style="padding: 8px 10px; text-align: center;">
+                          <button type="button" class="btn btn-secondary btn-sm" data-gflash-modal-say="\${esc(row[3] || row[0])}" style="padding: 2px 7px; font-size: 11px; border-radius: 6px;">
+                            🔊
+                          </button>
+                        </td>
                       </tr>
                     \`).join('')}
                   </tbody>
@@ -437,14 +443,14 @@ const jsContent = `// Parlez Grammar Flashcard Sentence Builder with Tricky Dist
               </div>
             </div>
 
-            <!-- Traps & Deceptive Foils Box -->
+            <!-- Traps & Common Mistakes -->
             \${struct.traps && struct.traps.length ? \`
-              <div style="background: #fff1f2; border: 1.5px solid #fca5a5; border-radius: 12px; padding: 12px 14px; margin-bottom: 14px;">
-                <div style="font-size: 11.5px; font-weight: 800; text-transform: uppercase; color: #991b1b; margin-bottom: 6px; letter-spacing: 0.5px;">
-                  ⚠️ Traps & Common Mistakes (Beware in Flashcards!):
+              <div style="background: #fff1f2; border: 1.5px solid #fecdd3; border-radius: 12px; padding: 12px 14px; margin-bottom: 16px;">
+                <div style="font-size: 11.5px; font-weight: 800; text-transform: uppercase; color: #be123c; margin-bottom: 6px; display: flex; align-items: center; gap: 5px;">
+                  ⚠️ Traps & Common Mistakes to Avoid:
                 </div>
-                <div style="display: grid; gap: 5px; font-size: 12px; color: #b91c1c; line-height: 1.4;">
-                  \${struct.traps.map(t => \`<div>\${esc(t)}</div>\`).join('')}
+                <div style="font-size: 12px; color: #9f1239; line-height: 1.45;">
+                  \${struct.traps.map(t => \`<div style="margin-bottom: 4px;">• \${esc(t)}</div>\`).join('')}
                 </div>
               </div>
             \` : ''}
@@ -498,6 +504,26 @@ const jsContent = `// Parlez Grammar Flashcard Sentence Builder with Tricky Dist
     return \`
       <!-- The Flashcard -->
       <div class="review-card hover-card" style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 18px rgba(0,0,0,0.04); margin-bottom: 14px;">
+
+        <!-- Top Pedagogical Chain & Intentional Link Header -->
+        <div style="background: linear-gradient(135deg, #f0f4ff 0%, #faf5ff 100%); padding: 10px 14px; border-bottom: 1.5px solid #e0e7ff; display: flex; flex-direction: column; gap: 4px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap;">
+            <span style="display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 800; text-transform: uppercase; color: #4338ca; letter-spacing: 0.5px; background: #e0e7ff; padding: 2px 8px; border-radius: 6px;">
+              \${card.chainType === 'contrast' ? '⚖️ Contrast Pair' : (card.chainType === 'subject_shift' ? '🔄 Subject Shift' : (card.chainType === 'rule_trap' ? '⚠️ Agreement Trap' : '🪜 Step-by-Step'))} · Step \${card.chainStep || 1} of \${card.chainTotal || 1}
+            </span>
+            <span style="font-size: 11px; font-weight: 700; color: #6b7280;">
+              \${esc(card.chainTitle ? card.chainTitle.split(':')[0] : card.topicLabel)}
+            </span>
+          </div>
+          <div style="font-size: 13px; font-weight: 800; color: #1e1b4b; line-height: 1.35; margin-top: 2px;">
+            \${esc(card.purpose || 'Intentional Practice')}
+          </div>
+          \${card.purposeNote ? \`
+            <div style="font-size: 11.5px; color: #4b5563; line-height: 1.4; background: rgba(255,255,255,0.7); padding: 5px 9px; border-radius: 8px; border-left: 3px solid #6366f1; margin-top: 2px;">
+              💡 <b>Connection:</b> \${esc(card.purposeNote)}
+            </div>
+          \` : ''}
+        </div>
 
         <!-- Top: Flashcard Photo / Illustration -->
         <div class="review-scene gflash-scene" style="height: 190px; background: #faf8f5; border-bottom: 1px solid #f1f5f9; display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative;">
@@ -612,7 +638,7 @@ const jsContent = `// Parlez Grammar Flashcard Sentence Builder with Tricky Dist
               </div>
             </div>
 
-            <!-- Grammar Rule Box with Button to view Structure Table -->
+            <!-- Grammar Rule Box with Button to view Structure Table & Next Preview -->
             <div style="background: #fdf4ff; border: 1px solid #f5d0fe; border-radius: 12px; padding: 12px 14px; margin-bottom: 14px; font-size: 12.5px; color: #701a75; line-height: 1.45;">
               <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 4px;">
                 <div>💡 <b>Grammar Rule:</b> \${esc(card.rule)}</div>
@@ -620,6 +646,12 @@ const jsContent = `// Parlez Grammar Flashcard Sentence Builder with Tricky Dist
                   📊 Structure Table
                 </button>
               </div>
+              \${card.nextPreview ? \`
+                <div style="background: rgba(255, 255, 255, 0.7); border: 1px solid #f0abfc; border-radius: 8px; padding: 6px 10px; margin-top: 8px; font-size: 11.5px; color: #86198f; display: flex; align-items: flex-start; gap: 6px;">
+                  <span style="font-weight: 800;">➜</span>
+                  <div><b>Next card purpose:</b> \${esc(card.nextPreview)}</div>
+                </div>
+              \` : ''}
             </div>
 
             <div class="small muted" style="text-align:center;margin-bottom:8px;font-size:11.5px;font-weight:700;">
@@ -654,7 +686,7 @@ const jsContent = `// Parlez Grammar Flashcard Sentence Builder with Tricky Dist
     // Empty queue (e.g. 'due' filter when caught up)
     if (activeQueue.length === 0 && currentTopic === 'due') {
       return \`
-        <div id="grammar-flashcards-root" class="challenge-container" style="max-width: 680px; margin: 0 auto;">
+        <div id="grammar-flashcards-root">
           <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap;">
             <span class="small muted" style="font-weight:700;">Grammar Flashcards</span>
             <select id="gflash-topic-select" class="select select-sm" aria-label="Filter grammar flashcards">
@@ -674,55 +706,57 @@ const jsContent = `// Parlez Grammar Flashcard Sentence Builder with Tricky Dist
       \`;
     }
 
-    // Finished session
-    if (activeQueue.length > 0 && currentIndex >= activeQueue.length) {
+    // End-of-Session Screen with Targeted Remediation
+    if (currentIndex >= activeQueue.length) {
       const totalStudied = activeQueue.length;
       const mistakesCount = sessionMistakes.length;
-      const accuracy = Math.round(100 * Math.max(0, totalStudied - mistakesCount) / Math.max(1, totalStudied));
+      const accuracyPct = Math.round(((totalStudied - mistakesCount) / Math.max(1, totalStudied)) * 100);
 
       return \`
-        <div id="grammar-flashcards-root" class="challenge-container" style="max-width: 680px; margin: 0 auto;">
+        <div id="grammar-flashcards-root">
           <div class="review-card" style="padding: 24px 20px; text-align: center; border-radius: 20px;">
             <div style="font-size: 48px; margin-bottom: 10px;">
               \${mistakesCount === 0 ? '🏆' : '🎯'}
             </div>
             
             <h2 style="font-size: 22px; margin-bottom: 6px;">
-              \${mistakesCount === 0 ? 'Flawless Grammar Mastery !' : 'Session Completed !'}
+              \${mistakesCount === 0 ? 'Flawless Session !' : 'Session Completed !'}
             </h2>
 
             <p class="small muted" style="margin-bottom: 16px;">
-              \${isRemediationActive 
-                ? 'Targeted practice complete. Great job locking in those tricky rules!' 
-                : \`You finished all \${totalStudied} grammar cards with \${accuracy}% first-try accuracy.\`}
+              You finished all \${totalStudied} grammar cards with \${accuracyPct}% first-try accuracy.
             </p>
 
-            \${mistakesCount > 0 && !isRemediationActive ? \`
-              <div style="background: #fffbeb; border: 1.5px solid #fde68a; border-radius: 14px; padding: 14px; margin-bottom: 20px; text-align: left;">
-                <div style="font-size: 13px; font-weight: 800; color: #92400e; margin-bottom: 8px;">
-                  ⚠️ \${mistakesCount} Rule \${mistakesCount === 1 ? 'Trap' : 'Traps'} Encountered:
+            \${mistakesCount > 0 ? \`
+              <!-- Targeted Remediation Banner -->
+              <div style="background: #fff7ed; border: 1.5px solid #fed7aa; border-radius: 14px; padding: 14px 16px; margin-bottom: 18px; text-align: left;">
+                <div style="font-size: 13.5px; font-weight: 800; color: #9a3412; margin-bottom: 6px;">
+                  ⚠️ \${mistakesCount} \${mistakesCount === 1 ? 'rule needs' : 'rules need'} focused practice:
                 </div>
-                <div style="display: grid; gap: 6px; font-size: 12.5px; color: #78350f;">
+                <div style="font-size: 12px; color: #c2410c; line-height: 1.45; margin-bottom: 12px;">
                   \${sessionMistakes.map(m => \`
-                    <div style="background: #ffffff; border: 1px solid #fef3c7; padding: 7px 10px; border-radius: 8px;">
-                      <b>\${esc(m.card.topicLabel)} :</b> \${esc(m.trapTips[0] || 'Order mistake')}
-                    </div>
+                    <div style="margin-bottom: 4px;">• <b>\${esc(m.card.fullSentence)}</b> (\${esc(m.card.rule)})</div>
                   \`).join('')}
                 </div>
-                <div style="margin-top: 12px; text-align: center;">
-                  <button type="button" class="btn btn-primary btn-block" data-gflash-action="start-remediation" style="font-size: 14px;">
-                    🎯 Start Targeted Practice on Missed Rules (\${mistakesCount})
-                  </button>
-                </div>
+                <button type="button"
+                        class="btn btn-primary btn-block"
+                        data-gflash-action="start-remediation"
+                        style="font-size: 14px; border-radius: 12px; padding: 10px 16px;">
+                  🎯 Start Targeted Practice on Missed Rules (\${mistakesCount})
+                </button>
               </div>
-            \` : ''}
+            \` : \`
+              <div style="background: #ecfdf5; border: 1.5px solid #6ee7b7; border-radius: 14px; padding: 14px; margin-bottom: 18px; color: #065f46; font-size: 13.5px; font-weight: 700;">
+                ✨ Spectacular! You avoided every single deceptive distractor!
+              </div>
+            \`}
 
             <div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
-              <button type="button" class="btn btn-secondary" data-gflash-action="restart-all">
-                🔄 Study Deck Again
+              <button type="button" class="btn btn-secondary" data-gflash-action="restart-session">
+                ↺ Practice Topic Again
               </button>
               <button type="button" class="btn btn-white" data-gflash-topic="all">
-                All Topics
+                🗂️ All Grammar Rules
               </button>
             </div>
           </div>
@@ -731,16 +765,15 @@ const jsContent = `// Parlez Grammar Flashcard Sentence Builder with Tricky Dist
       \`;
     }
 
-    const card = activeQueue[currentIndex] || CHALLENGES[0];
-    const total = activeQueue.length;
+    const card = activeQueue[currentIndex];
     const st = getActiveState(false);
+    const total = activeQueue.length;
 
     return \`
-      <div id="grammar-flashcards-root" class="challenge-container" style="max-width: 680px; margin: 0 auto;">
-        
-        <!-- Topic Selection Bar -->
-        <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 12px; flex-wrap: wrap;">
-          <div style="font-size: 12px; font-weight: 800; color: #475569; text-transform: uppercase; letter-spacing: 0.5px;">
+      <div id="grammar-flashcards-root">
+        <!-- Topic & Queue Selector Bar -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; gap: 8px; flex-wrap: wrap;">
+          <div style="font-size: 12px; font-weight: 800; color: #6366f1;">
             \${isRemediationActive ? '🎯 Targeted Practice' : '🗂️ Grammar Flashcard'} · \${currentIndex + 1} of \${total}
           </div>
           <select id="gflash-topic-select" class="select select-sm" aria-label="Filter grammar flashcards" style="font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 10px;">
@@ -761,78 +794,81 @@ const jsContent = `// Parlez Grammar Flashcard Sentence Builder with Tricky Dist
     \`;
   }
 
-  // Event Listeners for Flashcard Interactions
+  // Delegated Event Handlers
   document.addEventListener('click', function (e) {
-    const btn = e.target.closest('button');
-    if (!btn) {
-      if (e.target.classList && e.target.classList.contains('gflash-modal-backdrop')) {
-        closeStructureModal();
-      }
+    // Select token
+    const selBtn = e.target.closest('[data-gflash-select]');
+    if (selBtn) {
+      selectToken(selBtn.dataset.gflashSelect);
       return;
     }
 
-    if (btn.dataset.gflashStructure) {
-      openStructureModal(btn.dataset.gflashStructure);
+    // Deselect token
+    const deselBtn = e.target.closest('[data-gflash-deselect]');
+    if (deselBtn) {
+      deselectToken(deselBtn.dataset.gflashDeselect);
       return;
     }
 
-    if (btn.dataset.gflashCloseModal) {
+    // Actions
+    const actionBtn = e.target.closest('[data-gflash-action]');
+    if (actionBtn) {
+      const act = actionBtn.dataset.gflashAction;
+      if (act === 'clear-words') clearSelection();
+      else if (act === 'check-sentence') checkSentence();
+      else if (act === 'next-card') nextCard();
+      else if (act === 'start-remediation') startTargetedRemediation();
+      else if (act === 'restart-session') startSession(currentTopic);
+      return;
+    }
+
+    // Rate & advance
+    const rateBtn = e.target.closest('[data-gflash-rate]');
+    if (rateBtn) {
+      rateAndAdvance(rateBtn.dataset.gflashRate);
+      return;
+    }
+
+    // Audio
+    const sayBtn = e.target.closest('[data-gflash-say]');
+    if (sayBtn) {
+      playAudio(sayBtn.dataset.gflashSay, 0.83);
+      return;
+    }
+    const slowBtn = e.target.closest('[data-gflash-slow]');
+    if (slowBtn) {
+      playAudio(slowBtn.dataset.gflashSlow, 0.60);
+      return;
+    }
+    const modalSayBtn = e.target.closest('[data-gflash-modal-say]');
+    if (modalSayBtn) {
+      playAudio(modalSayBtn.dataset.gflashModalSay, 0.83);
+      return;
+    }
+
+    // Structure modal open / close
+    const structBtn = e.target.closest('[data-gflash-structure]');
+    if (structBtn) {
+      openStructureModal(structBtn.dataset.gflashStructure);
+      return;
+    }
+
+    const closeModBtn = e.target.closest('[data-gflash-close-modal]');
+    if (closeModBtn) {
       closeStructureModal();
       return;
     }
 
-    if (btn.dataset.gflashTopic) {
-      startSession(btn.dataset.gflashTopic);
+    // Backdrop click to close modal
+    if (e.target && e.target.dataset && e.target.dataset.gflashBackdropClose === 'true') {
+      closeStructureModal();
       return;
     }
 
-    if (btn.dataset.gflashSelect) {
-      selectToken(btn.dataset.gflashSelect);
-      return;
-    }
-
-    if (btn.dataset.gflashDeselect) {
-      deselectToken(btn.dataset.gflashDeselect);
-      return;
-    }
-
-    if (btn.dataset.gflashAction === 'clear-words') {
-      clearSelection();
-      return;
-    }
-
-    if (btn.dataset.gflashAction === 'check-sentence') {
-      checkSentence();
-      return;
-    }
-
-    if (btn.dataset.gflashRate) {
-      rateAndAdvance(btn.dataset.gflashRate);
-      return;
-    }
-
-    if (btn.dataset.gflashAction === 'next-card') {
-      nextCard();
-      return;
-    }
-
-    if (btn.dataset.gflashAction === 'start-remediation') {
-      startTargetedRemediation();
-      return;
-    }
-
-    if (btn.dataset.gflashAction === 'restart-all') {
-      startSession(currentTopic);
-      return;
-    }
-
-    if (btn.dataset.gflashSay) {
-      playAudio(btn.dataset.gflashSay, 0.83);
-      return;
-    }
-
-    if (btn.dataset.gflashSlow) {
-      playAudio(btn.dataset.gflashSlow, 0.6);
+    // Topic button shortcuts (e.g. from End-of-Session)
+    const topicBtn = e.target.closest('[data-gflash-topic]');
+    if (topicBtn) {
+      startSession(topicBtn.dataset.gflashTopic);
       return;
     }
   });

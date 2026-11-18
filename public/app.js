@@ -2593,5 +2593,5 @@ const initialHash=location.hash.slice(1);if(initialHash==='grammar-study'||initi
 if('serviceWorker' in navigator && location.protocol.startsWith('http')){
   let refreshing=false;
   navigator.serviceWorker.addEventListener('controllerchange',()=>{if(!refreshing){refreshing=true;location.reload();}});
-  navigator.serviceWorker.register('./sw.js?v=33').then(reg=>reg.update()).catch(()=>{});
+  navigator.serviceWorker.register('./sw.js?v=36').then(reg=>reg.update()).catch(()=>{});
 }

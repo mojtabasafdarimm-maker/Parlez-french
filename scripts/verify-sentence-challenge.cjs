@@ -62,6 +62,10 @@ server.listen(0, '127.0.0.1', async () => {
     await grammarNavBtn.click();
     await page.waitForTimeout(300);
 
+    // Switch to reflexive topic for specific distractor test
+    await page.selectOption('#gflash-topic-select', 'reflexive');
+    await page.waitForTimeout(200);
+
     // Verify Grammar Flashcard Root exists
     const rootCount = await page.locator('#grammar-flashcards-root').count();
     assert.strictEqual(rootCount, 1, 'Grammar Flashcard root container must be present');
@@ -93,16 +97,16 @@ server.listen(0, '127.0.0.1', async () => {
 
     // 3. Test Deceptive Distractor / Trap Detection
     console.log('3. Testing Deceptive Distractor (Auxiliary trap "a" or agreement trap "levé")...');
-    // Find distractor button 'a'
-    const distractorA = page.locator('#grammar-flashcards-root button[data-gflash-select]:text-is("a")').first();
+    // Find distractor button 'ai' or 'a'
+    const distractorA = page.locator('#grammar-flashcards-root button[data-gflash-select]:text-is("ai"), #grammar-flashcards-root button[data-gflash-select]:text-is("a")').first();
     if (await distractorA.count() > 0) {
       await distractorA.click();
       await page.waitForTimeout(100);
     }
     // Also select some words
-    const btnElle = page.locator('#grammar-flashcards-root button[data-gflash-select]:text-is("Elle")').first();
-    if (await btnElle.count() > 0) {
-      await btnElle.click();
+    const btnJe = page.locator('#grammar-flashcards-root button[data-gflash-select]:text-is("Je"), #grammar-flashcards-root button[data-gflash-select]:text-is("Elle")').first();
+    if (await btnJe.count() > 0) {
+      await btnJe.click();
       await page.waitForTimeout(100);
     }
 
@@ -128,7 +132,7 @@ server.listen(0, '127.0.0.1', async () => {
     await page.waitForTimeout(250);
 
     // On Card 2: Assemble correctly!
-    const wordsToClick = ['Tu', 't’es', 'douchée', 'hier', 'soir', '?'];
+    const wordsToClick = ['Elle', 's’est', 'levée', 'tôt', 'ce', 'matin'];
     for (const w of wordsToClick) {
       const wBtn = page.locator(`#grammar-flashcards-root button[data-gflash-select]:text-is("${w}")`).first();
       if (await wBtn.count() > 0) {
@@ -148,7 +152,7 @@ server.listen(0, '127.0.0.1', async () => {
 
     // Verify French answer with Listen & Slow buttons
     const spokenFrench = await page.locator('#grammar-flashcards-root div:has-text("Correct Spoken French")').first().textContent();
-    assert(spokenFrench.includes('Tu t’es douchée hier soir ?'), 'Must display full spoken sentence');
+    assert(spokenFrench.includes('Elle s’est levée tôt ce matin.'), 'Must display full spoken sentence');
     const listenBtnCount = await page.locator('button[data-gflash-say]').count();
     const slowBtnCount = await page.locator('button[data-gflash-slow]').count();
     assert(listenBtnCount >= 1 && slowBtnCount >= 1, 'Listen and Slow audio buttons must be present');
