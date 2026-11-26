@@ -2966,7 +2966,8 @@
     "lastReviewed": 0,
     "mastered": false,
     "customImage": null,
-    "examplePhonetic": "[zhuh nuh veh pah ah lay-kohl luh dee-mahnsh]"
+    "examplePhonetic": "[zhuh nuh veh pah ah lay-kohl luh dee-mahnsh]",
+    "structureId": "negation"
   },
   {
     "id": "gr_negation_jamais",
@@ -2989,7 +2990,8 @@
     "lastReviewed": 0,
     "mastered": false,
     "customImage": null,
-    "examplePhonetic": "[zhuh nuh prahn zhah-meh lah-vyohn poor suh trah-zheh]"
+    "examplePhonetic": "[zhuh nuh prahn zhah-meh lah-vyohn poor suh trah-zheh]",
+    "structureId": "negation"
   },
   {
     "id": "gr_negation_plus",
@@ -3012,7 +3014,8 @@
     "lastReviewed": 0,
     "mastered": false,
     "customImage": null,
-    "examplePhonetic": "[eel nuh trah-vahy plew dahn seht ahn-truh-preez]"
+    "examplePhonetic": "[eel nuh trah-vahy plew dahn seht ahn-truh-preez]",
+    "structureId": "negation"
   },
   {
     "id": "gr_negation_rien",
@@ -3035,7 +3038,8 @@
     "lastReviewed": 0,
     "mastered": false,
     "customImage": null,
-    "examplePhonetic": "[zhuh nay ryehn ah day-klah-ray ah lah dwahn]"
+    "examplePhonetic": "[zhuh nay ryehn ah day-klah-ray ah lah dwahn]",
+    "structureId": "negation"
   },
   {
     "id": "gr_prep_countries",
@@ -3058,7 +3062,8 @@
     "lastReviewed": 0,
     "mastered": false,
     "customImage": null,
-    "examplePhonetic": "[zhah-beet ahn frahns oh kah-nah-dah ay oh ay-tah-zew-nee]"
+    "examplePhonetic": "[zhah-beet ahn frahns oh kah-nah-dah ay oh ay-tah-zew-nee]",
+    "structureId": "prepositions"
   },
   {
     "id": "gr_prep_cities",
@@ -3081,7 +3086,8 @@
     "lastReviewed": 0,
     "mastered": false,
     "customImage": null,
-    "examplePhonetic": "[zhah-beet ah pah-ree ay zhuh trah-vahy ah lee-ohn]"
+    "examplePhonetic": "[zhah-beet ah pah-ree ay zhuh trah-vahy ah lee-ohn]",
+    "structureId": "prepositions"
   },
   {
     "id": "gr_prep_chez",
@@ -3104,7 +3110,8 @@
     "lastReviewed": 0,
     "mastered": false,
     "customImage": null,
-    "examplePhonetic": "[suh swahr zhuh veh shay luh mayd-sehn pwee shay may-z ah-mee]"
+    "examplePhonetic": "[suh swahr zhuh veh shay luh mayd-sehn pwee shay may-z ah-mee]",
+    "structureId": "prepositions"
   },
   {
     "id": "gr_aller_vs_prendre",
@@ -3127,7 +3134,8 @@
     "lastReviewed": 0,
     "mastered": false,
     "customImage": null,
-    "examplePhonetic": "[zhuh prahn luh bews poor ah-lay oh trah-vahy]"
+    "examplePhonetic": "[zhuh prahn luh bews poor ah-lay oh trah-vahy]",
+    "structureId": "aller_prendre"
   },
   {
     "id": "gr_jouer_a_vs_de",
@@ -3150,7 +3158,8 @@
     "lastReviewed": 0,
     "mastered": false,
     "customImage": null,
-    "examplePhonetic": "[zhuh zhoo oh teh-neess ay zhuh zhoo dew pyah-noh]"
+    "examplePhonetic": "[zhuh zhoo oh teh-neess ay zhuh zhoo dew pyah-noh]",
+    "structureId": "jouer_prep"
   },
   {
     "id": "gr_trois_temps",
@@ -3173,7 +3182,8 @@
     "lastReviewed": 0,
     "mastered": false,
     "customImage": null,
-    "examplePhonetic": "[zhuh vyehn duh mahn-zhay zhuh swee ahn trehn day-tew-dyay zhuh veh dor-meer]"
+    "examplePhonetic": "[zhuh vyehn duh mahn-zhay zhuh swee ahn trehn day-tew-dyay zhuh veh dor-meer]",
+    "structureId": "trois_temps"
   },
   {
     "id": "gr_verbes_er",
@@ -3196,7 +3206,8 @@
     "lastReviewed": 0,
     "mastered": false,
     "customImage": null,
-    "examplePhonetic": "[ay-may zh em tew em eel em noo-z ay-mohn voo-z ay-may eel-z em]"
+    "examplePhonetic": "[ay-may zh em tew em eel em noo-z ay-mohn voo-z ay-may eel-z em]",
+    "structureId": "verbes_er"
   },
   {
     "id": "gr_verbes_ir_2e",
@@ -3219,7 +3230,8 @@
     "lastReviewed": 0,
     "mastered": false,
     "customImage": null,
-    "examplePhonetic": "[fee-neer zhuh fee-nee tew fee-nee eel fee-nee noo fee-nee-sohn voo fee-nee-say eel fee-neess]"
+    "examplePhonetic": "[fee-neer zhuh fee-nee tew fee-nee eel fee-nee noo fee-nee-sohn voo fee-nee-say eel fee-neess]",
+    "structureId": "verbes_ir_2e"
   },
   {
     "id": "gr_verbes_ir_3e",
@@ -3242,7 +3254,8 @@
     "lastReviewed": 0,
     "mastered": false,
     "customImage": null,
-    "examplePhonetic": "[sor-teer zhuh sor tew sor eel sor noo sor-tohn voo sor-tay eel sort]"
+    "examplePhonetic": "[sor-teer zhuh sor tew sor eel sor noo sor-tohn voo sor-tay eel sort]",
+    "structureId": "verbes_ir_3e"
   },
   {
     "id": "gr_questions_3formes",
@@ -3265,7 +3278,8 @@
     "lastReviewed": 0,
     "mastered": false,
     "customImage": null,
-    "examplePhonetic": "[tew ah fehn ess kuh tew ah fehn ah-tew fehn]"
+    "examplePhonetic": "[tew ah fehn ess kuh tew ah fehn ah-tew fehn]",
+    "structureId": "questions_3formes"
   },
   {
     "id": "c2_immeuble",
@@ -4139,7 +4153,8 @@
     "lastReviewed": 0,
     "mastered": false,
     "customImage": null,
-    "examplePhonetic": "[zhuh day-may-nahzh ah lah fehn dew mwah ay zhahn-may-nahzh dahn mohn noo-vel ah-par-tuh-mahn]"
+    "examplePhonetic": "[zhuh day-may-nahzh ah lah fehn dew mwah ay zhahn-may-nahzh dahn mohn noo-vel ah-par-tuh-mahn]",
+    "structureId": "demenager_emmenager"
   },
   {
     "id": "gr_prepositions_lieu_2",
@@ -4162,7 +4177,8 @@
     "lastReviewed": 0,
     "mastered": false,
     "customImage": null,
-    "examplePhonetic": "[lah tahbl bahs eh duh-vahn luh kah-nah-pay ah drwaht dew kah-nah-pay ay ah koh-tay day fuh-netr]"
+    "examplePhonetic": "[lah tahbl bahs eh duh-vahn luh kah-nah-pay ah drwaht dew kah-nah-pay ay ah koh-tay day fuh-netr]",
+    "structureId": "prepositions_lieu"
   },
   {
     "id": "gr_pc_avoir",
@@ -4185,7 +4201,8 @@
     "lastReviewed": 0,
     "mastered": false,
     "customImage": null,
-    "examplePhonetic": "[yehr zhay mahn-zhay tew ah mahn-zhay eel ah mahn-zhay noo zah-vohn mahn-zhay voo zah-vay mahn-zhay eel zohn mahn-zhay]"
+    "examplePhonetic": "[yehr zhay mahn-zhay tew ah mahn-zhay eel ah mahn-zhay noo zah-vohn mahn-zhay voo zah-vay mahn-zhay eel zohn mahn-zhay]",
+    "structureId": "avoir"
   },
   {
     "id": "gr_participes_passes",
@@ -4208,7 +4225,8 @@
     "lastReviewed": 0,
     "mastered": false,
     "customImage": null,
-    "examplePhonetic": "[mahn-zhay ahsh-tay fee-nee shwah-zee dor-mee lew vew bew ruh-sew pree mee dee ay-kree feh]"
+    "examplePhonetic": "[mahn-zhay ahsh-tay fee-nee shwah-zee dor-mee lew vew bew ruh-sew pree mee dee ay-kree feh]",
+    "structureId": "participes_passes"
   },
   {
     "id": "gr_pc_negation",
@@ -4231,7 +4249,8 @@
     "lastReviewed": 0,
     "mastered": false,
     "customImage": null,
-    "examplePhonetic": "[el nah pah dee lah vay-ree-tay noo nah-vohn pah trah-vah-yay dahn luh gah-rahzh]"
+    "examplePhonetic": "[el nah pah dee lah vay-ree-tay noo nah-vohn pah trah-vah-yay dahn luh gah-rahzh]",
+    "structureId": "passe_compose_syntax"
   },
   {
     "id": "gr_pc_adverbes",
@@ -4254,7 +4273,8 @@
     "lastReviewed": 0,
     "mastered": false,
     "customImage": null,
-    "examplePhonetic": "[yehr swahr zhay byahn dor-mee zhay day-zhah ruh-gar-day suh feelm ay noo zah-vohn troh par-lay]"
+    "examplePhonetic": "[yehr swahr zhay byahn dor-mee zhay day-zhah ruh-gar-day suh feelm ay noo zah-vohn troh par-lay]",
+    "structureId": "passe_compose_syntax"
   },
   {
     "id": "c11_immeuble_parties",
@@ -5013,7 +5033,8 @@
     "dueAt": 0,
     "lastReviewed": 0,
     "mastered": false,
-    "customImage": null
+    "customImage": null,
+    "structureId": "rules"
   },
   {
     "id": "gr_pc_etre_maison",
@@ -5036,7 +5057,8 @@
     "dueAt": 0,
     "lastReviewed": 0,
     "mastered": false,
-    "customImage": null
+    "customImage": null,
+    "structureId": "maison"
   },
   {
     "id": "gr_pc_pronominaux",
@@ -5059,7 +5081,8 @@
     "dueAt": 0,
     "lastReviewed": 0,
     "mastered": false,
-    "customImage": null
+    "customImage": null,
+    "structureId": "reflexive"
   },
   {
     "id": "gr_se_faire_infinitif",
@@ -5082,7 +5105,8 @@
     "dueAt": 0,
     "lastReviewed": 0,
     "mastered": false,
-    "customImage": null
+    "customImage": null,
+    "structureId": "se_faire"
   },
   {
     "id": "gr_ne_que_avant_de",
@@ -5105,9 +5129,9 @@
     "dueAt": 0,
     "lastReviewed": 0,
     "mastered": false,
-    "customImage": null
-  }
-,
+    "customImage": null,
+    "structureId": "neque"
+  },
   {
     "id": "c12_parc_loisirs",
     "kind": "vocab",
@@ -5934,7 +5958,8 @@
     "lastReviewed": 0,
     "mastered": false,
     "customImage": null,
-    "examplePhonetic": "[zhuh koh-neh dah-nyahl zhuh say par-lay frahn-seh zhuh say oo eel ah-beet]"
+    "examplePhonetic": "[zhuh koh-neh dah-nyahl zhuh say par-lay frahn-seh zhuh say oo eel ah-beet]",
+    "structureId": "connaitre_savoir"
   },
   {
     "id": "gr_pronoms_cod",
@@ -5957,7 +5982,8 @@
     "lastReviewed": 0,
     "mastered": false,
     "customImage": null,
-    "examplePhonetic": "[zhuh lah ruh-gard zhuh nuh lah ruh-gard pah zhuh veh lah ruh-gar-day]"
+    "examplePhonetic": "[zhuh lah ruh-gard zhuh nuh lah ruh-gard pah zhuh veh lah ruh-gar-day]",
+    "structureId": "cod_coi"
   },
   {
     "id": "gr_accord_cod_passe_compose",
@@ -5980,7 +6006,8 @@
     "lastReviewed": 0,
     "mastered": false,
     "customImage": null,
-    "examplePhonetic": "[tew ah vew sah vwah-tewr wee zhuh lay vew tay-z ah-mee zhuh lay-z ay vew]"
+    "examplePhonetic": "[tew ah vew sah vwah-tewr wee zhuh lay vew tay-z ah-mee zhuh lay-z ay vew]",
+    "structureId": "cod_coi"
   },
   {
     "id": "gr_pronoms_coi",
@@ -6003,7 +6030,8 @@
     "lastReviewed": 0,
     "mastered": false,
     "customImage": null,
-    "examplePhonetic": "[zhuh parl ah pohl zhuh lwee parl zhuh parl ah mah-ree zhuh lwee parl zhuh lay-kree oh-z ah-mee zhuh lur ay-kree]"
+    "examplePhonetic": "[zhuh parl ah pohl zhuh lwee parl zhuh parl ah mah-ree zhuh lwee parl zhuh lay-kree oh-z ah-mee zhuh lur ay-kree]",
+    "structureId": "cod_coi"
   },
   {
     "id": "gr_trouver_plaire",
@@ -6026,10 +6054,10 @@
     "lastReviewed": 0,
     "mastered": false,
     "customImage": null,
-    "examplePhonetic": "[zhuh troov seht veel mahn-yee-feek el muh pleh boh-koo]"
+    "examplePhonetic": "[zhuh troov seht veel mahn-yee-feek el muh pleh boh-koo]",
+    "structureId": "trouver_plaire"
   }
 ];
-
   window.ParlezCurriculumCards = {
     all: cards,
     byLesson: function (lesson) {

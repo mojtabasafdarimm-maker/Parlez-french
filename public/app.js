@@ -620,6 +620,7 @@ function mergeCurriculumCards(){
       } else {
         if(!existing.examplePhonetic && c.examplePhonetic) existing.examplePhonetic = c.examplePhonetic;
         if(!existing.customImage && c.scene && existing.scene !== c.scene) existing.scene = c.scene;
+        if(c.structureId) existing.structureId = c.structureId;
       }
     }
   }
@@ -1969,6 +1970,10 @@ function grammarCardSessionView(){
       <div class="quiet-english-meaning">${esc(c.englishPrompt)}</div>
       <div class="quiet-audio-row">
         <button class="btn btn-secondary btn-sm" type="button" data-action="say-grammar-answer" aria-label="Listen to French answer">${icon('sound')} Listen</button>
+        ${(()=>{
+          const sKey = c.structureId || (window.ParlezCardStructureMap && window.ParlezCardStructureMap[c.id]);
+          return sKey ? `<button type="button" class="btn btn-white btn-sm" onclick="window.openGrammarStructureModal('${esc(sKey)}')" style="font-size:12px;font-weight:700;padding:5px 10px;border-radius:10px;display:inline-flex;align-items:center;gap:5px;box-shadow:0 1px 3px rgba(0,0,0,0.05);">📊 View Detailed Table &amp; Traps</button>` : '';
+        })()}
       </div>
     </div>
 
@@ -2018,6 +2023,10 @@ function grammarFlashcardsView(){
           ${c.grammarNote?`<div class="vocab-note" style="margin-top:8px"><small>${esc(c.grammarNote)}</small></div>`:''}
           <div class="lib-footer">
             <button class="btn btn-secondary btn-sm" data-say-card="${esc(c.frenchExample||c.frenchAnswer)}">${icon('sound')} Listen</button>
+            ${(()=>{
+              const sKey = c.structureId || (window.ParlezCardStructureMap && window.ParlezCardStructureMap[c.id]);
+              return sKey ? `<button type="button" class="btn btn-white btn-sm" onclick="window.openGrammarStructureModal('${esc(sKey)}')" style="font-size:11.5px;font-weight:700;padding:3px 8px;border-radius:8px;">📊 Table</button>` : '';
+            })()}
             <button class="btn btn-white btn-sm" data-practice="${esc(c.id)}">Flashcard ${icon('arrow')}</button>
           </div>
         </div>
@@ -2303,10 +2312,16 @@ function cardDetailsModal(c){
         </div>`:''}
 
         ${(()=>{const gInfo=window.ParlezGender?window.ParlezGender.getCardGender(c):null;return gInfo?`<div class="card-details-box gender-details-box ${gInfo.pillClass}" style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><span class="small" style="font-weight:700">Visual Noun Gender Cue</span><span class="gender-pill ${gInfo.pillClass}">${esc(gInfo.pillLabel)}</span></div>${gInfo.tip?`<p style="margin:6px 0 0;font-size:13.5px;line-height:1.5">${esc(gInfo.tip)}</p>`:''}</div>`:'';})()}
-        ${c.grammarNote?`<div class="card-details-box note-box">
-          <span class="small muted" style="font-weight:600;color:var(--purple-dark,#515097)">Grammar & Usage Note</span>
-          <p style="margin:6px 0 0;font-size:13.5px;line-height:1.5">${esc(c.grammarNote)}</p>
-        </div>`:''}
+        ${(()=>{
+          const structKey = c.structureId || (window.ParlezCardStructureMap && window.ParlezCardStructureMap[c.id]);
+          return (c.grammarNote || structKey) ? `<div class="card-details-box note-box" style="position:relative;">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;">
+            <span class="small muted" style="font-weight:700;color:var(--purple-dark,#515097)">Grammar &amp; Usage Note</span>
+            ${structKey ? `<button type="button" class="btn btn-secondary btn-sm" onclick="window.openGrammarStructureModal('${esc(structKey)}')" style="font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:8px;">📊 Structure Table &amp; Rules</button>` : ''}
+          </div>
+          ${c.grammarNote ? `<p style="margin:6px 0 0;font-size:13.5px;line-height:1.5">${esc(c.grammarNote)}</p>` : ''}
+        </div>` : '';
+        })()}
       </div>
 
       <div style="display:flex;justify-content:space-between;align-items:center;margin-top:16px;gap:8px;flex-wrap:wrap">
@@ -2571,6 +2586,76 @@ function page(){switch(view){case 'vocab':return vocabPage();case 'review':retur
 function render(){document.querySelector('#modal-backdrop')?.remove();modalOpen=false;$('#app').innerHTML=shell(page());if(view==='library'&&libSearch){const i=$('#lib-search');if(i)i.setSelectionRange(i.value.length,i.value.length);}}
 function navigate(to){view=to;window.location.hash=to;reviewSession=null;vocabSession=null;promptPeeked=false;speakShown=false;speakHint=false;speakResponse='';render();scrollTo({top:0,behavior:'instant'});}
 function startPracticeCard(id){view='review';reviewSession={ids:[id],index:0,done:0,again:0};reviewFilter='All cards';revealed=false;promptPeeked=false;window.location.hash='review';render();scrollTo(0,0);}
+
+window.openGrammarStructureModal = function(structureKey) {
+  if (!structureKey) return;
+  const struct = (window.ParlezGrammarStructures && window.ParlezGrammarStructures[structureKey]) || (window.ParlezChallenge && window.ParlezChallenge.getStructures && window.ParlezChallenge.getStructures()[structureKey]);
+  if (!struct) return;
+  document.querySelector('.gflash-modal-backdrop')?.remove();
+  const esc = s => (s === undefined || s === null ? '' : String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'));
+  const modalHtml = `
+    <div class="gflash-modal-backdrop" data-gflash-backdrop-close="true" style="position: fixed; inset: 0; background: rgba(15, 23, 42, 0.65); z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 14px; backdrop-filter: blur(4px); animation: fadeIn 0.15s ease;">
+      <div class="gflash-modal-dialog" style="background: #ffffff; border-radius: 20px; max-width: 640px; width: 100%; max-height: 88vh; overflow-y: auto; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); border: 1.5px solid #e2e8f0; display: flex; flex-direction: column;">
+        <div style="padding: 16px 20px; border-bottom: 1.5px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; background: #fafafa; border-radius: 20px 20px 0 0; position: sticky; top: 0; z-index: 10;">
+          <div>
+            <span class="meta" style="margin: 0; font-size: 10.5px; background: #e0e7ff; color: #3730a3; padding: 3px 8px; border-radius: 6px; font-weight: 800;">${esc(struct.badge)}</span>
+            <h3 style="margin: 4px 0 0; font-size: 17px; font-weight: 800; color: #1e1b4b;">${esc(struct.title)}</h3>
+          </div>
+          <button type="button" class="btn btn-white btn-sm" onclick="document.querySelector('.gflash-modal-backdrop')?.remove()" style="border-radius: 50%; width: 34px; height: 34px; padding: 0; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 800;">✕</button>
+        </div>
+        <div style="padding: 18px 20px;">
+          <p style="font-size: 13.5px; color: #475569; line-height: 1.5; margin: 0 0 14px;">${esc(struct.summary)}</p>
+          <div style="background: #eef2ff; border: 1.5px solid #c7d2fe; border-radius: 12px; padding: 12px 14px; margin-bottom: 16px;">
+            <div style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: #4338ca; letter-spacing: 0.5px; margin-bottom: 4px;">📐 Structural Formula:</div>
+            <div style="font-family: monospace; font-size: 13.5px; font-weight: 800; color: #1e1b4b;">${esc(struct.formula)}</div>
+            ${struct.negationFormula && struct.negationFormula !== 'N/A' ? `<div style="margin-top: 6px; font-family: monospace; font-size: 12px; color: #6366f1;">Négation : ${esc(struct.negationFormula)}</div>` : ''}
+          </div>
+          <div style="margin-bottom: 16px;">
+            <div style="font-size: 11.5px; font-weight: 800; text-transform: uppercase; margin-bottom: 8px; color: #1e293b;">📋 Complete Reference Table:</div>
+            <div class="gt-table-responsive" style="max-height: 280px; overflow-y: auto; border: 1px solid #e2e8f0; border-radius: 12px;">
+              <table class="gt-table" style="width: 100%; border-collapse: collapse; font-size: 12.5px; text-align: left;">
+                <thead style="position: sticky; top: 0; background: #f8fafc; z-index: 1;">
+                  <tr style="border-bottom: 1.5px solid #cbd5e1;">
+                    ${struct.headers.map(h => `<th style="padding: 8px 10px; font-weight: 800; color: #475569;">${esc(h)}</th>`).join('')}
+                    <th style="padding: 8px 10px; text-align: center; color: #475569;">Audio</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${struct.rows.map((row, rIdx) => `
+                    <tr style="border-bottom: 1px solid #f1f5f9; background: ${rIdx % 2 === 0 ? '#ffffff' : '#fafafa'};">
+                      ${row.map((cell, cIdx) => `<td style="padding: 8px 10px; ${cIdx === 0 ? 'font-weight: 800; color: #3730a3;' : (cIdx === 2 ? 'font-weight: 700; color: #e11d48;' : '')}">${esc(cell)}</td>`).join('')}
+                      <td style="padding: 8px 10px; text-align: center;">
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="if(window.say) window.say('${esc(row[3] || row[0])}')" style="padding: 2px 7px; font-size: 11px; border-radius: 6px;">🔊</button>
+                      </td>
+                    </tr>
+                  `).join('')}
+                </tbody>
+              </table>
+            </div>
+          </div>
+          ${struct.traps && struct.traps.length ? `
+            <div style="background: #fff1f2; border: 1.5px solid #fecdd3; border-radius: 12px; padding: 12px 14px; margin-bottom: 16px;">
+              <div style="font-size: 11.5px; font-weight: 800; text-transform: uppercase; color: #be123c; margin-bottom: 6px; display: flex; align-items: center; gap: 5px;">⚠️ Traps & Common Mistakes to Avoid:</div>
+              <div style="font-size: 12px; color: #9f1239; line-height: 1.45;">
+                ${struct.traps.map(t => `<div style="margin-bottom: 4px;">• ${esc(t)}</div>`).join('')}
+              </div>
+            </div>
+          ` : ''}
+          ${struct.rules && struct.rules.length ? `
+            <div style="background: #fdf4ff; border: 1.5px solid #f5d0fe; border-radius: 12px; padding: 12px 14px; font-size: 12px; color: #701a75; line-height: 1.45; margin-bottom: 16px;">
+              <div style="font-size: 11.5px; font-weight: 800; text-transform: uppercase; margin-bottom: 4px; color: #86198f;">💡 Key Notes & Nuances:</div>
+              ${struct.rules.map(r => `<div>• ${esc(r)}</div>`).join('')}
+            </div>
+          ` : ''}
+        </div>
+        <div style="padding: 12px 20px; border-top: 1.5px solid #f1f5f9; background: #fafafa; border-radius: 0 0 20px 20px; display: flex; justify-content: flex-end; gap: 8px;">
+          <button type="button" class="btn btn-primary" onclick="document.querySelector('.gflash-modal-backdrop')?.remove()" style="font-size: 13px; border-radius: 12px; padding: 8px 18px;">✓ Got It, Return to Card</button>
+        </div>
+      </div>
+    </div>`;
+  document.body.insertAdjacentHTML('beforeend', modalHtml);
+};
+
 // Delegated controls: stable even when cards and views re-render.
 document.addEventListener('click',e=>{const el=e.target.closest('button');if(!el)return;if(el.dataset.view){navigate(el.dataset.view);return;}if(el.dataset.grammarNav){grammarSubView=el.dataset.grammarNav;navigate('grammar');return;}if(el.dataset.grammarSubview){grammarSubView=el.dataset.grammarSubview;grammarSession=null;render();return;}if(el.dataset.drillGroup){drillGroupFilter=el.dataset.drillGroup;const avail=getDrillVerbs();if(!avail.some(v=>v.id===drillVerbId)&&avail.length)drillVerbId=avail[0].id;drillRevealed=false;render();return;}if(el.dataset.drillPronoun){drillPronounKey=el.dataset.drillPronoun;drillRevealed=false;render();return;}if(el.dataset.sayDrill){say(el.dataset.sayDrill,0.83,el);return;}if(el.dataset.grammarTopic){grammarTopicFilter=el.dataset.grammarTopic;render();return;}if(el.dataset.saySlow){say(el.dataset.saySlow,.60,el);return;}if(el.dataset.genderFilter){vocabGenderFilter=el.dataset.genderFilter;if(vocabGenderFilter==='reflex'&&window.ParlezGender)window.ParlezGender.startReflex();render();return;}if(el.dataset.genderAction&&window.ParlezGender){const ga=el.dataset.genderAction;if(ga==='choose')window.ParlezGender.answerReflex(el.dataset.choice);else if(ga==='next-reflex')window.ParlezGender.nextReflex();else if(ga==='restart-reflex'){window.ParlezGender.startReflex();render();}return;}if(el.dataset.grammarRate){rateGrammarCard(el.dataset.grammarRate);return;}if(el.dataset.rate){rateCard(el.dataset.rate);return;}if(el.dataset.vocabRate){rateVocabCard(el.dataset.vocabRate);return;}if(el.dataset.startDeck){
   vocabLessonFilter=el.dataset.startDeck;
